@@ -12,6 +12,7 @@
 *.jpg
 *.jpeg
 *.svg
+*.out
 
 # Log files
 *.log
