@@ -14,7 +14,8 @@ IFS=',' read -r -a MODELS <<< "$2"
 
 # Set paths
 SCRIPT_DIR="/scratch/lorthiois/scripts"
-mkdir -p "$SCRIPT_DIR"  # Ensure directory exists
+mkdir -p "$SCRIPT_DIR"
+TEMPLATE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution"
 OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
@@ -48,7 +49,7 @@ for MODEL in "${MODELS[@]}"; do
     TEMP_SCRIPT="$SCRIPT_DIR/temp_${MODEL}_deconv.sh"
     
     # Copy the template and modify parameters
-    cat "$SCRIPT_DIR/deconv_run.sh" | \
+    cat "$TEMPLATE_DIR/deconv_run.sh" | \
         sed "s|input_data=.*|input_data=\"$INPUT_RDA_FILE\"|" | \
         sed "s|output_data=.*|output_data=\"$OUTPUT_DIR\"|" | \
         sed "s|deconv_method=.*|deconv_method=\"$MODEL\"|" | \

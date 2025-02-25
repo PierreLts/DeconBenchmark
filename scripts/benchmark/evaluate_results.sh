@@ -13,7 +13,8 @@
 # Usage: ./evaluate_results.sh
 
 SCRIPT_DIR="/scratch/lorthiois/scripts"
-mkdir -p "$SCRIPT_DIR"  # Ensure directory exists
+mkdir -p "$SCRIPT_DIR"
+TEMPLATE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark"
 OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
@@ -47,7 +48,7 @@ while IFS=: read -r MODEL JOB_ID; do
     
     # Run model statistics
     STATS_SCRIPT="$SCRIPT_DIR/temp_${MODEL}_stats.sh"
-    cat "$SCRIPT_DIR/model_stats.sh" | \
+    cat "$TEMPLATE_DIR/model_stats.sh" | \
         sed "s|GROUND_TRUTH=.*|GROUND_TRUTH=\"$GROUND_TRUTH\"|" | \
         sed "s|RESULTS=.*|RESULTS=\"$RESULTS_FILE\"|" | \
         sed "s|OUTPUT_DIR=.*|OUTPUT_DIR=\"$BENCHMARK_DIR\"|" | \
