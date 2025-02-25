@@ -1,5 +1,7 @@
 #!/bin/bash
 # save as build_missing_images.sh
+#SBATCH --output=/scratch/lorthiois/logs/%A.o
+#SBATCH --error=/scratch/lorthiois/logs/%A.e
 
 # Create directory for local images
 SING_IMG_DIR=/scratch/lorthiois/singularity_images

@@ -28,6 +28,13 @@ Failed:
 fatal:
 Fatal:
 FATAL:
+Error
+ERROR
+Exception
+Failed
+fatal
+Fatal
+FATAL
 segmentation fault
 memory allocation
 not found
@@ -36,8 +43,10 @@ undefined reference
 invalid argument
 time limit
 OOM
-panic:
 Panic:
+Panic:
+Panic
+Panic
 CANCELLED
 EOF
 
