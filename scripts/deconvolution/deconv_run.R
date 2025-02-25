@@ -16,6 +16,17 @@ sparse_conversion <- as.logical(args[5])
 library(DeconBenchmark)
 library(Matrix)
 print("CHECK: Libraries loaded")
+
+
+# Set up custom image locations
+singularity_images <- list(
+  "bseqsc" = "/scratch/lorthiois/singularity_images/bseqsc.sif",
+  "celldistinguisher" = "/scratch/lorthiois/singularity_images/celldistinguisher.sif",
+  "cibersort" = "/scratch/lorthiois/singularity_images/cibersort.sif",
+  "demixt" = "/scratch/lorthiois/singularity_images/demixt.sif",
+  "methylresolver" = "/scratch/lorthiois/singularity_images/methylresolver.sif"
+)
+
  
 # Load input data
 loaded_objects <- load(input_data)

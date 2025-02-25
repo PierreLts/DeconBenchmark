@@ -30,6 +30,10 @@ module load r #IMPORTANT
 start=`date +%s`
 echo "START AT $(date)"
 
+export SINGULARITY_TMPDIR=/scratch/lorthiois/temp
+mkdir -p $SINGULARITY_TMPDIR
+export SINGULARITYENV_APPEND_PATH=/scratch/lorthiois/temp
+
 #(ORDER IS IMPORTANT)
 Rscript ${SCRIPT} ${RLIBRARY} ${input_data} ${output_data} ${deconv_method} ${sparse_conversion}
 

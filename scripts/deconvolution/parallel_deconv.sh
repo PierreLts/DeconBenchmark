@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=16G
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=128G
 #SBATCH --time=8:00:00
 #SBATCH --job-name=parallel_submit
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
