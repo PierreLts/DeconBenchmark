@@ -12,7 +12,8 @@
 # 
 # Usage: ./evaluate_results.sh
 
-SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts"
+SCRIPT_DIR="/scratch/lorthiois/scripts"
+mkdir -p "$SCRIPT_DIR"  # Ensure directory exists
 OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"

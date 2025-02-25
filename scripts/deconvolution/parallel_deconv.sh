@@ -13,7 +13,8 @@ INPUT_RDA_FILE="$1"
 IFS=',' read -r -a MODELS <<< "$2"
 
 # Set paths
-SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts"
+SCRIPT_DIR="/scratch/lorthiois/scripts"
+mkdir -p "$SCRIPT_DIR"  # Ensure directory exists
 OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
