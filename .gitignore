@@ -1,0 +1,30 @@
+# Data files
+*.rda
+*.rds
+*.csv
+*.tsv
+*.xlsx
+*.xls
+
+# Output files
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+
+# Log files
+*.log
+logs/
+/scratch/
+
+# R specific
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# System files
+.DS_Store
+Thumbs.db
