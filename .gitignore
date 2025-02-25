@@ -5,7 +5,7 @@
 *.tsv
 *.xlsx
 *.xls
-*.txt
+
 
 # Output files
 *.pdf
@@ -17,7 +17,7 @@
 
 # Log files
 *.log
-logs/
+
 /scratch/
 
 # R specific

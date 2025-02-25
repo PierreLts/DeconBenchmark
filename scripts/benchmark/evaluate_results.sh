@@ -21,6 +21,14 @@ GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_p
 LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs"
 MAPPING_FILE="$LOG_DIR/model_job_mapping.txt"
 
+# Add new mapping files for stats and plot jobs
+STATS_MAPPING_FILE="$LOG_DIR/stats_job_mapping.txt"
+PLOT_MAPPING_FILE="$LOG_DIR/plot_job_mapping.txt"
+
+# Clear previous mapping files
+> "$STATS_MAPPING_FILE"
+> "$PLOT_MAPPING_FILE"
+
 DATA_NAME=$(basename $(ls $OUTPUT_DIR/results_*_*.rda | head -1) | sed -E 's/results_[^_]+_(.+)\.rda/\1/')
 
 # Log file
@@ -60,6 +68,8 @@ while IFS=: read -r MODEL JOB_ID; do
     # Submit statistics job
     STATS_JOB_ID=$(sbatch "$STATS_SCRIPT" | grep -o '[0-9]*')
     echo "Submitted job $STATS_JOB_ID for $MODEL statistics" | tee -a "$EVAL_LOG"
+    # Record the mapping
+    echo "${MODEL}:${STATS_JOB_ID}" >> "$STATS_MAPPING_FILE"
     
     # Run visualization (with dependency on stats job)
     PLOT_SCRIPT="$SCRIPT_DIR/temp_${MODEL}_plot.sh"
@@ -75,6 +85,8 @@ while IFS=: read -r MODEL JOB_ID; do
     # Submit plot job with dependency on stats job
     PLOT_JOB_ID=$(sbatch --dependency=afterok:$STATS_JOB_ID "$PLOT_SCRIPT" | grep -o '[0-9]*')
     echo "Submitted job $PLOT_JOB_ID for $MODEL visualization" | tee -a "$EVAL_LOG"
+    # Record the mapping
+    echo "${MODEL}:${PLOT_JOB_ID}" >> "$PLOT_MAPPING_FILE"
     
 done < "$MAPPING_FILE"
 

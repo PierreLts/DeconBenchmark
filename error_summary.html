@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Deconvolution Methods Error Summary</title>
+    <title>Deconvolution and Evaluation Error Summary</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #333; }
+        h1, h2 { color: #333; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
         th { background-color: #f2f2f2; }
@@ -12,23 +12,58 @@
         .error { color: #e74c3c; }
         .success { color: #2ecc71; }
         .warning { color: #f39c12; }
+        .missing { color: #95a5a6; }
+        .dashboard { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .metric { border: 1px solid #ddd; padding: 15px; text-align: center; flex: 1; margin: 0 5px; }
+        .metric-title { font-weight: bold; }
+        .metric-value { font-size: 24px; margin: 10px 0; }
+        .tabs { margin-top: 20px; }
+        .tab { display: inline-block; padding: 10px 20px; cursor: pointer; background: #f2f2f2; border: 1px solid #ddd; }
+        .tab.active { background: white; border-bottom: 1px solid white; }
+        .tab-content { display: none; border: 1px solid #ddd; padding: 15px; margin-top: -1px; }
+        .tab-content.active { display: block; }
     </style>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 </head>
 <body>
-    <h1>Deconvolution Methods Error Summary</h1>
-    <p>Generated on mar 25 fév 2025 20:22:47 CET</p>
-    <table>
-        <tr>
-            <th>Method</th>
-            <th>Job ID</th>
-            <th>Status</th>
-            <th>Error Type</th>
-            <th>Error Details</th>
-        </tr>
+    <h1>Deconvolution and Evaluation Error Summary</h1>
+    <p>Generated on mar 25 fév 2025 21:08:11 CET for dataset: Batch1_Downsampled</p>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
+        <button class="tab" onclick="openTab(event, 'StatsTab')">Statistics Errors</button>
+        <button class="tab" onclick="openTab(event, 'PlotTab')">Visualization Errors</button>
+        <button class="tab" onclick="openTab(event, 'SummaryTab')">Error Summary</button>
+    </div>
+    
+    <div id="DeconvolutionTab" class="tab-content active">
+        <h2>Deconvolution Run Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
         <tr>
             <td>AdRoit</td>
             <td>32221101</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -39,7 +74,7 @@
         <tr>
             <td>ARIC</td>
             <td>32221102</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -47,7 +82,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>AutoGeneS</td>
             <td>32221103</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
 KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
@@ -55,7 +90,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayCount</td>
             <td>32221104</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -66,7 +101,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayesCCE</td>
             <td>32221105</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
 KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
@@ -74,7 +109,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayesPrism</td>
             <td>32221106</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -85,7 +120,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayICE</td>
             <td>32221107</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -96,7 +131,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BisqueMarker</td>
             <td>32221108</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -104,7 +139,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>BisqueRef</td>
             <td>32221109</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -115,7 +150,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>BseqSC</td>
             <td>32221110</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221110/RtmpwfE8dT/VzcsTZsaqy/args.h5 --env OUTPUT_PATH=/tmp/32221110/RtmpwfE8dT/VzcsTZsaqy/BseqSC-results.h5 docker://deconvolution/bseqsc:latest<br>
 FATAL:   Unable to handle docker://deconvolution/bseqsc:latest uri: failed to get checksum for docker://deconvolution/bseqsc:latest: reading manifest latest in docker.io/deconvolution/bseqsc: requested access to the resource is denied<br></td>
@@ -123,7 +158,7 @@ FATAL:   Unable to handle docker://deconvolution/bseqsc:latest uri: failed to ge
         <tr>
             <td>CellDistinguisher</td>
             <td>32221111</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221111/RtmpsTCakR/TCDGuMTurC/args.h5 --env OUTPUT_PATH=/tmp/32221111/RtmpsTCakR/TCDGuMTurC/CellDistinguisher-results.h5 docker://deconvolution/celldistinguisher:latest<br>
 FATAL:   Unable to handle docker://deconvolution/celldistinguisher:latest uri: failed to get checksum for docker://deconvolution/celldistinguisher:latest: reading manifest latest in docker.io/deconvolution/celldistinguisher: requested access to the resource is denied<br></td>
@@ -131,7 +166,7 @@ FATAL:   Unable to handle docker://deconvolution/celldistinguisher:latest uri: f
         <tr>
             <td>CIBERSORT</td>
             <td>32221113</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221113/Rtmpz35y43/nsDXybwuLE/args.h5 --env OUTPUT_PATH=/tmp/32221113/Rtmpz35y43/nsDXybwuLE/CIBERSORT-results.h5 docker://deconvolution/cibersort:latest<br>
 FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to get checksum for docker://deconvolution/cibersort:latest: reading manifest latest in docker.io/deconvolution/cibersort: requested access to the resource is denied<br></td>
@@ -139,7 +174,7 @@ FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to
         <tr>
             <td>CPM</td>
             <td>32221114</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -150,7 +185,7 @@ FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to
         <tr>
             <td>DAISM</td>
             <td>32221115</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -158,7 +193,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>debCAM</td>
             <td>32221116</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -169,7 +204,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>Deblender</td>
             <td>32221117</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
 KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
@@ -177,7 +212,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>DeCompress</td>
             <td>32221118</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -188,7 +223,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>deconf</td>
             <td>32221119</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -199,7 +234,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>DeconICA</td>
             <td>32221120</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -210,7 +245,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>DeconPeaker</td>
             <td>32221121</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -218,7 +253,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DeconRNASeq</td>
             <td>32221122</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -229,7 +264,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>deconvSeq</td>
             <td>32221123</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -240,7 +275,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DecOT</td>
             <td>32221124</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -248,7 +283,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DeMixT</td>
             <td>32221125</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221125/Rtmp2efYTM/RaTzPNBWaU/args.h5 --env OUTPUT_PATH=/tmp/32221125/Rtmp2efYTM/RaTzPNBWaU/DeMixT-results.h5 docker://deconvolution/demixt:latest<br>
 FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to get checksum for docker://deconvolution/demixt:latest: reading manifest latest in docker.io/deconvolution/demixt: manifest unknown<br></td>
@@ -256,7 +291,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         <tr>
             <td>DESeq2</td>
             <td>32221126</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -267,7 +302,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         <tr>
             <td>digitalDLSorter</td>
             <td>32221127</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -278,7 +313,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         <tr>
             <td>DSA</td>
             <td>32221128</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -286,7 +321,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>dtangle</td>
             <td>32221129</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -294,7 +329,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DWLS</td>
             <td>32221130</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -305,7 +340,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>EMeth</td>
             <td>32221131</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -316,7 +351,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>EPIC</td>
             <td>32221132</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -324,7 +359,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>FARDEEP</td>
             <td>32221133</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -335,7 +370,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>ImmuCellAI</td>
             <td>32221134</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -346,7 +381,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>LinDeconSeq</td>
             <td>32221135</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -358,17 +393,13 @@ panic: page 3 already freed<br></td>
             <td>Linseed</td>
             <td>32221137</td>
             <td class="error">Failed</td>
-            <td>Unknown</td>
-            <td>INFO:    Using cached SIF image<br>
-<br>
-Setting options('download.file.method.GEOquery'='auto')<br>
-Setting options('GEOquery.inmemory.gpl'=FALSE)<br>
-<br></td>
+            <td>No Output</td>
+            <td>No result file was generated</td>
         </tr>
         <tr>
             <td>MCPcounter</td>
             <td>32221138</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -379,7 +410,7 @@ Setting options('GEOquery.inmemory.gpl'=FALSE)<br>
         <tr>
             <td>MethylResolver</td>
             <td>32221139</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221139/RtmpFKCttT/iNoAQLetWk/args.h5 --env OUTPUT_PATH=/tmp/32221139/RtmpFKCttT/iNoAQLetWk/MethylResolver-results.h5 docker://deconvolution/methylresolver:latest<br>
 FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: failed to get checksum for docker://deconvolution/methylresolver:latest: reading manifest latest in docker.io/deconvolution/methylresolver: manifest unknown<br></td>
@@ -387,7 +418,7 @@ FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: fail
         <tr>
             <td>MIXTURE</td>
             <td>32221140</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -398,7 +429,7 @@ FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: fail
         <tr>
             <td>MOMF</td>
             <td>32221141</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -406,7 +437,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>MuSic</td>
             <td>32221142</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -417,7 +448,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>MySort</td>
             <td>32221143</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -425,7 +456,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>NITUMID</td>
             <td>32221144</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -433,7 +464,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>PREDE</td>
             <td>32221145</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -441,7 +472,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>quanTIseq</td>
             <td>32221146</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -449,7 +480,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>ReFACTor</td>
             <td>32221147</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -457,7 +488,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>RNA-Sieve</td>
             <td>32221148</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -468,7 +499,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>scaden</td>
             <td>32221149</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -476,7 +507,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>SCDC</td>
             <td>32221150</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -484,7 +515,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>spatialDWLS</td>
             <td>32221151</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -492,55 +523,817 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>TOAST</td>
             <td>32221152</td>
-            <td class="error">Failed</td>
+            <td class="warning">Completed with errors</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
         </tr>
-    </table>
+        </table>
+    </div>
     
-    <h2>Error Pattern Summary</h2>
-    <table>
+    <div id="StatsTab" class="tab-content">
+        <h2>Statistics Calculation Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Stats Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
         <tr>
-            <th>Error Pattern</th>
-            <th>Count</th>
-            <th>Affected Methods</th>
+            <td>AdRoit</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
         </tr>
         <tr>
+            <td>ARIC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>AutoGeneS</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayCount</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayesCCE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayesPrism</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayICE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>BisqueMarker</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>BisqueRef</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>BseqSC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>CellDistinguisher</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>CIBERSORT</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>CPM</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DAISM</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>debCAM</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>Deblender</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeCompress</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>deconf</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeconICA</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeconPeaker</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeconRNASeq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>deconvSeq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DecOT</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeMixT</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DESeq2</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>digitalDLSorter</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DSA</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>dtangle</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>DWLS</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>EMeth</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>EPIC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>FARDEEP</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>ImmuCellAI</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>LinDeconSeq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>Linseed</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>MCPcounter</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>MethylResolver</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>MIXTURE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>MOMF</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>MuSic</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>MySort</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>NITUMID</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>PREDE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>quanTIseq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>ReFACTor</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>RNA-Sieve</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>scaden</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>SCDC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>spatialDWLS</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        <tr>
+            <td>TOAST</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+        </table>
+    </div>
+    
+    <div id="PlotTab" class="tab-content">
+        <h2>Visualization Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Plot Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+        <tr>
+            <td>AdRoit</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>ARIC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>AutoGeneS</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayCount</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayesCCE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayesPrism</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>BayICE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>BisqueMarker</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>BisqueRef</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>BseqSC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>CellDistinguisher</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>CIBERSORT</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>CPM</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DAISM</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>debCAM</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>Deblender</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeCompress</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>deconf</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeconICA</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeconPeaker</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeconRNASeq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>deconvSeq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DecOT</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DeMixT</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DESeq2</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>digitalDLSorter</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DSA</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>dtangle</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>DWLS</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>EMeth</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>EPIC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>FARDEEP</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>ImmuCellAI</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>LinDeconSeq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>Linseed</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>MCPcounter</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>MethylResolver</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>MIXTURE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>MOMF</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>MuSic</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>MySort</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>NITUMID</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>PREDE</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>quanTIseq</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>ReFACTor</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>RNA-Sieve</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>scaden</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>SCDC</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>spatialDWLS</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        <tr>
+            <td>TOAST</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+        </table>
+    </div>
+    
+    <div id="SummaryTab" class="tab-content">
+        <h2>Error Pattern Summary</h2>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Total Methods</div>
+                <div class="metric-value">50</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Success</div>
+                <div class="metric-value" style="color: #2ecc71">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Warning</div>
+                <div class="metric-value" style="color: #f39c12">49</div>
+                <div>98.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Failed</div>
+                <div class="metric-value" style="color: #e74c3c">1</div>
+                <div>2.0%</div>
+            </div>
+        </div>
+        
+        <table>
+            <tr>
+                <th>Error Pattern</th>
+                <th>Count</th>
+                <th>Affected Methods</th>
+            </tr>
+        <tr>
             <td>Error:</td>
-            <td>3</td>
-            <td>AutoGeneS, BayesCCE, Deblender</td>
+            <td>4</td>
+            <td>AutoGeneS (deconv), BayesCCE (deconv), Deblender (deconv), Linseed (deconv)</td>
         </tr>
         <tr>
             <td>ERROR:</td>
-            <td>3</td>
-            <td>AutoGeneS, BayesCCE, Deblender</td>
+            <td>4</td>
+            <td>AutoGeneS (deconv), BayesCCE (deconv), Deblender (deconv), Linseed (deconv)</td>
         </tr>
         <tr>
             <td>fatal:</td>
             <td>5</td>
-            <td>BseqSC, CellDistinguisher, CIBERSORT, DeMixT, MethylResolver</td>
+            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>Fatal:</td>
             <td>5</td>
-            <td>BseqSC, CellDistinguisher, CIBERSORT, DeMixT, MethylResolver</td>
+            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>FATAL:</td>
             <td>5</td>
-            <td>BseqSC, CellDistinguisher, CIBERSORT, DeMixT, MethylResolver</td>
+            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>panic:</td>
             <td>18</td>
-            <td>ARIC, BisqueMarker, DAISM, DeconPeaker, DecOT, DSA, dtangle, EPIC, MOMF, MySort, NITUMID, PREDE, quanTIseq, ReFACTor, scaden, SCDC, spatialDWLS, TOAST</td>
+            <td>ARIC (deconv), BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DecOT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), SCDC (deconv), spatialDWLS (deconv), TOAST (deconv)</td>
         </tr>
         <tr>
             <td>Panic:</td>
             <td>18</td>
-            <td>ARIC, BisqueMarker, DAISM, DeconPeaker, DecOT, DSA, dtangle, EPIC, MOMF, MySort, NITUMID, PREDE, quanTIseq, ReFACTor, scaden, SCDC, spatialDWLS, TOAST</td>
+            <td>ARIC (deconv), BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DecOT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), SCDC (deconv), spatialDWLS (deconv), TOAST (deconv)</td>
         </tr>
-    </table>
+        <tr>
+            <td>CANCELLED</td>
+            <td>1</td>
+            <td>Linseed (deconv)</td>
+        </tr>
+        </table>
+    </div>
+    
+    <script>
+        // Open first tab by default
+        document.getElementsByClassName("tab")[0].click();
+    </script>
 </body>
 </html>

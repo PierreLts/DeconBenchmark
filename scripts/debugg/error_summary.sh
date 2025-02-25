@@ -12,12 +12,15 @@
 LOG_DIR="/scratch/lorthiois/logs"
 OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/error_summary.html"
 JOB_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/model_job_mapping.txt"
+STATS_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/stats_job_mapping.txt"
+PLOT_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/plot_job_mapping.txt"
+DATA_NAME=$(basename $(ls /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_*_*.rda 2>/dev/null | head -1) | sed -E 's/results_[^_]+_(.+)\.rda/\1/' || echo "unknown")
 
 # Create a temporary working directory
 TEMP_DIR=$(mktemp -d)
 ERROR_PATTERNS_FILE="$TEMP_DIR/error_patterns.txt"
 
-# Common error patterns to search for {test}
+# Common error patterns to search for
 cat > "$ERROR_PATTERNS_FILE" << EOF
 Error:
 ERROR:
@@ -50,10 +53,10 @@ cat > "$OUTPUT_FILE" << EOF
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Deconvolution Methods Error Summary</title>
+    <title>Deconvolution and Evaluation Error Summary</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #333; }
+        body { font-family: Arial, sans-serif; margin: a20px; }
+        h1, h2 { color: #333; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
         th { background-color: #f2f2f2; }
@@ -61,23 +64,65 @@ cat > "$OUTPUT_FILE" << EOF
         .error { color: #e74c3c; }
         .success { color: #2ecc71; }
         .warning { color: #f39c12; }
+        .missing { color: #95a5a6; }
+        .dashboard { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .metric { border: 1px solid #ddd; padding: 15px; text-align: center; flex: 1; margin: 0 5px; }
+        .metric-title { font-weight: bold; }
+        .metric-value { font-size: 24px; margin: 10px 0; }
+        .tabs { margin-top: 20px; }
+        .tab { display: inline-block; padding: 10px 20px; cursor: pointer; background: #f2f2f2; border: 1px solid #ddd; }
+        .tab.active { background: white; border-bottom: 1px solid white; }
+        .tab-content { display: none; border: 1px solid #ddd; padding: 15px; margin-top: -1px; }
+        .tab-content.active { display: block; }
     </style>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 </head>
 <body>
-    <h1>Deconvolution Methods Error Summary</h1>
-    <p>Generated on $(date)</p>
-    <table>
-        <tr>
-            <th>Method</th>
-            <th>Job ID</th>
-            <th>Status</th>
-            <th>Error Type</th>
-            <th>Error Details</th>
-        </tr>
+    <h1>Deconvolution and Evaluation Error Summary</h1>
+    <p>Generated on $(date) for dataset: ${DATA_NAME}</p>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
+        <button class="tab" onclick="openTab(event, 'StatsTab')">Statistics Errors</button>
+        <button class="tab" onclick="openTab(event, 'PlotTab')">Visualization Errors</button>
+        <button class="tab" onclick="openTab(event, 'SummaryTab')">Error Summary</button>
+    </div>
+    
+    <div id="DeconvolutionTab" class="tab-content active">
+        <h2>Deconvolution Run Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
 EOF
 
-# Process each method and its job ID
+# Initialize counters for dashboard
+TOTAL_METHODS=0
+SUCCESS_METHODS=0
+FAILED_METHODS=0
+WARNING_METHODS=0
+
+# Process each method and its job ID for deconvolution errors
 while IFS=: read -r METHOD JOB_ID; do
+    TOTAL_METHODS=$((TOTAL_METHODS + 1))
     echo "Processing $METHOD (Job $JOB_ID)..."
     
     # Check if error file exists
@@ -93,6 +138,7 @@ while IFS=: read -r METHOD JOB_ID; do
             <td>Error log file not found</td>
         </tr>
 EOF
+        WARNING_METHODS=$((WARNING_METHODS + 1))
         continue
     fi
     
@@ -107,6 +153,23 @@ EOF
             <td>No errors detected</td>
         </tr>
 EOF
+        SUCCESS_METHODS=$((SUCCESS_METHODS + 1))
+        continue
+    fi
+    
+    # Check for result file existence
+    RESULT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_${METHOD}_${DATA_NAME}.rda"
+    if [ ! -f "$RESULT_FILE" ]; then
+        cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${JOB_ID}</td>
+            <td class="error">Failed</td>
+            <td>No Output</td>
+            <td>No result file was generated</td>
+        </tr>
+EOF
+        FAILED_METHODS=$((FAILED_METHODS + 1))
         continue
     fi
     
@@ -146,10 +209,17 @@ EOF
     STATUS_CLASS="error"
     STATUS_TEXT="Failed"
     
-    # Check if there's a success message
-    if grep -i "success\|completed successfully" "$ERROR_FILE" > /dev/null; then
+    # Check if there's a success message and result file exists
+    if grep -i "success\|completed successfully" "$ERROR_FILE" > /dev/null && [ -f "$RESULT_FILE" ]; then
         STATUS_CLASS="success"
         STATUS_TEXT="Success with warnings"
+        SUCCESS_METHODS=$((SUCCESS_METHODS + 1))
+    elif [ -f "$RESULT_FILE" ]; then
+        STATUS_CLASS="warning"
+        STATUS_TEXT="Completed with errors"
+        WARNING_METHODS=$((WARNING_METHODS + 1))
+    else
+        FAILED_METHODS=$((FAILED_METHODS + 1))
     fi
     
     cat >> "$OUTPUT_FILE" << EOF
@@ -164,17 +234,492 @@ EOF
 
 done < "$JOB_MAPPING_FILE"
 
-# Close HTML
+# Close deconvolution section
 cat >> "$OUTPUT_FILE" << EOF
-    </table>
+        </table>
+    </div>
     
-    <h2>Error Pattern Summary</h2>
-    <table>
+    <div id="StatsTab" class="tab-content">
+        <h2>Statistics Calculation Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Stats Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+EOF
+
+# Now add code to track statistics job errors
+if [ -f "$STATS_MAPPING_FILE" ]; then
+    while IFS=: read -r METHOD STATS_JOB_ID; do
+        # Check stats job error file
+        STATS_ERROR_FILE="$LOG_DIR/${STATS_JOB_ID}.e"
+        if [ ! -f "$STATS_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
         <tr>
-            <th>Error Pattern</th>
-            <th>Count</th>
-            <th>Affected Methods</th>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
         </tr>
+EOF
+            continue
+        fi
+        
+        # Check for successful completion
+        if [ ! -s "$STATS_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="success">Success</td>
+            <td>None</td>
+            <td>No errors detected</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check if output files were generated
+        STATS_OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/${METHOD}_${DATA_NAME}/${METHOD}_${DATA_NAME}_summary_stats.csv"
+        if [ ! -f "$STATS_OUTPUT_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="error">Failed</td>
+            <td>No Output</td>
+            <td>No statistics output file was generated</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Search for error patterns
+        ERROR_FOUND=false
+        ERROR_TYPE=""
+        ERROR_DETAILS=""
+        
+        while IFS= read -r PATTERN; do
+            if grep -i "$PATTERN" "$STATS_ERROR_FILE" > /dev/null; then
+                ERROR_FOUND=true
+                ERROR_TYPE="$PATTERN"
+                ERROR_LINE=$(grep -i -m 1 "$PATTERN" "$STATS_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                LINE_NUM=$(grep -i -n -m 1 "$PATTERN" "$STATS_ERROR_FILE" | cut -d: -f1)
+                if [ ! -z "$LINE_NUM" ]; then
+                    START_LINE=$((LINE_NUM > 1 ? LINE_NUM - 1 : 1))
+                    END_LINE=$((LINE_NUM + 1))
+                    ERROR_CONTEXT=$(sed -n "${START_LINE},${END_LINE}p" "$STATS_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                    ERROR_DETAILS=$(echo "$ERROR_CONTEXT" | sed 's/$/<br>/')
+                else
+                    ERROR_DETAILS="$ERROR_LINE"
+                fi
+                break
+            fi
+        done < "$ERROR_PATTERNS_FILE"
+        
+        # If no specific error found but file exists
+        if [ "$ERROR_FOUND" = false ] && [ -s "$STATS_ERROR_FILE" ]; then
+            ERROR_TYPE="Unknown"
+            ERROR_DETAILS=$(tail -5 "$STATS_ERROR_FILE" | sed 's/</\&lt;/g; s/>/\&gt;/g; s/$/<br>/')
+        fi
+        
+        # Determine status
+        STATUS_CLASS="warning"
+        STATUS_TEXT="Completed with errors"
+        
+        if grep -i "success\|completed successfully" "$STATS_ERROR_FILE" > /dev/null; then
+            STATUS_CLASS="success"
+            STATUS_TEXT="Success with warnings"
+        fi
+        
+        cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="${STATUS_CLASS}">${STATUS_TEXT}</td>
+            <td>${ERROR_TYPE}</td>
+            <td>${ERROR_DETAILS}</td>
+        </tr>
+EOF
+
+    done < "$STATS_MAPPING_FILE"
+else
+    # Fallback to existing code
+    while IFS=: read -r METHOD JOB_ID; do
+        # Find the stats job for this method by looking for job name pattern in log files
+        STATS_JOB_ID=$(grep -l "${METHOD}_stats" $LOG_DIR/*o 2>/dev/null | head -1 | xargs basename 2>/dev/null | cut -d. -f1)
+        
+        if [ -z "$STATS_JOB_ID" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No statistics job found for this method</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check stats job error file
+        STATS_ERROR_FILE="$LOG_DIR/${STATS_JOB_ID}.e"
+        if [ ! -f "$STATS_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check for successful completion
+        if [ ! -s "$STATS_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="success">Success</td>
+            <td>None</td>
+            <td>No errors detected</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check if output files were generated
+        STATS_OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/${METHOD}_${DATA_NAME}/${METHOD}_${DATA_NAME}_summary_stats.csv"
+        if [ ! -f "$STATS_OUTPUT_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="error">Failed</td>
+            <td>No Output</td>
+            <td>No statistics output file was generated</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Search for error patterns
+        ERROR_FOUND=false
+        ERROR_TYPE=""
+        ERROR_DETAILS=""
+        
+        while IFS= read -r PATTERN; do
+            if grep -i "$PATTERN" "$STATS_ERROR_FILE" > /dev/null; then
+                ERROR_FOUND=true
+                ERROR_TYPE="$PATTERN"
+                ERROR_LINE=$(grep -i -m 1 "$PATTERN" "$STATS_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                LINE_NUM=$(grep -i -n -m 1 "$PATTERN" "$STATS_ERROR_FILE" | cut -d: -f1)
+                if [ ! -z "$LINE_NUM" ]; then
+                    START_LINE=$((LINE_NUM > 1 ? LINE_NUM - 1 : 1))
+                    END_LINE=$((LINE_NUM + 1))
+                    ERROR_CONTEXT=$(sed -n "${START_LINE},${END_LINE}p" "$STATS_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                    ERROR_DETAILS=$(echo "$ERROR_CONTEXT" | sed 's/$/<br>/')
+                else
+                    ERROR_DETAILS="$ERROR_LINE"
+                fi
+                break
+            fi
+        done < "$ERROR_PATTERNS_FILE"
+        
+        # If no specific error found but file exists
+        if [ "$ERROR_FOUND" = false ] && [ -s "$STATS_ERROR_FILE" ]; then
+            ERROR_TYPE="Unknown"
+            ERROR_DETAILS=$(tail -5 "$STATS_ERROR_FILE" | sed 's/</\&lt;/g; s/>/\&gt;/g; s/$/<br>/')
+        fi
+        
+        # Determine status
+        STATUS_CLASS="warning"
+        STATUS_TEXT="Completed with errors"
+        
+        if grep -i "success\|completed successfully" "$STATS_ERROR_FILE" > /dev/null; then
+            STATUS_CLASS="success"
+            STATUS_TEXT="Success with warnings"
+        fi
+        
+        cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${STATS_JOB_ID}</td>
+            <td class="${STATUS_CLASS}">${STATUS_TEXT}</td>
+            <td>${ERROR_TYPE}</td>
+            <td>${ERROR_DETAILS}</td>
+        </tr>
+EOF
+    done < "$JOB_MAPPING_FILE"
+fi
+
+# Close stats section
+cat >> "$OUTPUT_FILE" << EOF
+        </table>
+    </div>
+    
+    <div id="PlotTab" class="tab-content">
+        <h2>Visualization Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Plot Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+EOF
+
+# Now add code to track plot job errors
+if [ -f "$PLOT_MAPPING_FILE" ]; then
+    while IFS=: read -r METHOD PLOT_JOB_ID; do
+        # Check plot job error file
+        PLOT_ERROR_FILE="$LOG_DIR/${PLOT_JOB_ID}.e"
+        if [ ! -f "$PLOT_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check for successful completion
+        if [ ! -s "$PLOT_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="success">Success</td>
+            <td>None</td>
+            <td>No errors detected</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check if output files were generated
+        PLOT_OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/${METHOD}_${DATA_NAME}/${METHOD}_${DATA_NAME}_vs_ground_truth.pdf"
+        if [ ! -f "$PLOT_OUTPUT_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="error">Failed</td>
+            <td>No Output</td>
+            <td>No plot file was generated</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Search for error patterns in plot log
+        ERROR_FOUND=false
+        ERROR_TYPE=""
+        ERROR_DETAILS=""
+        
+        while IFS= read -r PATTERN; do
+            if grep -i "$PATTERN" "$PLOT_ERROR_FILE" > /dev/null; then
+                ERROR_FOUND=true
+                ERROR_TYPE="$PATTERN"
+                ERROR_LINE=$(grep -i -m 1 "$PATTERN" "$PLOT_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                LINE_NUM=$(grep -i -n -m 1 "$PATTERN" "$PLOT_ERROR_FILE" | cut -d: -f1)
+                if [ ! -z "$LINE_NUM" ]; then
+                    START_LINE=$((LINE_NUM > 1 ? LINE_NUM - 1 : 1))
+                    END_LINE=$((LINE_NUM + 1))
+                    ERROR_CONTEXT=$(sed -n "${START_LINE},${END_LINE}p" "$PLOT_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                    ERROR_DETAILS=$(echo "$ERROR_CONTEXT" | sed 's/$/<br>/')
+                else
+                    ERROR_DETAILS="$ERROR_LINE"
+                fi
+                break
+            fi
+        done < "$ERROR_PATTERNS_FILE"
+        
+        if [ "$ERROR_FOUND" = false ] && [ -s "$PLOT_ERROR_FILE" ]; then
+            ERROR_TYPE="Unknown"
+            ERROR_DETAILS=$(tail -5 "$PLOT_ERROR_FILE" | sed 's/</\&lt;/g; s/>/\&gt;/g; s/$/<br>/')
+        fi
+        
+        # Determine status
+        STATUS_CLASS="warning"
+        STATUS_TEXT="Completed with errors"
+        
+        if grep -i "success\|completed successfully" "$PLOT_ERROR_FILE" > /dev/null; then
+            STATUS_CLASS="success"
+            STATUS_TEXT="Success with warnings"
+        fi
+        
+        cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="${STATUS_CLASS}">${STATUS_TEXT}</td>
+            <td>${ERROR_TYPE}</td>
+            <td>${ERROR_DETAILS}</td>
+        </tr>
+EOF
+
+    done < "$PLOT_MAPPING_FILE"
+else
+    # Fallback to existing code
+    while IFS=: read -r METHOD JOB_ID; do
+        # Find the plot job for this method
+        PLOT_JOB_ID=$(grep -l "${METHOD}_plot" $LOG_DIR/*o 2>/dev/null | head -1 | xargs basename 2>/dev/null | cut -d. -f1)
+        
+        if [ -z "$PLOT_JOB_ID" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>N/A</td>
+            <td class="missing">Not Found</td>
+            <td>N/A</td>
+            <td>No visualization job found for this method</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check plot job error file
+        PLOT_ERROR_FILE="$LOG_DIR/${PLOT_JOB_ID}.e"
+        if [ ! -f "$PLOT_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check for successful completion
+        if [ ! -s "$PLOT_ERROR_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="success">Success</td>
+            <td>None</td>
+            <td>No errors detected</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Check if output files were generated
+        PLOT_OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/${METHOD}_${DATA_NAME}/${METHOD}_${DATA_NAME}_vs_ground_truth.pdf"
+        if [ ! -f "$PLOT_OUTPUT_FILE" ]; then
+            cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="error">Failed</td>
+            <td>No Output</td>
+            <td>No plot file was generated</td>
+        </tr>
+EOF
+            continue
+        fi
+        
+        # Search for error patterns in plot log
+        ERROR_FOUND=false
+        ERROR_TYPE=""
+        ERROR_DETAILS=""
+        
+        while IFS= read -r PATTERN; do
+            if grep -i "$PATTERN" "$PLOT_ERROR_FILE" > /dev/null; then
+                ERROR_FOUND=true
+                ERROR_TYPE="$PATTERN"
+                ERROR_LINE=$(grep -i -m 1 "$PATTERN" "$PLOT_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                LINE_NUM=$(grep -i -n -m 1 "$PATTERN" "$PLOT_ERROR_FILE" | cut -d: -f1)
+                if [ ! -z "$LINE_NUM" ]; then
+                    START_LINE=$((LINE_NUM > 1 ? LINE_NUM - 1 : 1))
+                    END_LINE=$((LINE_NUM + 1))
+                    ERROR_CONTEXT=$(sed -n "${START_LINE},${END_LINE}p" "$PLOT_ERROR_FILE" | tr -d '\r' | sed 's/</\&lt;/g; s/>/\&gt;/g')
+                    ERROR_DETAILS=$(echo "$ERROR_CONTEXT" | sed 's/$/<br>/')
+                else
+                    ERROR_DETAILS="$ERROR_LINE"
+                fi
+                break
+            fi
+        done < "$ERROR_PATTERNS_FILE"
+        
+        if [ "$ERROR_FOUND" = false ] && [ -s "$PLOT_ERROR_FILE" ]; then
+            ERROR_TYPE="Unknown"
+            ERROR_DETAILS=$(tail -5 "$PLOT_ERROR_FILE" | sed 's/</\&lt;/g; s/>/\&gt;/g; s/$/<br>/')
+        fi
+        
+        # Determine status
+        STATUS_CLASS="warning"
+        STATUS_TEXT="Completed with errors"
+        
+        if grep -i "success\|completed successfully" "$PLOT_ERROR_FILE" > /dev/null; then
+            STATUS_CLASS="success"
+            STATUS_TEXT="Success with warnings"
+        fi
+        
+        cat >> "$OUTPUT_FILE" << EOF
+        <tr>
+            <td>${METHOD}</td>
+            <td>${PLOT_JOB_ID}</td>
+            <td class="${STATUS_CLASS}">${STATUS_TEXT}</td>
+            <td>${ERROR_TYPE}</td>
+            <td>${ERROR_DETAILS}</td>
+        </tr>
+EOF
+    done < "$JOB_MAPPING_FILE"
+fi
+
+# Close plot section
+cat >> "$OUTPUT_FILE" << EOF
+        </table>
+    </div>
+    
+    <div id="SummaryTab" class="tab-content">
+        <h2>Error Pattern Summary</h2>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Total Methods</div>
+                <div class="metric-value">${TOTAL_METHODS}</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Success</div>
+                <div class="metric-value" style="color: #2ecc71">${SUCCESS_METHODS}</div>
+                <div>$(printf "%.1f%%" $((SUCCESS_METHODS * 100 / TOTAL_METHODS)))</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Warning</div>
+                <div class="metric-value" style="color: #f39c12">${WARNING_METHODS}</div>
+                <div>$(printf "%.1f%%" $((WARNING_METHODS * 100 / TOTAL_METHODS)))</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Failed</div>
+                <div class="metric-value" style="color: #e74c3c">${FAILED_METHODS}</div>
+                <div>$(printf "%.1f%%" $((FAILED_METHODS * 100 / TOTAL_METHODS)))</div>
+            </div>
+        </div>
+        
+        <table>
+            <tr>
+                <th>Error Pattern</th>
+                <th>Count</th>
+                <th>Affected Methods</th>
+            </tr>
 EOF
 
 # Add error pattern summary
@@ -182,17 +727,60 @@ while IFS= read -r PATTERN; do
     # Skip empty lines
     [ -z "$PATTERN" ] && continue
     
-    # Count occurrences of this pattern
+    # Count occurrences of this pattern across all logs
     METHODS_WITH_ERROR=""
     ERROR_COUNT=0
     
+    # Check deconvolution jobs
     while IFS=: read -r METHOD JOB_ID; do
         ERROR_FILE="$LOG_DIR/${JOB_ID}.e"
         if [ -f "$ERROR_FILE" ] && grep -i "$PATTERN" "$ERROR_FILE" > /dev/null; then
-            METHODS_WITH_ERROR="$METHODS_WITH_ERROR$METHOD, "
+            METHODS_WITH_ERROR="$METHODS_WITH_ERROR$METHOD (deconv), "
             ERROR_COUNT=$((ERROR_COUNT + 1))
         fi
+        
+        # Check stats jobs
+        STATS_JOB_ID=""
+        if [ -f "$STATS_MAPPING_FILE" ]; then
+            STATS_JOB_ID=$(grep "^${METHOD}:" "$STATS_MAPPING_FILE" | cut -d: -f2)
+        else
+            STATS_JOB_ID=$(grep -l "${METHOD}_stats" $LOG_DIR/*o 2>/dev/null | head -1 | xargs basename 2>/dev/null | cut -d. -f1)
+        fi
+        
+        if [ ! -z "$STATS_JOB_ID" ]; then
+            STATS_ERROR_FILE="$LOG_DIR/${STATS_JOB_ID}.e"
+            if [ -f "$STATS_ERROR_FILE" ] && grep -i "$PATTERN" "$STATS_ERROR_FILE" > /dev/null; then
+                METHODS_WITH_ERROR="$METHODS_WITH_ERROR$METHOD (stats), "
+                ERROR_COUNT=$((ERROR_COUNT + 1))
+            fi
+        fi
+        
+        # Check plot jobs
+        PLOT_JOB_ID=""
+        if [ -f "$PLOT_MAPPING_FILE" ]; then
+            PLOT_JOB_ID=$(grep "^${METHOD}:" "$PLOT_MAPPING_FILE" | cut -d: -f2)
+        else
+            PLOT_JOB_ID=$(grep -l "${METHOD}_plot" $LOG_DIR/*o 2>/dev/null | head -1 | xargs basename 2>/dev/null | cut -d. -f1)
+        fi
+        
+        if [ ! -z "$PLOT_JOB_ID" ]; then
+            PLOT_ERROR_FILE="$LOG_DIR/${PLOT_JOB_ID}.e"
+            if [ -f "$PLOT_ERROR_FILE" ] && grep -i "$PATTERN" "$PLOT_ERROR_FILE" > /dev/null; then
+                METHODS_WITH_ERROR="$METHODS_WITH_ERROR$METHOD (plot), "
+                ERROR_COUNT=$((ERROR_COUNT + 1))
+            fi
+        fi
     done < "$JOB_MAPPING_FILE"
+    
+    # Check comparison job if it exists
+    COMPARE_JOB_ID=$(grep -l "compare_models" $LOG_DIR/*o 2>/dev/null | head -1 | xargs basename 2>/dev/null | cut -d. -f1)
+    if [ ! -z "$COMPARE_JOB_ID" ]; then
+        COMPARE_ERROR_FILE="$LOG_DIR/${COMPARE_JOB_ID}.e"
+        if [ -f "$COMPARE_ERROR_FILE" ] && grep -i "$PATTERN" "$COMPARE_ERROR_FILE" > /dev/null; then
+            METHODS_WITH_ERROR="$METHODS_WITH_ERROR compare_models, "
+            ERROR_COUNT=$((ERROR_COUNT + 1))
+        fi
+    fi
     
     # Only add row if errors found
     if [ $ERROR_COUNT -gt 0 ]; then
@@ -211,7 +799,13 @@ done < "$ERROR_PATTERNS_FILE"
 
 # Finish HTML
 cat >> "$OUTPUT_FILE" << EOF
-    </table>
+        </table>
+    </div>
+    
+    <script>
+        // Open first tab by default
+        document.getElementsByClassName("tab")[0].click();
+    </script>
 </body>
 </html>
 EOF
