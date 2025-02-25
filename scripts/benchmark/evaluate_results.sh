@@ -63,7 +63,7 @@ while IFS=: read -r MODEL JOB_ID; do
     
     # Run visualization (with dependency on stats job)
     PLOT_SCRIPT="$SCRIPT_DIR/temp_${MODEL}_plot.sh"
-    cat "$SCRIPT_DIR/cell_proportion_plot.sh" | \
+    cat "$TEMPLATE_DIR/cell_proportion_plot.sh" | \
         sed "s|GROUND_TRUTH=.*|GROUND_TRUTH=\"$GROUND_TRUTH\"|" | \
         sed "s|RESULTS=.*|RESULTS=\"$RESULTS_FILE\"|" | \
         sed "s|OUTPUT_DIR=.*|OUTPUT_DIR=\"$BENCHMARK_DIR\"|" | \
@@ -81,7 +81,7 @@ done < "$MAPPING_FILE"
 # Submit comparison job
 echo "Running model comparison..." | tee -a "$EVAL_LOG"
 COMPARE_SCRIPT="$SCRIPT_DIR/temp_compare_models.sh"
-cat "$SCRIPT_DIR/compare_models.sh" | \
+cat "$TEMPLATE_DIR/compare_models.sh" | \
     sed "s|BENCHMARK_DIR=.*|BENCHMARK_DIR=\"$BENCHMARK_DIR\"|" | \
     sed "s|OUTPUT_DIR=.*|OUTPUT_DIR=\"$BENCHMARK_DIR/comparison\"|" | \
     sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=compare_models|" | \
