@@ -14,10 +14,10 @@ set -e # Exit the script if any statement returns a non-true return value
 set -x # Print each line of code being computed
 
 RLIBRARY="/work/gr-fe/R_4.3.1" # R library path
-SCRIPT=/work/gr-fe/lorthiois/project2/scripts/model_stats.R
-GROUND_TRUTH="/work/gr-fe/lorthiois/project2/generated_data/ground_truth_proportions.rda"
-RESULTS="/work/gr-fe/lorthiois/project2/deconv_results/results_RNA-Sieve_Batch1.rda"
-OUTPUT_DIR="/work/gr-fe/lorthiois/project2/benchmark_results"
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R
+GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
+RESULTS="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_RNA-Sieve_Batch1.rda"
+OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 
 # Extract method and data names from the results filename
 RESULTS_FILENAME=$(basename "${RESULTS}")

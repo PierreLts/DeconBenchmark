@@ -4,7 +4,7 @@
 # Usage: ./run_top_methods.sh [INPUT_RDA_FILE]
 
 # Default input file
-DEFAULT_INPUT="/work/gr-fe/lorthiois/project2/data/Batch1_Downsampled.rda"
+DEFAULT_INPUT="/work/gr-fe/lorthiois/DeconBenchmark/data/Batch1_Downsampled.rda"
 INPUT_RDA_FILE=${1:-$DEFAULT_INPUT}
 
 # Top recommended methods based on the review paper

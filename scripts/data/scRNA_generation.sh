@@ -20,10 +20,10 @@ set -x #Print each line of code being computed
 
 
 RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
-SCRIPT=/work/gr-fe/lorthiois/project2/scripts/scRNA_generation.R
-input_data="/work/gr-fe/lorthiois/project2/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds"
-output_data="/work/gr-fe/lorthiois/project2/generated_data"
-mapping_file="/work/gr-fe/lorthiois/project2/data/mart_export.txt"
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/scRNA_generation.R
+input_data="/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds"
+output_data="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
+mapping_file="/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt"
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/ #IMPORTANT
 module load r #IMPORTANT

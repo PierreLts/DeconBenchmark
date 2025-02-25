@@ -14,9 +14,9 @@ set -e # Exit the script if any statement returns a non-true return value
 set -x # Print each line of code being computed
 
 RLIBRARY="/work/gr-fe/R_4.3.1" # R library path
-SCRIPT=/work/gr-fe/lorthiois/project2/scripts/compare_models.R
-BENCHMARK_DIR="/work/gr-fe/lorthiois/project2/benchmark_results"
-OUTPUT_DIR="/work/gr-fe/lorthiois/project2/comparison_results"
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/compare_models.R
+BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
+OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/comparison_results"
 
 # Create output directory if it doesn't exist
 mkdir -p ${OUTPUT_DIR}

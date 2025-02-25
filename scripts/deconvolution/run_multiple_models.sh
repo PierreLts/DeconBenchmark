@@ -19,10 +19,10 @@ INPUT_RDA_FILE="$1"
 IFS=',' read -r -a MODELS <<< "$2"
 
 # Set paths
-SCRIPT_DIR="/work/gr-fe/lorthiois/project2/scripts"
-OUTPUT_DIR="/work/gr-fe/lorthiois/project2/deconv_results"
-BENCHMARK_DIR="/work/gr-fe/lorthiois/project2/benchmark_results"
-GROUND_TRUTH="/work/gr-fe/lorthiois/project2/generated_data/ground_truth_proportions.rda"
+SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts"
+OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
+BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
+GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
 
 # Create output directories
 mkdir -p "$OUTPUT_DIR"
@@ -32,7 +32,7 @@ mkdir -p "$BENCHMARK_DIR"
 DATA_NAME=$(basename "$INPUT_RDA_FILE" .rda)
 
 # Log file setup
-LOG_DIR="/work/gr-fe/lorthiois/project2/logs"
+LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs"
 mkdir -p "$LOG_DIR"
 MAIN_LOG="$LOG_DIR/run_multiple_models_$(date +%Y%m%d_%H%M%S).log"
 

@@ -10,8 +10,8 @@
 
 # Path configuration
 LOG_DIR="/scratch/lorthiois/logs"
-OUTPUT_FILE="/work/gr-fe/lorthiois/project2/error_summary.html"
-JOB_MAPPING_FILE="/work/gr-fe/lorthiois/project2/logs/model_job_mapping.txt"
+OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/error_summary.html"
+JOB_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/model_job_mapping.txt"
 
 # Create a temporary working directory
 TEMP_DIR=$(mktemp -d)

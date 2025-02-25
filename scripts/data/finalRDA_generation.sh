@@ -20,9 +20,9 @@ set -x #Print each line of code being computed
 
 
 RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
-SCRIPT=/work/gr-fe/lorthiois/project2/scripts/finalRDA_generation.R
-input_data="/work/gr-fe/lorthiois/project2/generated_data"
-output_data="/work/gr-fe/lorthiois/project2/generated_data"
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/finalRDA_generation.R
+input_data="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
+output_data="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/ #IMPORTANT
 module load r #IMPORTANT

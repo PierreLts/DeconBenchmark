@@ -12,11 +12,11 @@
 # 
 # Usage: ./evaluate_results.sh
 
-SCRIPT_DIR="/work/gr-fe/lorthiois/project2/scripts"
-OUTPUT_DIR="/work/gr-fe/lorthiois/project2/deconv_results"
-BENCHMARK_DIR="/work/gr-fe/lorthiois/project2/benchmark_results"
-GROUND_TRUTH="/work/gr-fe/lorthiois/project2/generated_data/ground_truth_proportions.rda"
-LOG_DIR="/work/gr-fe/lorthiois/project2/logs"
+SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts"
+OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
+BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
+GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
+LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs"
 MAPPING_FILE="$LOG_DIR/model_job_mapping.txt"
 
 DATA_NAME=$(basename $(ls $OUTPUT_DIR/results_*_*.rda | head -1) | sed -E 's/results_[^_]+_(.+)\.rda/\1/')

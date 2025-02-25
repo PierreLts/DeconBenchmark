@@ -13,9 +13,9 @@ set -e
 set -x
 
 RLIBRARY="/work/gr-fe/R_4.3.1" 
-SCRIPT=/work/gr-fe/lorthiois/project2/scripts/ground_truth.R
-INPUT_DATA="/work/gr-fe/lorthiois/project2/generated_data"
-OUTPUT_FILE="/work/gr-fe/lorthiois/project2/generated_data/ground_truth_proportions.rda"
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/ground_truth.R
+INPUT_DATA="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
+OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/
 module load r
