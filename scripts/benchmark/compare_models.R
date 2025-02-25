@@ -4,7 +4,7 @@ if (length(args) != 3) {
   stop("3 arguments must be supplied: <R_library_path> <benchmark_results_dir> <output_dir>", call.=FALSE)
 }
 
-####### Parameters
+####### Parameters (test)
 path_Rlibrary <- args[1]
 benchmark_dir <- args[2]
 output_dir <- args[3]
