@@ -3,7 +3,7 @@
 <head>
     <title>Deconvolution and Evaluation Error Summary</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: a20px; }
+        body { font-family: Arial, sans-serif; margin: 20px; }
         h1, h2 { color: #333; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
@@ -41,12 +41,11 @@
 </head>
 <body>
     <h1>Deconvolution and Evaluation Error Summary</h1>
-    <p>Generated on mar 25 fév 2025 21:20:15 CET for dataset: Batch1_Downsampled</p>
+    <p>Generated on mar 25 fév 2025 21:36:47 CET for dataset: Batch1_Downsampled</p>
     
     <div class="tabs">
         <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
         <button class="tab" onclick="openTab(event, 'StatsTab')">Statistics Errors</button>
-        <button class="tab" onclick="openTab(event, 'PlotTab')">Visualization Errors</button>
         <button class="tab" onclick="openTab(event, 'SummaryTab')">Error Summary</button>
     </div>
     
@@ -63,7 +62,7 @@
         <tr>
             <td>AdRoit</td>
             <td>32221101</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -74,7 +73,7 @@
         <tr>
             <td>ARIC</td>
             <td>32221102</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -82,7 +81,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>AutoGeneS</td>
             <td>32221103</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
 KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
@@ -90,7 +89,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayCount</td>
             <td>32221104</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -101,7 +100,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayesCCE</td>
             <td>32221105</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
 KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
@@ -109,7 +108,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayesPrism</td>
             <td>32221106</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -120,7 +119,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BayICE</td>
             <td>32221107</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -131,7 +130,7 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         <tr>
             <td>BisqueMarker</td>
             <td>32221108</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -139,7 +138,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>BisqueRef</td>
             <td>32221109</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -150,7 +149,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>BseqSC</td>
             <td>32221110</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221110/RtmpwfE8dT/VzcsTZsaqy/args.h5 --env OUTPUT_PATH=/tmp/32221110/RtmpwfE8dT/VzcsTZsaqy/BseqSC-results.h5 docker://deconvolution/bseqsc:latest<br>
 FATAL:   Unable to handle docker://deconvolution/bseqsc:latest uri: failed to get checksum for docker://deconvolution/bseqsc:latest: reading manifest latest in docker.io/deconvolution/bseqsc: requested access to the resource is denied<br></td>
@@ -158,7 +157,7 @@ FATAL:   Unable to handle docker://deconvolution/bseqsc:latest uri: failed to ge
         <tr>
             <td>CellDistinguisher</td>
             <td>32221111</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221111/RtmpsTCakR/TCDGuMTurC/args.h5 --env OUTPUT_PATH=/tmp/32221111/RtmpsTCakR/TCDGuMTurC/CellDistinguisher-results.h5 docker://deconvolution/celldistinguisher:latest<br>
 FATAL:   Unable to handle docker://deconvolution/celldistinguisher:latest uri: failed to get checksum for docker://deconvolution/celldistinguisher:latest: reading manifest latest in docker.io/deconvolution/celldistinguisher: requested access to the resource is denied<br></td>
@@ -166,7 +165,7 @@ FATAL:   Unable to handle docker://deconvolution/celldistinguisher:latest uri: f
         <tr>
             <td>CIBERSORT</td>
             <td>32221113</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221113/Rtmpz35y43/nsDXybwuLE/args.h5 --env OUTPUT_PATH=/tmp/32221113/Rtmpz35y43/nsDXybwuLE/CIBERSORT-results.h5 docker://deconvolution/cibersort:latest<br>
 FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to get checksum for docker://deconvolution/cibersort:latest: reading manifest latest in docker.io/deconvolution/cibersort: requested access to the resource is denied<br></td>
@@ -174,7 +173,7 @@ FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to
         <tr>
             <td>CPM</td>
             <td>32221114</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -185,7 +184,7 @@ FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to
         <tr>
             <td>DAISM</td>
             <td>32221115</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -193,7 +192,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>debCAM</td>
             <td>32221116</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -204,7 +203,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>Deblender</td>
             <td>32221117</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
 KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
@@ -212,7 +211,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>DeCompress</td>
             <td>32221118</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -223,7 +222,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>deconf</td>
             <td>32221119</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -234,7 +233,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>DeconICA</td>
             <td>32221120</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -245,7 +244,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         <tr>
             <td>DeconPeaker</td>
             <td>32221121</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -253,7 +252,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DeconRNASeq</td>
             <td>32221122</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -264,7 +263,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>deconvSeq</td>
             <td>32221123</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -275,7 +274,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DecOT</td>
             <td>32221124</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -283,7 +282,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DeMixT</td>
             <td>32221125</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221125/Rtmp2efYTM/RaTzPNBWaU/args.h5 --env OUTPUT_PATH=/tmp/32221125/Rtmp2efYTM/RaTzPNBWaU/DeMixT-results.h5 docker://deconvolution/demixt:latest<br>
 FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to get checksum for docker://deconvolution/demixt:latest: reading manifest latest in docker.io/deconvolution/demixt: manifest unknown<br></td>
@@ -291,7 +290,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         <tr>
             <td>DESeq2</td>
             <td>32221126</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -302,7 +301,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         <tr>
             <td>digitalDLSorter</td>
             <td>32221127</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -313,7 +312,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         <tr>
             <td>DSA</td>
             <td>32221128</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -321,7 +320,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>dtangle</td>
             <td>32221129</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -329,7 +328,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>DWLS</td>
             <td>32221130</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -340,7 +339,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>EMeth</td>
             <td>32221131</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -351,7 +350,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>EPIC</td>
             <td>32221132</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -359,7 +358,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>FARDEEP</td>
             <td>32221133</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -370,7 +369,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>ImmuCellAI</td>
             <td>32221134</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -381,7 +380,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>LinDeconSeq</td>
             <td>32221135</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -393,13 +392,14 @@ panic: page 3 already freed<br></td>
             <td>Linseed</td>
             <td>32221137</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No result file was generated</td>
+            <td>Error:</td>
+            <td><br>
+slurmstepd: error: *** JOB 32221137 ON jst032 CANCELLED AT 2025-02-25T20:39:14 ***<br></td>
         </tr>
         <tr>
             <td>MCPcounter</td>
             <td>32221138</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -410,7 +410,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>MethylResolver</td>
             <td>32221139</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>fatal:</td>
             <td>Running singularity  run --cleanenv --env INPUT_PATH=/tmp/32221139/RtmpFKCttT/iNoAQLetWk/args.h5 --env OUTPUT_PATH=/tmp/32221139/RtmpFKCttT/iNoAQLetWk/MethylResolver-results.h5 docker://deconvolution/methylresolver:latest<br>
 FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: failed to get checksum for docker://deconvolution/methylresolver:latest: reading manifest latest in docker.io/deconvolution/methylresolver: manifest unknown<br></td>
@@ -418,7 +418,7 @@ FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: fail
         <tr>
             <td>MIXTURE</td>
             <td>32221140</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -429,7 +429,7 @@ FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: fail
         <tr>
             <td>MOMF</td>
             <td>32221141</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -437,7 +437,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>MuSic</td>
             <td>32221142</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -448,7 +448,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>MySort</td>
             <td>32221143</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -456,7 +456,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>NITUMID</td>
             <td>32221144</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -464,7 +464,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>PREDE</td>
             <td>32221145</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -472,7 +472,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>quanTIseq</td>
             <td>32221146</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -480,7 +480,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>ReFACTor</td>
             <td>32221147</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -488,7 +488,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>RNA-Sieve</td>
             <td>32221148</td>
-            <td class="warning">Completed with errors</td>
+            <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
             <td><br>
 ++ date +%s<br>
@@ -499,7 +499,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>scaden</td>
             <td>32221149</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -507,7 +507,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>SCDC</td>
             <td>32221150</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -515,7 +515,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>spatialDWLS</td>
             <td>32221151</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -523,7 +523,7 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>TOAST</td>
             <td>32221152</td>
-            <td class="warning">Completed with errors</td>
+            <td class="error">Failed</td>
             <td>panic:</td>
             <td><br>
 panic: page 3 already freed<br></td>
@@ -544,701 +544,459 @@ panic: page 3 already freed<br></td>
         <tr>
             <td>AdRoit</td>
             <td>32224439</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>++ date +%s<br>
++ end=1740514753<br>
++ runtime=1<br>
++ echo 'Runtime: 1 seconds'<br>
++ echo 'Benchmarking results saved to: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results'<br></td>
         </tr>
         <tr>
             <td>ARIC</td>
             <td>32224441</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ARIC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: ARIC<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>AutoGeneS</td>
             <td>32224443</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_AutoGeneS_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: AutoGeneS<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>BayCount</td>
             <td>32224445</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayCount_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: BayCount<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>BayesCCE</td>
             <td>32224447</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayesCCE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: BayesCCE<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>BayesPrism</td>
             <td>32224449</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>++ date +%s<br>
++ end=1740514758<br>
++ runtime=1<br>
++ echo 'Runtime: 1 seconds'<br>
++ echo 'Benchmarking results saved to: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results'<br></td>
         </tr>
         <tr>
             <td>BayICE</td>
             <td>32224451</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayICE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: Mismatch: Ground truth and predicted proportions do not have the same cell types.<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>BisqueMarker</td>
             <td>32224453</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BisqueMarker_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: BisqueMarker<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>BisqueRef</td>
             <td>32224455</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BisqueRef_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: BisqueRef<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>BseqSC</td>
             <td>32224457</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BseqSC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: BseqSC<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>CellDistinguisher</td>
             <td>32224459</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_CellDistinguisher_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: CellDistinguisher<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>CIBERSORT</td>
             <td>32224461</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_CIBERSORT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: CIBERSORT<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>CPM</td>
             <td>32224463</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>++ date +%s<br>
++ end=1740514759<br>
++ runtime=0<br>
++ echo 'Runtime: 0 seconds'<br>
++ echo 'Benchmarking results saved to: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results'<br></td>
         </tr>
         <tr>
             <td>DAISM</td>
             <td>32224465</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DAISM_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DAISM<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>debCAM</td>
             <td>32224467</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_debCAM_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: debCAM<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>Deblender</td>
             <td>32224469</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_Deblender_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: Deblender<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DeCompress</td>
             <td>32224471</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeCompress_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DeCompress<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>deconf</td>
             <td>32224473</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_deconf_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: deconf<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DeconICA</td>
             <td>32224475</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconICA_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DeconICA<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DeconPeaker</td>
             <td>32224477</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconPeaker_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DeconPeaker<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DeconRNASeq</td>
             <td>32224479</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconRNASeq_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DeconRNASeq<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>deconvSeq</td>
             <td>32224481</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>++ date +%s<br>
++ end=1740514761<br>
++ runtime=0<br>
++ echo 'Runtime: 0 seconds'<br>
++ echo 'Benchmarking results saved to: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results'<br></td>
         </tr>
         <tr>
             <td>DecOT</td>
             <td>32224483</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DecOT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DecOT<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DeMixT</td>
             <td>32224485</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeMixT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DeMixT<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DESeq2</td>
             <td>32224487</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DESeq2_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DESeq2<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>digitalDLSorter</td>
             <td>32224489</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_digitalDLSorter_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: digitalDLSorter<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DSA</td>
             <td>32224491</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DSA_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: DSA<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>dtangle</td>
             <td>32224493</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_dtangle_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: dtangle<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>DWLS</td>
             <td>32224495</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>++ date +%s<br>
++ end=1740514762<br>
++ runtime=0<br>
++ echo 'Runtime: 0 seconds'<br>
++ echo 'Benchmarking results saved to: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results'<br></td>
         </tr>
         <tr>
             <td>EMeth</td>
             <td>32224497</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_EMeth_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: EMeth<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>EPIC</td>
             <td>32224499</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_EPIC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: EPIC<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>FARDEEP</td>
             <td>32224501</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_FARDEEP_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: FARDEEP<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>ImmuCellAI</td>
             <td>32224503</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ImmuCellAI_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: ImmuCellAI<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>LinDeconSeq</td>
             <td>32224505</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_LinDeconSeq_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: LinDeconSeq<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>MCPcounter</td>
             <td>32224507</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Unknown</td>
+            <td>++ date<br>
++ echo 'START AT mar 25 fév 2025 21:19:23 CET'<br>
++ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MCPcounter_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error in proportions[i, ] : subscript out of bounds<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>MethylResolver</td>
             <td>32224509</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MethylResolver_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: MethylResolver<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>MIXTURE</td>
             <td>32224511</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MIXTURE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: MIXTURE<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>MOMF</td>
             <td>32224513</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MOMF_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: MOMF<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>MuSic</td>
             <td>32224515</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>++ date +%s<br>
++ end=1740514764<br>
++ runtime=0<br>
++ echo 'Runtime: 0 seconds'<br>
++ echo 'Benchmarking results saved to: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results'<br></td>
         </tr>
         <tr>
             <td>MySort</td>
             <td>32224517</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MySort_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: MySort<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>NITUMID</td>
             <td>32224519</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_NITUMID_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: NITUMID<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>PREDE</td>
             <td>32224521</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_PREDE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: PREDE<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>quanTIseq</td>
             <td>32224523</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_quanTIseq_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: quanTIseq<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>ReFACTor</td>
             <td>32224525</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ReFACTor_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: ReFACTor<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>RNA-Sieve</td>
             <td>32224527</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>++ date +%s<br>
++ end=1740514765<br>
++ runtime=1<br>
++ echo 'Runtime: 1 seconds'<br>
++ echo 'Benchmarking results saved to: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results'<br></td>
         </tr>
         <tr>
             <td>scaden</td>
             <td>32224529</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_scaden_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: scaden<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>SCDC</td>
             <td>32224531</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_SCDC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: SCDC<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>spatialDWLS</td>
             <td>32224533</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_spatialDWLS_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: spatialDWLS<br>
+Execution halted<br></td>
         </tr>
         <tr>
             <td>TOAST</td>
             <td>32224535</td>
             <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No statistics output file was generated</td>
-        </tr>
-        </table>
-    </div>
-    
-    <div id="PlotTab" class="tab-content">
-        <h2>Visualization Errors</h2>
-        <table>
-            <tr>
-                <th>Method</th>
-                <th>Plot Job ID</th>
-                <th>Status</th>
-                <th>Error Type</th>
-                <th>Error Details</th>
-            </tr>
-        <tr>
-            <td>AdRoit</td>
-            <td>32224440</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No plot file was generated</td>
-        </tr>
-        <tr>
-            <td>ARIC</td>
-            <td>32224442</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>AutoGeneS</td>
-            <td>32224444</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>BayCount</td>
-            <td>32224446</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>BayesCCE</td>
-            <td>32224448</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>BayesPrism</td>
-            <td>32224450</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No plot file was generated</td>
-        </tr>
-        <tr>
-            <td>BayICE</td>
-            <td>32224452</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>BisqueMarker</td>
-            <td>32224454</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>BisqueRef</td>
-            <td>32224456</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>BseqSC</td>
-            <td>32224458</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>CellDistinguisher</td>
-            <td>32224460</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>CIBERSORT</td>
-            <td>32224462</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>CPM</td>
-            <td>32224464</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No plot file was generated</td>
-        </tr>
-        <tr>
-            <td>DAISM</td>
-            <td>32224466</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>debCAM</td>
-            <td>32224468</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>Deblender</td>
-            <td>32224470</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DeCompress</td>
-            <td>32224472</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>deconf</td>
-            <td>32224474</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DeconICA</td>
-            <td>32224476</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DeconPeaker</td>
-            <td>32224478</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DeconRNASeq</td>
-            <td>32224480</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>deconvSeq</td>
-            <td>32224482</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No plot file was generated</td>
-        </tr>
-        <tr>
-            <td>DecOT</td>
-            <td>32224484</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DeMixT</td>
-            <td>32224486</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DESeq2</td>
-            <td>32224488</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>digitalDLSorter</td>
-            <td>32224490</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DSA</td>
-            <td>32224492</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>dtangle</td>
-            <td>32224494</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>DWLS</td>
-            <td>32224496</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No plot file was generated</td>
-        </tr>
-        <tr>
-            <td>EMeth</td>
-            <td>32224498</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>EPIC</td>
-            <td>32224500</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>FARDEEP</td>
-            <td>32224502</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>ImmuCellAI</td>
-            <td>32224504</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>LinDeconSeq</td>
-            <td>32224506</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>MCPcounter</td>
-            <td>32224508</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>MethylResolver</td>
-            <td>32224510</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>MIXTURE</td>
-            <td>32224512</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>MOMF</td>
-            <td>32224514</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>MuSic</td>
-            <td>32224516</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No plot file was generated</td>
-        </tr>
-        <tr>
-            <td>MySort</td>
-            <td>32224518</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>NITUMID</td>
-            <td>32224520</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>PREDE</td>
-            <td>32224522</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>quanTIseq</td>
-            <td>32224524</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>ReFACTor</td>
-            <td>32224526</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>RNA-Sieve</td>
-            <td>32224528</td>
-            <td class="error">Failed</td>
-            <td>No Output</td>
-            <td>No plot file was generated</td>
-        </tr>
-        <tr>
-            <td>scaden</td>
-            <td>32224530</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>SCDC</td>
-            <td>32224532</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>spatialDWLS</td>
-            <td>32224534</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
-        </tr>
-        <tr>
-            <td>TOAST</td>
-            <td>32224536</td>
-            <td class="warning">Unknown</td>
-            <td>N/A</td>
-            <td>Error log file not found</td>
+            <td>Error:</td>
+            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_TOAST_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+Error: No proportion matrix found for method: TOAST<br>
+Execution halted<br></td>
         </tr>
         </table>
     </div>
@@ -1258,13 +1016,35 @@ panic: page 3 already freed<br></td>
             </div>
             <div class="metric">
                 <div class="metric-title">Warning</div>
-                <div class="metric-value" style="color: #f39c12">49</div>
-                <div>98.0%</div>
+                <div class="metric-value" style="color: #f39c12">8</div>
+                <div>16.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Failed</div>
-                <div class="metric-value" style="color: #e74c3c">1</div>
-                <div>2.0%</div>
+                <div class="metric-value" style="color: #e74c3c">42</div>
+                <div>84.0%</div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Stats Total</div>
+                <div class="metric-value">49</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Success</div>
+                <div class="metric-value" style="color: #2ecc71">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Warning</div>
+                <div class="metric-value" style="color: #f39c12">7</div>
+                <div>14.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Failed</div>
+                <div class="metric-value" style="color: #e74c3c">42</div>
+                <div>85.0%</div>
             </div>
         </div>
         
