@@ -11,7 +11,7 @@
 
 
 RLIBRARY="/work/gr-fe/R_4.3.1"
-SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/debugg/scripts/install_r_lib.R
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/debugg/install_r_lib.R
 DOINSTALL=1 #if set to 1 will install package, if set to 0 will only check if it can load the libraries
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/

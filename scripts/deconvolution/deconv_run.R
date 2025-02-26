@@ -18,7 +18,7 @@ library(Matrix)
 print("CHECK: Libraries loaded")
 
 
-# Set up custom image locations
+# singularity_images
 singularity_images <- list(
   "bseqsc" = "/scratch/lorthiois/singularity_images/bseqsc.sif",
   "celldistinguisher" = "/scratch/lorthiois/singularity_images/celldistinguisher.sif",

@@ -152,13 +152,29 @@ EOF
     # Check file size - if zero, likely no errors
     if [ ! -s "$ERROR_FILE" ]; then
         cat >> "$OUTPUT_FILE" << EOF
-        <tr>
-            <td>${METHOD}</td>
-            <td>${JOB_ID}</td>
-            <td class="success">Success</td>
-            <td>None</td>
-            <td>No errors detected</td>
-        </tr>
+            <tr>
+                <td>${METHOD}</td>
+                <td>${JOB_ID}</td>
+                <td class="success">Success</td>
+                <td>None</td>
+                <td>No errors detected</td>
+            </tr>
+EOF
+        SUCCESS_METHODS=$((SUCCESS_METHODS + 1))
+        continue
+    fi
+
+    # Check for success markers in output without significant errors
+    if grep -i "runtime:\|completed\|saved to\|check: deconvolution completed" "$ERROR_FILE" > /dev/null && ! grep -i "error\|failed\|fatal\|panic\|exception" "$ERROR_FILE" > /dev/null; then
+        # File contains normal output without errors - consider as success
+        cat >> "$OUTPUT_FILE" << EOF
+            <tr>
+                <td>${METHOD}</td>
+                <td>${JOB_ID}</td>
+                <td class="success">Success</td>
+                <td>None</td>
+                <td>Standard execution log (no errors)</td>
+            </tr>
 EOF
         SUCCESS_METHODS=$((SUCCESS_METHODS + 1))
         continue
@@ -269,20 +285,37 @@ EOF
             continue
         fi
         
-        # Check for successful completion
-        if [ ! -s "$STATS_ERROR_FILE" ]; then
-            cat >> "$OUTPUT_FILE" << EOF
-        <tr>
-            <td>${METHOD}</td>
-            <td>${STATS_JOB_ID}</td>
-            <td class="success">Success</td>
-            <td>None</td>
-            <td>No errors detected</td>
-        </tr>
+    # Check for successful completion
+    if [ ! -s "$STATS_ERROR_FILE" ]; then
+        # Empty error file means success with no errors
+        cat >> "$OUTPUT_FILE" << EOF
+    <tr>
+        <td>${METHOD}</td>
+        <td>${STATS_JOB_ID}</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>No errors detected</td>
+    </tr>
 EOF
-            STATS_SUCCESS=$((STATS_SUCCESS + 1))
-            continue
-        fi
+        STATS_SUCCESS=$((STATS_SUCCESS + 1))
+        continue
+    fi
+
+    # Check for success markers in output
+    if grep -i "saved to\|completed\|runtime:\|benchmarking results" "$STATS_ERROR_FILE" > /dev/null && ! grep -i "error\|failed\|fatal\|panic\|exception" "$STATS_ERROR_FILE" > /dev/null; then
+        # File contains normal output without errors - consider as success
+        cat >> "$OUTPUT_FILE" << EOF
+    <tr>
+        <td>${METHOD}</td>
+        <td>${STATS_JOB_ID}</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+EOF
+        STATS_SUCCESS=$((STATS_SUCCESS + 1))
+        continue
+    fi
         
         # Search for error patterns
         ERROR_FOUND=false

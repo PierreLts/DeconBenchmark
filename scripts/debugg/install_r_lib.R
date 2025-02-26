@@ -29,7 +29,7 @@ if(do_install == 1){
       install.packages(pkg)
     }
   }
-
+  library(devtools)
   # Install required libraries
   # install_if_missing("ggplot2")
   # install_if_missing("reshape2")
@@ -45,10 +45,17 @@ if(do_install == 1){
   # # babelwhale
   # install_if_missing("babelwhale")
   # babelwhale::test_singularity_installation(detailed = TRUE)
-
+  library(CDSeq)
   # # DeconBenchmark
   # install_if_missing("devtools")
   # devtools::install_github("tinnlab/DeconBenchmark")
+  #install.packages("CDSeq")
+  # # install.packages("devtools")
+  # devtools::install_github("kkang7/CDSeq_R_Package")
+  # # install.packages("devtools")
+  # devtools::install_github("kkang7/CDSeq_R_Package", build_vignettes = TRUE)
+
+
 }
 
 
