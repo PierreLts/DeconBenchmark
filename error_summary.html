@@ -41,7 +41,7 @@
 </head>
 <body>
     <h1>Deconvolution and Evaluation Error Summary</h1>
-    <p>Generated on mer 26 fév 2025 16:23:04 CET for dataset: Batch1_Downsampled</p>
+    <p>Generated on mer 26 fév 2025 18:30:18 CET for dataset: Batch1_Downsampled</p>
     
     <div class="tabs">
         <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
@@ -61,30 +61,30 @@
             </tr>
             <tr>
                 <td>AdRoit</td>
-                <td>32255651</td>
+                <td>32269878</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>ARIC</td>
-            <td>32255652</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td><br>
-KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
-        </tr>
-        <tr>
-            <td>AutoGeneS</td>
-            <td>32255653</td>
+            <td>32269879</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
 KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         </tr>
         <tr>
+            <td>AutoGeneS</td>
+            <td>32269880</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
+        </tr>
+        <tr>
             <td>BayCount</td>
-            <td>32255654</td>
+            <td>32269881</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -93,7 +93,7 @@ Calls: BayCount -&gt; matrix<br></td>
         </tr>
         <tr>
             <td>BayesCCE</td>
-            <td>32255655</td>
+            <td>32269882</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
@@ -101,29 +101,29 @@ KeyError: "Unable to open object (object 'cellTypeExpr' doesn't exist)"<br></td>
         </tr>
             <tr>
                 <td>BayesPrism</td>
-                <td>32255656</td>
+                <td>32269883</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
             <tr>
                 <td>BayICE</td>
-                <td>32255657</td>
+                <td>32269884</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>BisqueMarker</td>
-            <td>32255658</td>
+            <td>32269885</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/bisquemarker:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:743c6a66cfd7df43adfad271b6c6a71a23fb88c30171a6402b7b3c8c9b3ffa02: initializing source docker://deconvolution/bisquemarker:latest: reading manifest latest in docker.io/deconvolution/bisquemarker: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>BisqueRef</td>
-            <td>32255659</td>
+            <td>32269886</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -132,7 +132,7 @@ Error in value[[3L]](cond) : <br>
         </tr>
         <tr>
             <td>BseqSC</td>
-            <td>32255660</td>
+            <td>32269887</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -140,7 +140,7 @@ FATAL:   Unable to handle docker://deconvolution/bseqsc:latest uri: failed to ge
         </tr>
         <tr>
             <td>CellDistinguisher</td>
-            <td>32255661</td>
+            <td>32269888</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -148,7 +148,7 @@ FATAL:   Unable to handle docker://deconvolution/celldistinguisher:latest uri: f
         </tr>
         <tr>
             <td>CIBERSORT</td>
-            <td>32255662</td>
+            <td>32269889</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -156,22 +156,22 @@ FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to
         </tr>
             <tr>
                 <td>CPM</td>
-                <td>32255663</td>
+                <td>32269890</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>DAISM</td>
-            <td>32255664</td>
+            <td>32269891</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 18 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/daism:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:243a17896c41724014021d8efaa628418076ba7ab9c00eb2a40a0e19c9310d9c: initializing source docker://deconvolution/daism:latest: reading manifest latest in docker.io/deconvolution/daism: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>debCAM</td>
-            <td>32255665</td>
+            <td>32269892</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -180,7 +180,7 @@ Error in CAM(bulk, K = K, dim.rdc = min(max(K + 5, 10), ncol(bulk)), thres.low =
         </tr>
         <tr>
             <td>Deblender</td>
-            <td>32255666</td>
+            <td>32269893</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
@@ -188,7 +188,7 @@ KeyError: "Unable to open object (object 'nCellTypes' doesn't exist)"<br></td>
         </tr>
         <tr>
             <td>DeCompress</td>
-            <td>32255667</td>
+            <td>32269894</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -197,7 +197,7 @@ Error in matrix(abs(rnorm(100 * nCellTypes)), ncol = nCellTypes) : <br>
         </tr>
         <tr>
             <td>deconf</td>
-            <td>32255668</td>
+            <td>32269895</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -206,7 +206,7 @@ Error in seq.default(from = 1, to = (nrow(I) * n.cell.types), by = 1) : <br>
         </tr>
         <tr>
             <td>DeconICA</td>
-            <td>32255669</td>
+            <td>32269896</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -215,15 +215,15 @@ Calls: run_fastica<br></td>
         </tr>
         <tr>
             <td>DeconPeaker</td>
-            <td>32255670</td>
+            <td>32269897</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/deconpeaker:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:a5dbaa70dcd202dabf7937225d1ae242d5984c2050911bb88323a0e0afa8081a: initializing source docker://deconvolution/deconpeaker:latest: reading manifest latest in docker.io/deconvolution/deconpeaker: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>DeconRNASeq</td>
-            <td>32255671</td>
+            <td>32269898</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -232,14 +232,14 @@ Error in dimnames(x) &lt;- dn : <br>
         </tr>
             <tr>
                 <td>deconvSeq</td>
-                <td>32255672</td>
+                <td>32269899</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>DecOT</td>
-            <td>32255673</td>
+            <td>32269900</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "h5py/h5o.pyx", line 190, in h5py.h5o.open<br>
@@ -247,7 +247,7 @@ KeyError: "Unable to open object (object 'singleCellSubjects' doesn't exist)"<br
         </tr>
         <tr>
             <td>DeMixT</td>
-            <td>32255674</td>
+            <td>32269901</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -255,7 +255,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         </tr>
         <tr>
             <td>DESeq2</td>
-            <td>32255675</td>
+            <td>32269902</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -264,7 +264,7 @@ Error in cor(vst(pure, alpha)) : <br>
         </tr>
         <tr>
             <td>digitalDLSorter</td>
-            <td>32255676</td>
+            <td>32269903</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -273,23 +273,23 @@ Error in library(digitalDLSorteR) : <br>
         </tr>
         <tr>
             <td>DSA</td>
-            <td>32255677</td>
+            <td>32269904</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/dsa:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:7c84011a44f7acc1368a0c95e2648fce35e0945ad6b94c711c9607d3798b5c97: initializing source docker://deconvolution/dsa:latest: reading manifest latest in docker.io/deconvolution/dsa: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>dtangle</td>
-            <td>32255678</td>
+            <td>32269905</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/dtangle:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:94eaf4b41e6e80d29b8f938be3411a21a7c0552109a6910f3285494f3be24c04: initializing source docker://deconvolution/dtangle:latest: reading manifest latest in docker.io/deconvolution/dtangle: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>DWLS</td>
-            <td>32255679</td>
+            <td>32269906</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -297,7 +297,7 @@ Combining coefficients and standard errors<br></td>
         </tr>
         <tr>
             <td>EMeth</td>
-            <td>32255680</td>
+            <td>32269907</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -306,15 +306,15 @@ Error in matrix(0.5, ncol = Q, nrow = ncol(Y)) : <br>
         </tr>
         <tr>
             <td>EPIC</td>
-            <td>32255681</td>
+            <td>32269908</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 24 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/epic:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:fe73a524d70f52379d434bb89bc6afadad5f9ae36a0777445a255bd0fbeac745: initializing source docker://deconvolution/epic:latest: reading manifest latest in docker.io/deconvolution/epic: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>FARDEEP</td>
-            <td>32255682</td>
+            <td>32269909</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -323,7 +323,7 @@ Error in array(x, c(length(x), 1L), if (!is.null(names(x))) list(names(x),  : <b
         </tr>
         <tr>
             <td>ImmuCellAI</td>
-            <td>32255683</td>
+            <td>32269910</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -332,7 +332,7 @@ Error in rowSums(exp_new) : <br>
         </tr>
         <tr>
             <td>LinDeconSeq</td>
-            <td>32255684</td>
+            <td>32269911</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -341,22 +341,22 @@ Error in deconSeq(args$bulk, args$signature, verbose = F) : <br>
         </tr>
         <tr>
             <td>Linseed</td>
-            <td>32255685</td>
+            <td>32269912</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
-slurmstepd: error: *** JOB 32255685 ON jst088 CANCELLED AT 2025-02-26T15:35:39 ***<br></td>
+slurmstepd: error: *** JOB 32269912 ON jst357 CANCELLED AT 2025-02-26T18:29:33 ***<br></td>
         </tr>
             <tr>
                 <td>MCPcounter</td>
-                <td>32255686</td>
+                <td>32269913</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>MethylResolver</td>
-            <td>32255687</td>
+            <td>32269914</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -364,7 +364,7 @@ FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: fail
         </tr>
         <tr>
             <td>MIXTURE</td>
-            <td>32255688</td>
+            <td>32269915</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -373,96 +373,97 @@ Error in array(x, c(length(x), 1L), if (!is.null(names(x))) list(names(x),  : <b
         </tr>
         <tr>
             <td>MOMF</td>
-            <td>32255689</td>
+            <td>32269916</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/momf:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:fc7a550e2f44e35931ad592b9b294a3d4d1e3944681cbe2c69dded442a5e4e34: initializing source docker://deconvolution/momf:latest: reading manifest latest in docker.io/deconvolution/momf: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
             <tr>
                 <td>MuSic</td>
-                <td>32255690</td>
+                <td>32269917</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>MySort</td>
-            <td>32255691</td>
+            <td>32269918</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+panic: page 24 already freed<br></td>
         </tr>
         <tr>
             <td>NITUMID</td>
-            <td>32255692</td>
+            <td>32269919</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/nitumid:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:31ef35d94efb55e211b2d6483eca58db298ae7e1acab48e984ae6fe2d3011312: initializing source docker://deconvolution/nitumid:latest: reading manifest latest in docker.io/deconvolution/nitumid: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>PREDE</td>
-            <td>32255693</td>
+            <td>32269920</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+panic: page 24 already freed<br></td>
         </tr>
         <tr>
             <td>quanTIseq</td>
-            <td>32255694</td>
+            <td>32269921</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/quantiseq:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:ca98afc1a2fc590ba571f34b29a4dc41547787b1108d2d7f3e0c745ffab7d805: initializing source docker://deconvolution/quantiseq:latest: reading manifest latest in docker.io/deconvolution/quantiseq: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>ReFACTor</td>
-            <td>32255695</td>
+            <td>32269922</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/refactor:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:1dab937bd2b95650d3b8a2fd820996245a29bdd1ab57e8414baaa5d0502a81dc: initializing source docker://deconvolution/refactor:latest: reading manifest latest in docker.io/deconvolution/refactor: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
             <tr>
                 <td>RNA-Sieve</td>
-                <td>32255696</td>
+                <td>32269923</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>scaden</td>
-            <td>32255697</td>
+            <td>32269924</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 3 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/scaden:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:473e1aa4ab9a58031e75109a78d2c936fe90f53d1d1e757fe0258e7bab4f77c1: initializing source docker://deconvolution/scaden:latest: reading manifest latest in docker.io/deconvolution/scaden: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
             <tr>
                 <td>SCDC</td>
-                <td>32255698</td>
+                <td>32269925</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>spatialDWLS</td>
-            <td>32255699</td>
+            <td>32269926</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>fatal:</td>
             <td><br>
-panic: page 18 already freed<br></td>
+FATAL:   Unable to handle docker://deconvolution/spatialdwls:latest uri: while building SIF from layers: conveyor failed to get: while fetching image: initializing source oci:/home/lorthiois/.apptainer/cache/blob:48aa35f1cf261a4e8a67178a18456534d7d73f6d7d195d08247b8e9ba595e83a: initializing source docker://deconvolution/spatialdwls:latest: reading manifest latest in docker.io/deconvolution/spatialdwls: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit<br></td>
         </tr>
         <tr>
             <td>TOAST</td>
-            <td>32255700</td>
+            <td>32269927</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
-            <td><br>
-panic: page 21 already freed<br></td>
+            <td>Error</td>
+            <td>Assign cell type names to CellType1 to Celltype0<br>
+Error in names(SelMarker) &lt;- paste0("CellType", 1:K) : <br>
+  attempt to set an attribute on NULL<br></td>
         </tr>
         </table>
     </div>
@@ -479,14 +480,14 @@ panic: page 21 already freed<br></td>
             </tr>
     <tr>
         <td>AdRoit</td>
-        <td>32256983</td>
+        <td>32272875</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>ARIC</td>
-            <td>32256985</td>
+            <td>32272877</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ARIC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -495,7 +496,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>AutoGeneS</td>
-            <td>32256987</td>
+            <td>32272879</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_AutoGeneS_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -504,7 +505,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BayCount</td>
-            <td>32256989</td>
+            <td>32272881</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayCount_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -513,7 +514,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BayesCCE</td>
-            <td>32256991</td>
+            <td>32272883</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayesCCE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -522,14 +523,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>BayesPrism</td>
-        <td>32256993</td>
+        <td>32272885</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>BayICE</td>
-            <td>32256995</td>
+            <td>32272887</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayICE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -538,7 +539,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BisqueMarker</td>
-            <td>32256997</td>
+            <td>32272889</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BisqueMarker_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -547,7 +548,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BisqueRef</td>
-            <td>32256999</td>
+            <td>32272891</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BisqueRef_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -556,7 +557,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BseqSC</td>
-            <td>32257001</td>
+            <td>32272893</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BseqSC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -565,7 +566,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>CellDistinguisher</td>
-            <td>32257003</td>
+            <td>32272895</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_CellDistinguisher_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -574,7 +575,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>CIBERSORT</td>
-            <td>32257005</td>
+            <td>32272897</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_CIBERSORT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -583,14 +584,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>CPM</td>
-        <td>32257007</td>
+        <td>32272899</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>DAISM</td>
-            <td>32257009</td>
+            <td>32272901</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DAISM_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -599,7 +600,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>debCAM</td>
-            <td>32257011</td>
+            <td>32272903</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_debCAM_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -608,7 +609,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>Deblender</td>
-            <td>32257013</td>
+            <td>32272905</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_Deblender_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -617,7 +618,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DeCompress</td>
-            <td>32257015</td>
+            <td>32272907</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeCompress_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -626,7 +627,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>deconf</td>
-            <td>32257017</td>
+            <td>32272909</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_deconf_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -635,7 +636,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DeconICA</td>
-            <td>32257019</td>
+            <td>32272911</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconICA_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -644,7 +645,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DeconPeaker</td>
-            <td>32257021</td>
+            <td>32272913</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconPeaker_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -653,7 +654,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DeconRNASeq</td>
-            <td>32257023</td>
+            <td>32272915</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconRNASeq_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -662,14 +663,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>deconvSeq</td>
-        <td>32257025</td>
+        <td>32272917</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>DecOT</td>
-            <td>32257027</td>
+            <td>32272919</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DecOT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -678,7 +679,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DeMixT</td>
-            <td>32257029</td>
+            <td>32272921</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeMixT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -687,7 +688,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DESeq2</td>
-            <td>32257031</td>
+            <td>32272923</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DESeq2_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -696,7 +697,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>digitalDLSorter</td>
-            <td>32257033</td>
+            <td>32272925</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_digitalDLSorter_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -705,7 +706,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DSA</td>
-            <td>32257035</td>
+            <td>32272927</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DSA_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -714,7 +715,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>dtangle</td>
-            <td>32257037</td>
+            <td>32272929</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_dtangle_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -723,14 +724,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>DWLS</td>
-        <td>32257039</td>
+        <td>32272931</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>EMeth</td>
-            <td>32257041</td>
+            <td>32272933</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_EMeth_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -739,7 +740,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>EPIC</td>
-            <td>32257043</td>
+            <td>32272935</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_EPIC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -748,7 +749,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>FARDEEP</td>
-            <td>32257045</td>
+            <td>32272937</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_FARDEEP_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -757,7 +758,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>ImmuCellAI</td>
-            <td>32257047</td>
+            <td>32272939</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ImmuCellAI_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -766,7 +767,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>LinDeconSeq</td>
-            <td>32257049</td>
+            <td>32272941</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_LinDeconSeq_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -775,7 +776,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>MCPcounter</td>
-            <td>32257051</td>
+            <td>32272943</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MCPcounter_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -784,7 +785,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>MethylResolver</td>
-            <td>32257053</td>
+            <td>32272945</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MethylResolver_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -793,7 +794,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>MIXTURE</td>
-            <td>32257055</td>
+            <td>32272947</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MIXTURE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -802,7 +803,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>MOMF</td>
-            <td>32257057</td>
+            <td>32272949</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MOMF_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -811,14 +812,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>MuSic</td>
-        <td>32257059</td>
+        <td>32272951</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>MySort</td>
-            <td>32257061</td>
+            <td>32272953</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MySort_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -827,7 +828,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>NITUMID</td>
-            <td>32257063</td>
+            <td>32272955</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_NITUMID_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -836,7 +837,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>PREDE</td>
-            <td>32257065</td>
+            <td>32272957</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_PREDE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -845,7 +846,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>quanTIseq</td>
-            <td>32257067</td>
+            <td>32272959</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_quanTIseq_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -854,7 +855,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>ReFACTor</td>
-            <td>32257069</td>
+            <td>32272961</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ReFACTor_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -863,14 +864,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>RNA-Sieve</td>
-        <td>32257071</td>
+        <td>32272963</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>scaden</td>
-            <td>32257073</td>
+            <td>32272965</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_scaden_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -879,14 +880,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>SCDC</td>
-        <td>32257075</td>
+        <td>32272967</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>spatialDWLS</td>
-            <td>32257077</td>
+            <td>32272969</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_spatialDWLS_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -895,7 +896,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>TOAST</td>
-            <td>32257079</td>
+            <td>32272971</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_TOAST_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
@@ -970,68 +971,73 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>fatal:</td>
-            <td>5</td>
-            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
+            <td>17</td>
+            <td>BisqueMarker (deconv), BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DAISM (deconv), DeconPeaker (deconv), DeMixT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MethylResolver (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
         <tr>
             <td>Fatal:</td>
-            <td>5</td>
-            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
+            <td>17</td>
+            <td>BisqueMarker (deconv), BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DAISM (deconv), DeconPeaker (deconv), DeMixT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MethylResolver (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
         <tr>
             <td>FATAL:</td>
-            <td>5</td>
-            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
+            <td>17</td>
+            <td>BisqueMarker (deconv), BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DAISM (deconv), DeconPeaker (deconv), DeMixT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MethylResolver (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
         <tr>
             <td>Error</td>
-            <td>62</td>
-            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (deconv), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BisqueRef (deconv), BisqueRef (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (deconv), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (deconv), DeCompress (stats), deconf (deconv), deconf (stats), DeconICA (deconv), DeconICA (stats), DeconPeaker (stats), DeconRNASeq (deconv), DeconRNASeq (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (deconv), DESeq2 (stats), digitalDLSorter (deconv), digitalDLSorter (stats), DSA (stats), dtangle (stats), DWLS (deconv), EMeth (deconv), EMeth (stats), EPIC (stats), FARDEEP (deconv), FARDEEP (stats), ImmuCellAI (deconv), ImmuCellAI (stats), LinDeconSeq (deconv), LinDeconSeq (stats), Linseed (deconv), MCPcounter (stats), MethylResolver (stats), MIXTURE (deconv), MIXTURE (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (stats)</td>
+            <td>63</td>
+            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (deconv), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BisqueRef (deconv), BisqueRef (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (deconv), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (deconv), DeCompress (stats), deconf (deconv), deconf (stats), DeconICA (deconv), DeconICA (stats), DeconPeaker (stats), DeconRNASeq (deconv), DeconRNASeq (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (deconv), DESeq2 (stats), digitalDLSorter (deconv), digitalDLSorter (stats), DSA (stats), dtangle (stats), DWLS (deconv), EMeth (deconv), EMeth (stats), EPIC (stats), FARDEEP (deconv), FARDEEP (stats), ImmuCellAI (deconv), ImmuCellAI (stats), LinDeconSeq (deconv), LinDeconSeq (stats), Linseed (deconv), MCPcounter (stats), MethylResolver (stats), MIXTURE (deconv), MIXTURE (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (deconv), TOAST (stats)</td>
         </tr>
         <tr>
             <td>ERROR</td>
-            <td>62</td>
-            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (deconv), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BisqueRef (deconv), BisqueRef (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (deconv), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (deconv), DeCompress (stats), deconf (deconv), deconf (stats), DeconICA (deconv), DeconICA (stats), DeconPeaker (stats), DeconRNASeq (deconv), DeconRNASeq (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (deconv), DESeq2 (stats), digitalDLSorter (deconv), digitalDLSorter (stats), DSA (stats), dtangle (stats), DWLS (deconv), EMeth (deconv), EMeth (stats), EPIC (stats), FARDEEP (deconv), FARDEEP (stats), ImmuCellAI (deconv), ImmuCellAI (stats), LinDeconSeq (deconv), LinDeconSeq (stats), Linseed (deconv), MCPcounter (stats), MethylResolver (stats), MIXTURE (deconv), MIXTURE (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (stats)</td>
+            <td>63</td>
+            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (deconv), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BisqueRef (deconv), BisqueRef (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (deconv), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (deconv), DeCompress (stats), deconf (deconv), deconf (stats), DeconICA (deconv), DeconICA (stats), DeconPeaker (stats), DeconRNASeq (deconv), DeconRNASeq (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (deconv), DESeq2 (stats), digitalDLSorter (deconv), digitalDLSorter (stats), DSA (stats), dtangle (stats), DWLS (deconv), EMeth (deconv), EMeth (stats), EPIC (stats), FARDEEP (deconv), FARDEEP (stats), ImmuCellAI (deconv), ImmuCellAI (stats), LinDeconSeq (deconv), LinDeconSeq (stats), Linseed (deconv), MCPcounter (stats), MethylResolver (stats), MIXTURE (deconv), MIXTURE (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (deconv), TOAST (stats)</td>
         </tr>
         <tr>
             <td>Failed</td>
-            <td>6</td>
-            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeCompress (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
+            <td>18</td>
+            <td>BisqueMarker (deconv), BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DAISM (deconv), DeCompress (deconv), DeconPeaker (deconv), DeMixT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MethylResolver (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
         <tr>
             <td>fatal</td>
-            <td>5</td>
-            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
+            <td>17</td>
+            <td>BisqueMarker (deconv), BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DAISM (deconv), DeconPeaker (deconv), DeMixT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MethylResolver (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
         <tr>
             <td>Fatal</td>
-            <td>5</td>
-            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
+            <td>17</td>
+            <td>BisqueMarker (deconv), BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DAISM (deconv), DeconPeaker (deconv), DeMixT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MethylResolver (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
         <tr>
             <td>FATAL</td>
-            <td>5</td>
-            <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
+            <td>17</td>
+            <td>BisqueMarker (deconv), BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DAISM (deconv), DeconPeaker (deconv), DeMixT (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MethylResolver (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
+        </tr>
+        <tr>
+            <td>OOM</td>
+            <td>12</td>
+            <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
         <tr>
             <td>Panic:</td>
-            <td>15</td>
-            <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv), TOAST (deconv)</td>
+            <td>2</td>
+            <td>MySort (deconv), PREDE (deconv)</td>
         </tr>
         <tr>
             <td>Panic:</td>
-            <td>15</td>
-            <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv), TOAST (deconv)</td>
+            <td>2</td>
+            <td>MySort (deconv), PREDE (deconv)</td>
         </tr>
         <tr>
             <td>Panic</td>
-            <td>15</td>
-            <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv), TOAST (deconv)</td>
+            <td>2</td>
+            <td>MySort (deconv), PREDE (deconv)</td>
         </tr>
         <tr>
             <td>Panic</td>
-            <td>15</td>
-            <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv), TOAST (deconv)</td>
+            <td>2</td>
+            <td>MySort (deconv), PREDE (deconv)</td>
         </tr>
         <tr>
             <td>CANCELLED</td>

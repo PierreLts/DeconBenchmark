@@ -21,7 +21,7 @@ SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/deconv_run.R
 input_data="/work/gr-fe/lorthiois/DeconBenchmark/data/Batch1_Downsampled.rda"
 output_data="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 deconv_method="CIBERSORT"
-sparse_conversion=FALSE # Enable sparse matrix conversion
+sparse_conversion=TRUE # Enable sparse matrix conversion
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/ #IMPORTANT
 module load r #IMPORTANT

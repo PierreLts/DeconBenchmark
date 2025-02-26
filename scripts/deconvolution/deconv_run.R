@@ -18,14 +18,14 @@ library(Matrix)
 print("CHECK: Libraries loaded")
 
 
-# singularity_images
-singularity_images <- list(
-  "bseqsc" = "/scratch/lorthiois/singularity_images/bseqsc.sif",
-  "celldistinguisher" = "/scratch/lorthiois/singularity_images/celldistinguisher.sif",
-  "cibersort" = "/scratch/lorthiois/singularity_images/cibersort.sif",
-  "demixt" = "/scratch/lorthiois/singularity_images/demixt.sif",
-  "methylresolver" = "/scratch/lorthiois/singularity_images/methylresolver.sif"
-)
+# # singularity_images
+# singularity_images <- list(
+#   "bseqsc" = "/scratch/lorthiois/singularity_images/bseqsc.sif",
+#   "celldistinguisher" = "/scratch/lorthiois/singularity_images/celldistinguisher.sif",
+#   "cibersort" = "/scratch/lorthiois/singularity_images/cibersort.sif",
+#   "demixt" = "/scratch/lorthiois/singularity_images/demixt.sif",
+#   "methylresolver" = "/scratch/lorthiois/singularity_images/methylresolver.sif"
+# )
 
  
 # Load input data
