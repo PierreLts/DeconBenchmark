@@ -1,51 +1,39 @@
 #!/bin/bash
-# Modified build_missing_images.sh
+#SBATCH --nodes=1 
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=4G
+#SBATCH --time=2:00:00
+#SBATCH --job-name=fix_cache
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
 
-# Create directory for local images
-SING_IMG_DIR=/scratch/lorthiois/singularity_images
-mkdir -p $SING_IMG_DIR
+### Usefull for debuging 
+set -e # Exit the script if any statement returns a non-true return value.
+set -x #Print each line of code being computed
+#set -u #Exit the script if a variable was not initialized
 
-# Set Singularity cache directory
-export SINGULARITY_CACHEDIR=/scratch/lorthiois/singularity_cache
-mkdir -p $SINGULARITY_CACHEDIR
+# Create definition file directory
+mkdir -p /scratch/lorthiois/def_files
 
-# List of images to build
-IMAGES=(
-  "deconvolution/bseqsc:latest"
-  "deconvolution/celldistinguisher:latest"
-  "deconvolution/cibersort:latest"
-  "deconvolution/demixt:latest"
-  "deconvolution/methylresolver:latest"
-)
+# Create a definition file using debootstrap
+cat > /scratch/lorthiois/def_files/test.def << EOF
+Bootstrap: debootstrap
+OSVersion: focal
+MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
-# Try to pull images directly from Docker Hub
-for IMG in "${IMAGES[@]}"; do
-  IMG_NAME=$(echo $IMG | cut -d/ -f2 | cut -d: -f1)
-  echo "Pulling $IMG_NAME image from Docker Hub..."
-  
-  # Try to pull with increasing timeout
-  if ! singularity pull --timeout 300 --name $SING_IMG_DIR/$IMG_NAME.sif docker://$IMG; then
-    echo "Failed to pull $IMG, trying backup approach..."
+%post
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        r-base \
+        r-base-dev \
+        libcurl4-openssl-dev \
+        libssl-dev \
+        libxml2-dev
     
-    # If direct pull fails, create a minimal definition file
-    DEF_FILE=$(mktemp --suffix=.def)
-    echo "Bootstrap: docker" > $DEF_FILE
-    echo "From: r-base:4.1.0" >> $DEF_FILE
-    echo "" >> $DEF_FILE
-    echo "%post" >> $DEF_FILE
-    echo "    apt-get update && apt-get install -y --no-install-recommends \\" >> $DEF_FILE
-    echo "        libcurl4-openssl-dev \\" >> $DEF_FILE
-    echo "        libssl-dev \\" >> $DEF_FILE
-    echo "        libxml2-dev" >> $DEF_FILE
-    echo "    R -e \"install.packages(c('remotes', 'devtools'))\""  >> $DEF_FILE
-    
-    # Build from definition file
-    echo "Building $IMG_NAME from definition file..."
-    singularity build $SING_IMG_DIR/$IMG_NAME.sif $DEF_FILE
-    rm $DEF_FILE
-  fi
-done
+    # Install base R packages
+    R --no-save -e "install.packages('Matrix', repos='https://cloud.r-project.org/')"
+EOF
 
-echo "Container building completed"
+# Build the image
+mkdir -p /scratch/lorthiois/singularity_images
+singularity build /scratch/lorthiois/singularity_images/test.sif /scratch/lorthiois/def_files/test.def

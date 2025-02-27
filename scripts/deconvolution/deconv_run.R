@@ -80,6 +80,11 @@ if (length(method_list) > 1) {
     signature <- reference$signature
   }
 }
+### Test fix
+reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
+signature <- reference$signature
+singleCellSubjects <- rep("subject1", length(singleCellLabels))
+
 
 # Run deconvolution using Singularity with all specified methods
 print(paste("Starting deconvolution with", length(method_list), "methods..."))
@@ -89,6 +94,9 @@ deconvolutionResult <- runDeconvolution(
   singleCellExpr = singleCellExpr,
   singleCellLabels = singleCellLabels,
   signature = signature,
+  #reference = reference,
+  nCellTypes = length(unique(singleCellLabels)), ### Test fix
+  singleCellSubjects = singleCellSubjects, ### Test fix
   containerEngine = "singularity"
 )
 print("CHECK: Deconvolution completed for all methods")
