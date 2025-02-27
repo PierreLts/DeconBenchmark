@@ -1,15 +1,14 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 5) {
-  stop("5 arguments must be supplied: <R_library_path> <mean_ground_truth> <patient_ground_truth_dir> <results_path> <output_dir>", call.=FALSE)
+if (length(args) != 4) {
+  stop("4 arguments must be supplied: <R_library_path> <patient_ground_truth> <results_path> <output_dir>", call.=FALSE)
 }
 
 ####### Script Parameters 
 path_Rlibrary <- args[1]
-mean_ground_truth_path <- args[2]
-patient_ground_truth_dir <- args[3]
-results_path <- args[4]
-output_dir <- args[5]
+patient_ground_truth_path <- args[2]
+results_path <- args[3]
+output_dir <- args[4]
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE)
@@ -40,87 +39,39 @@ if (is.null(proportions)) {
   stop(paste("No proportion matrix found for method:", method_name))
 }
 
-# Load mean ground truth (for samples without patient-specific matches)
-load(mean_ground_truth_path)
-mean_gt_proportions <- groundTruth$P
+# Load patient ground truth data
+load(patient_ground_truth_path)  # Loads 'groundTruth' object with P matrix and patient_mapping
 
-# Load patient mapping data
-patient_mapping_file <- file.path(patient_ground_truth_dir, "patient_sample_mapping.csv")
-if (file.exists(patient_mapping_file)) {
-  patient_mapping <- read.csv(patient_mapping_file, stringsAsFactors = FALSE)
-} else {
-  warning("Patient mapping file not found. Using only mean ground truth.")
-  patient_mapping <- data.frame(sample = character(0), patient_id = character(0))
-}
-
-# Get list of patient ground truth files
-patient_gt_files <- list.files(
-  path = patient_ground_truth_dir, 
-  pattern = "ground_truth_patient_.*\\.rda$",
-  full.names = TRUE
-)
-
-# Load all patient ground truths into a list
-patient_ground_truths <- list()
-for (gt_file in patient_gt_files) {
-  patient_id <- gsub(".*ground_truth_patient_(.+)\\.rda$", "\\1", gt_file)
-  load(gt_file)  # Loads patientGroundTruth
-  patient_ground_truths[[patient_id]] <- patientGroundTruth
-}
-
-# Define weights for patient-specific vs mean ground truth
+# Define weights
 PATIENT_MATCH_WEIGHT <- 0.8  # Higher weight for patient-specific matches
 MEAN_MATCH_WEIGHT <- 0.2     # Lower weight for mean-based matches
 
+# Calculate overall mean ground truth for samples without exact matches
+mean_gt_proportions <- colMeans(groundTruth$P)
+
 # Initialize dataframes to hold metrics 
 metrics_list <- list()
-patient_matched_samples <- c()
-mean_matched_samples <- c()
 
 # Process each sample in the deconvolution results
 for (i in 1:nrow(proportions)) {
   sample_id <- rownames(proportions)[i]
   predicted <- as.numeric(proportions[i, ])
   
-  # Check if this sample has a patient-specific match
-  patient_match <- patient_mapping[patient_mapping$sample == sample_id, ]
-  
-  if (nrow(patient_match) > 0) {
-    # We have a patient-specific match
-    patient_id <- patient_match$patient_id[1]
+  # Check if this sample has a match in the ground truth
+  if (sample_id %in% rownames(groundTruth$P)) {
+    # We have an exact match
+    actual <- as.numeric(groundTruth$P[sample_id, ])
+    match_type <- "exact_match"
+    match_weight <- PATIENT_MATCH_WEIGHT
     
-    if (patient_id %in% names(patient_ground_truths)) {
-      # Get the patient-specific ground truth
-      patient_gt <- patient_ground_truths[[patient_id]]
-      
-      # Find the exact ground truth row (could be before/after treatment)
-      gt_row <- which(rownames(patient_gt$P) == sample_id)
-      
-      if (length(gt_row) > 0) {
-        actual <- as.numeric(patient_gt$P[gt_row, ])
-        match_type <- "patient_specific"
-        match_weight <- PATIENT_MATCH_WEIGHT
-        patient_matched_samples <- c(patient_matched_samples, sample_id)
-      } else {
-        # Fall back to mean if exact row not found
-        actual <- as.numeric(mean_gt_proportions[1, ]) # Using first row as example
-        match_type <- "mean_fallback"
-        match_weight <- MEAN_MATCH_WEIGHT
-        mean_matched_samples <- c(mean_matched_samples, sample_id)
-      }
-    } else {
-      # Patient ground truth not found
-      actual <- as.numeric(mean_gt_proportions[1, ])
-      match_type <- "mean_fallback"
-      match_weight <- MEAN_MATCH_WEIGHT
-      mean_matched_samples <- c(mean_matched_samples, sample_id)
-    }
+    # Get patient ID for this sample
+    patient_id <- groundTruth$patient_mapping$patient_id[groundTruth$patient_mapping$sample == sample_id]
   } else {
-    # No patient match found, use mean ground truth
-    actual <- as.numeric(mean_gt_proportions[1, ])
-    match_type <- "mean_only"
+    # No exact match, try to use overall mean
+    actual <- mean_gt_proportions
+    match_type <- "mean_based"
     match_weight <- MEAN_MATCH_WEIGHT
-    mean_matched_samples <- c(mean_matched_samples, sample_id)
+    patient_id <- "unknown"
   }
   
   # Ensure ground truth has the same cell types
@@ -146,6 +97,7 @@ for (i in 1:nrow(proportions)) {
   
   metrics_list[[i]] <- c(
     Sample = sample_id,
+    PatientID = patient_id,
     Pearson = pearson_corr,
     Spearman = spearman_corr,
     MAE = mae_value,
@@ -159,6 +111,8 @@ for (i in 1:nrow(proportions)) {
 # Convert metrics to a data frame
 metrics_df <- as.data.frame(do.call(rbind, metrics_list))
 metrics_df$Sample <- as.character(metrics_df$Sample)
+metrics_df$PatientID <- as.character(metrics_df$PatientID)
+metrics_df$MatchType <- as.character(metrics_df$MatchType)
 
 # Convert numeric columns
 numeric_columns <- c("Pearson", "Spearman", "MAE", "RMSE", "R2", "Weight")
@@ -196,13 +150,13 @@ metrics_df$WeightedScore <- composite_score(metrics_df)
 
 # Print summary of matching
 print(paste("Total samples:", nrow(metrics_df)))
-print(paste("Patient-matched samples:", length(patient_matched_samples), 
-            "(", round(100*length(patient_matched_samples)/nrow(metrics_df), 1), "%)"))
-print(paste("Mean-matched samples:", length(mean_matched_samples),
-            "(", round(100*length(mean_matched_samples)/nrow(metrics_df), 1), "%)"))
+print(paste("Exact matched samples:", sum(metrics_df$MatchType == "exact_match"), 
+            "(", round(100*sum(metrics_df$MatchType == "exact_match")/nrow(metrics_df), 1), "%)"))
+print(paste("Mean-based samples:", sum(metrics_df$MatchType == "mean_based"),
+            "(", round(100*sum(metrics_df$MatchType == "mean_based")/nrow(metrics_df), 1), "%)"))
 
-# Calculate weighted summary statistics
-summary_stats <- metrics_df %>%
+# Calculate per-match-type summary statistics
+match_summary <- metrics_df %>%
   group_by(MatchType) %>%
   summarize(
     SampleCount = n(),
@@ -221,7 +175,27 @@ summary_stats <- metrics_df %>%
     WeightedScore_SD = sd(WeightedScore, na.rm = TRUE)
   )
 
-# Calculate overall weighted means
+# Calculate per-patient summary statistics
+patient_summary <- metrics_df %>%
+  filter(PatientID != "unknown") %>%
+  group_by(PatientID) %>%
+  summarize(
+    SampleCount = n(),
+    Pearson_Mean = mean(Pearson, na.rm = TRUE),
+    Pearson_SD = sd(Pearson, na.rm = TRUE),
+    Spearman_Mean = mean(Spearman, na.rm = TRUE),
+    Spearman_SD = sd(Spearman, na.rm = TRUE),
+    MAE_Mean = mean(MAE, na.rm = TRUE),
+    MAE_SD = sd(MAE, na.rm = TRUE),
+    RMSE_Mean = mean(RMSE, na.rm = TRUE),
+    RMSE_SD = sd(RMSE, na.rm = TRUE),
+    R2_Mean = mean(R2, na.rm = TRUE),
+    R2_SD = sd(R2, na.rm = TRUE),
+    WeightedScore_Mean = mean(WeightedScore, na.rm = TRUE),
+    WeightedScore_SD = sd(WeightedScore, na.rm = TRUE)
+  )
+
+# Calculate overall weighted statistics
 overall_stats <- data.frame(
   MatchType = "overall_weighted",
   SampleCount = nrow(metrics_df),
@@ -241,21 +215,25 @@ overall_stats <- data.frame(
 )
 
 # Combine summaries
-summary_stats <- rbind(summary_stats, overall_stats)
+match_summary <- rbind(match_summary, overall_stats)
 
 # Save metrics to files
 metrics_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_patient_benchmarking.csv"))
 write.csv(metrics_df, metrics_file, row.names = FALSE)
 print(paste("Patient benchmarking results saved to:", metrics_file))
 
-summary_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_patient_summary.csv"))
-write.csv(summary_stats, summary_file, row.names = FALSE)
-print(paste("Patient summary statistics saved to:", summary_file))
+match_summary_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_match_summary.csv"))
+write.csv(match_summary, match_summary_file, row.names = FALSE)
+print(paste("Match type summary saved to:", match_summary_file))
+
+patient_summary_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_patient_summary.csv"))
+write.csv(patient_summary, patient_summary_file, row.names = FALSE)
+print(paste("Patient summary saved to:", patient_summary_file))
 
 # Create visualizations
-# Boxplot of metrics by match type
+# 1. Box plot of metrics by match type
 plot_data <- melt(metrics_df, 
-                 id.vars = c("Sample", "MatchType", "Weight"),
+                 id.vars = c("Sample", "PatientID", "MatchType", "Weight"),
                  measure.vars = c("Pearson", "Spearman", "MAE", "RMSE", "R2", "WeightedScore"))
 
 p <- ggplot(plot_data, aes(x = MatchType, y = value, fill = MatchType)) +
@@ -268,27 +246,34 @@ p <- ggplot(plot_data, aes(x = MatchType, y = value, fill = MatchType)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save plot
-plot_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_patient_metrics.pdf"))
-ggsave(plot_file, p, width = 10, height = 8)
-print(paste("Metrics plot saved to:", plot_file))
+boxplot_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_match_metrics.pdf"))
+ggsave(boxplot_file, p, width = 10, height = 8)
+print(paste("Match metrics plot saved to:", boxplot_file))
 
-# Create comparison bar chart for overall vs mean-only performance
-if ("patient_specific" %in% summary_stats$MatchType && "mean_only" %in% summary_stats$MatchType) {
-  compare_data <- summary_stats %>%
-    filter(MatchType %in% c("patient_specific", "mean_only", "overall_weighted")) %>%
-    select(MatchType, Pearson_Mean, Spearman_Mean, MAE_Mean, RMSE_Mean, R2_Mean) %>%
-    melt(id.vars = "MatchType")
+# 2. Patient variation - show how each patient performs
+if (nrow(patient_summary) > 1) {
+  # Prepare data for plotting
+  patient_plot_data <- melt(patient_summary, 
+                          id.vars = c("PatientID", "SampleCount"),
+                          measure.vars = c("Pearson_Mean", "Spearman_Mean", "MAE_Mean", "RMSE_Mean", "R2_Mean"))
   
-  p2 <- ggplot(compare_data, aes(x = variable, y = value, fill = MatchType)) +
+  # Rename variables for cleaner labels
+  patient_plot_data$variable <- gsub("_Mean$", "", patient_plot_data$variable)
+  
+  # Create the plot
+  p2 <- ggplot(patient_plot_data, aes(x = PatientID, y = value, fill = variable)) +
     geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~ variable, scales = "free_y") +
     theme_minimal() +
-    labs(title = paste(method_name, "Performance Comparison"),
-         x = "Metric", 
-         y = "Value") +
+    labs(title = paste(method_name, "Performance by Patient"),
+         x = "Patient ID", 
+         y = "Mean Value") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  # Save comparison plot
-  compare_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_comparison.pdf"))
-  ggsave(compare_file, p2, width = 8, height = 6)
-  print(paste("Comparison plot saved to:", compare_file))
+  # Save patient plot
+  patient_file <- file.path(output_dir, paste0(method_name, "_", data_name, "_patient_variation.pdf"))
+  ggsave(patient_file, p2, width = 12, height = 8)
+  print(paste("Patient variation plot saved to:", patient_file))
 }
+
+print("Analysis complete!")

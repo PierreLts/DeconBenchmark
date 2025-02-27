@@ -14,8 +14,7 @@ set -x # Print each line of code being computed
 
 RLIBRARY="/work/gr-fe/R_4.3.1" # R library path
 SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats_patient.R"
-MEAN_GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
-PATIENT_GROUND_TRUTH_DIR="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
+PATIENT_GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/patient_ground_truth_proportions.rda"
 RESULTS="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayesPrism_Batch1.rda" # Default, can be overridden
 OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/patient_specific"
 
@@ -35,7 +34,7 @@ start=`date +%s`
 echo "START AT $(date)"
 
 # Run the R script (ORDER IS IMPORTANT)
-Rscript ${SCRIPT} ${RLIBRARY} ${MEAN_GROUND_TRUTH} ${PATIENT_GROUND_TRUTH_DIR} ${RESULTS} ${METHOD_OUTPUT_DIR}
+Rscript ${SCRIPT} ${RLIBRARY} ${PATIENT_GROUND_TRUTH} ${RESULTS} ${METHOD_OUTPUT_DIR}
 
 # Print end date and echo total runtime
 end=`date +%s`
