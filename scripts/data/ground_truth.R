@@ -1,14 +1,13 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 4) {
-  stop(paste("4 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 3) {
+  stop(paste("3 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
-ground_truth_path <- args[2]
-results_path <- args[3]
-output_dir <- args[4]
+results_path <- args[2]
+output_dir <- args[3]
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
