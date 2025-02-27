@@ -2,8 +2,8 @@
 ## This script generates ground truth cell type proportions from single-cell labels
 #SBATCH --nodes 1
 #SBATCH --ntasks 1
-#SBATCH --cpus-per-task 2
-#SBATCH --mem 4G
+#SBATCH --cpus-per-task 8
+#SBATCH --mem 32G
 #SBATCH --time 0:30:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e

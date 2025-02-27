@@ -6,56 +6,59 @@ if (length(args) != 3) {
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
-results_path <- args[2]
-output_dir <- args[3]
+input_dir <- args[2]  # Directory containing the generated data
+output_file <- args[3]  # Full path to output ground truth file
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
-library(ggplot2)
 
-# Load deconvolution results
-load(results_path)
-# Extract method name from results file path
-method_name <- basename(results_path)
-method_name <- gsub("results_", "", method_name)
-method_name <- gsub("\\.rda$", "", method_name)
-parts <- strsplit(method_name, "_")[[1]]
-method_name <- parts[1]
-data_name <- paste(parts[-1], collapse="_")
-
-# Extract the proportions matrix
-if (!exists("deconvolutionResult")) {
-  stop("Expected 'deconvolutionResult' object not found in results file")
+# Find and load the Batch1.rda file which should contain all necessary data
+batch_file <- file.path(input_dir, "Batch1.rda")
+if (!file.exists(batch_file)) {
+  # Try to find alternative data files
+  data_files <- list.files(input_dir, pattern = "\\.rda$", full.names = TRUE)
+  sc_labels_file <- grep("singleCellLabels", data_files, value = TRUE)
+  
+  if (length(sc_labels_file) > 0) {
+    # Load single cell labels directly
+    load(sc_labels_file[1])
+  } else {
+    stop("Cannot find Batch1.rda or singleCellLabels.rda in the input directory")
+  }
+} else {
+  # Load the batch file which should contain all data
+  load(batch_file)
+  
+  # Extract single cell labels from the Batch1 object
+  if (exists("Batch1") && is.list(Batch1) && !is.null(Batch1$singleCellLabels)) {
+    singleCellLabels <- Batch1$singleCellLabels
+  } else {
+    stop("Batch1 object does not contain singleCellLabels")
+  }
 }
 
-proportions <- deconvolutionResult[[method_name]]$P
-if (is.null(proportions)) {
-  stop(paste("No proportion matrix found for method:", method_name))
+# Check if singleCellLabels exists
+if (!exists("singleCellLabels")) {
+  stop("singleCellLabels not found in the input data")
 }
 
-# Convert to long format for plotting - CORRECTED
-# We need to transpose the matrix first to get samples as rows and cell types as columns
-prop_df <- as.data.frame(t(proportions))
-prop_df$Sample <- rownames(prop_df)
-prop_long <- reshape2::melt(prop_df, id.vars="Sample", 
-                            variable.name="CellType", value.name="Proportion")
+# Calculate the ground truth proportions by counting cell types
+cell_types <- unique(singleCellLabels)
+cell_counts <- table(singleCellLabels)
+proportions <- as.numeric(cell_counts) / sum(cell_counts)
 
-# Create stacked bar plot
-p <- ggplot(prop_long, aes(x=CellType, y=Proportion, fill=Sample)) +
-  geom_bar(stat="identity", position="stack") +
-  theme_minimal() +
-  labs(title=paste(method_name, "Cell Type Proportions"),
-       x="Samples", y="Proportions") +
-  theme(axis.text.x=element_text(angle=45, hjust=1),
-        panel.grid.major=element_line(color="lightgray"),
-        panel.grid.minor=element_line(color="lightgray"),
-        legend.position="right",
-        legend.key.size = unit(0.5, "cm"),
-        plot.title=element_text(hjust=0.5)) +
-  scale_fill_brewer(palette="Set3", name="Sample")
+# Create a matrix with cell types as columns
+P <- matrix(proportions, nrow = 1, dimnames = list("true_proportions", names(cell_counts)))
 
-# Save the plot
-output_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_cell_proportions.pdf"))
-ggsave(output_filename, p, width=10, height=8)
+# Create a list to store the ground truth
+groundTruth <- list(P = P)
 
-print(paste("Plot saved to:", output_filename))
+# Print information for verification
+print("Ground truth proportions:")
+print(groundTruth$P)
+print(paste("Total cell types:", length(cell_types)))
+print(paste("Sum of proportions:", sum(proportions)))
+
+# Save the ground truth
+save(groundTruth, file = output_file)
+print(paste("Ground truth saved to:", output_file))
