@@ -230,38 +230,37 @@ pred_colors <- c(
   "#AD1457",  # Dark Pink
   "#283593"   # Dark Navy Blue
 )
-
-# Get unique cell types and their sources
-cell_type_info <- combined_data %>% 
-  select(CellType, CellTypeDisplay, CellTypeSource) %>%
-  distinct()
-
-# For debugging
-print("Cell type sources:")
-print(table(cell_type_info$CellTypeSource))
+#### Wrong color assignment!!!!
+# Get actual cell types from ground truth
+gt_cell_types <- unique(c(colnames(overall_gt_proportions), colnames(per_sample_gt_proportions)))
 
 # Create custom color mapping
-custom_colors <- vector("character", length(unique(cell_type_info$CellTypeDisplay)))
-names(custom_colors) <- unique(cell_type_info$CellTypeDisplay)
+unique_cell_displays <- unique(combined_data$CellTypeDisplay)
+custom_colors <- character(length(unique_cell_displays))
+names(custom_colors) <- unique_cell_displays
+
+# Separate counters
+light_counter <- 0
+dark_counter <- 0
 
 # Loop through each unique cell type display name
-for (i in seq_along(custom_colors)) {
-  cell_type_display <- names(custom_colors)[i]
-  # Find the source for this cell type
-  row_idx <- which(cell_type_info$CellTypeDisplay == cell_type_display)[1]
-  source <- cell_type_info$CellTypeSource[row_idx]
+for (display_name in names(custom_colors)) {
+  # Extract the base cell type name (remove any suffix like " (Pred)")
+  base_cell_type <- gsub(" \\(Pred\\)| \\(GT\\)$", "", display_name)
   
-  # Use dark colors only for "Pred only" cell types
-  if (source == "Pred only") {
-    # Use a dark color
-    color_idx <- (i %% length(pred_colors)) + 1
-    custom_colors[i] <- pred_colors[color_idx]
+  # If cell type appears in ground truth, use light colors
+  if (base_cell_type %in% gt_cell_types) {
+    light_counter <- light_counter + 1
+    color_idx <- ((light_counter - 1) %% length(gt_colors)) + 1
+    custom_colors[display_name] <- gt_colors[color_idx]
   } else {
-    # Use a light color for GT and Both
-    color_idx <- (i %% length(gt_colors)) + 1
-    custom_colors[i] <- gt_colors[color_idx]
+    # Otherwise, it's prediction-only, use dark colors
+    dark_counter <- dark_counter + 1
+    color_idx <- ((dark_counter - 1) %% length(pred_colors)) + 1
+    custom_colors[display_name] <- pred_colors[color_idx]
   }
 }
+###
 
 # Print color assignments for debugging
 print("Color assignments:")
