@@ -203,37 +203,73 @@ combined_data$CellTypeDisplay[combined_data$CellTypeSource == "GT only"] <-
 combined_data$CellTypeDisplay[combined_data$CellTypeSource == "Pred only"] <- 
   paste0(combined_data$CellType[combined_data$CellTypeSource == "Pred only"], " (Pred)")
 
-# Generate a color palette for all cell types
-num_cell_types <- length(unique(combined_data$CellTypeDisplay))
-
-# Create a broader palette that distinguishes between cell type sources
-base_colors <- c(
-  "#4285F4", "#34A853", "#FBBC05", "#EA4335",  # Google colors
-  "#3b5998", "#00acee", "#dd4b39", "#bb0000",  # Social media colors
-  "#5f9ea0", "#ff7f50", "#6495ed", "#ffd700",  # CSS colors
-  "#b22222", "#228b22", "#ff00ff", "#1e90ff"   # More CSS colors
+# Define color palettes
+gt_colors <- c(
+  "#E57373",  # Light Red
+  "#FF9933",  # Light Orange
+  "#FFD54F",  # Light Gold
+  "#AED581",  # Light Green
+  "#4CBFFF",  # Light Cyan
+  "#5999F2",  # Light Blue
+  "#BA68C8",  # Light Purple
+  "#E64CA6",  # Light Magenta
+  "#FF8CBF",  # Light Pink
+  "#7986CB"   # Light Navy Blue
 )
 
-# Extend the palette if needed
-if(num_cell_types > length(base_colors)) {
-  base_colors <- colorRampPalette(base_colors)(num_cell_types)
+# Darker colors for predicted-only cell types
+pred_colors <- c(
+  "#C62828",  # Dark Red
+  "#E65100",  # Dark Orange
+  "#F57F17",  # Dark Gold
+  "#33691E",  # Dark Green
+  "#01579B",  # Dark Cyan
+  "#1A237E",  # Dark Blue
+  "#4A148C",  # Dark Purple
+  "#880E4F",  # Dark Magenta
+  "#AD1457",  # Dark Pink
+  "#283593"   # Dark Navy Blue
+)
+
+# Get unique cell types and their sources
+cell_type_info <- combined_data %>% 
+  select(CellType, CellTypeDisplay, CellTypeSource) %>%
+  distinct()
+
+# For debugging
+print("Cell type sources:")
+print(table(cell_type_info$CellTypeSource))
+
+# Create custom color mapping
+custom_colors <- vector("character", length(unique(cell_type_info$CellTypeDisplay)))
+names(custom_colors) <- unique(cell_type_info$CellTypeDisplay)
+
+# Loop through each unique cell type display name
+for (i in seq_along(custom_colors)) {
+  cell_type_display <- names(custom_colors)[i]
+  # Find the source for this cell type
+  row_idx <- which(cell_type_info$CellTypeDisplay == cell_type_display)[1]
+  source <- cell_type_info$CellTypeSource[row_idx]
+  
+  # Use dark colors only for "Pred only" cell types
+  if (source == "Pred only") {
+    # Use a dark color
+    color_idx <- (i %% length(pred_colors)) + 1
+    custom_colors[i] <- pred_colors[color_idx]
+  } else {
+    # Use a light color for GT and Both
+    color_idx <- (i %% length(gt_colors)) + 1
+    custom_colors[i] <- gt_colors[color_idx]
+  }
 }
 
-# Create the color palette
-cell_type_display_names <- unique(combined_data$CellTypeDisplay)
-custom_colors <- base_colors[1:length(cell_type_display_names)]
-names(custom_colors) <- cell_type_display_names
-
-# Adjust colors based on source for better visual distinction
-for(i in 1:length(custom_colors)) {
-  name <- names(custom_colors)[i]
-  if(grepl(" \\(GT\\)$", name)) {
-    # Make GT-only colors more saturated
-    custom_colors[i] <- colorspace::lighten(custom_colors[i], 0.2)
-  } else if(grepl(" \\(Pred\\)$", name)) {
-    # Make prediction-only colors more vibrant
-    custom_colors[i] <- colorspace::darken(custom_colors[i], 0.2)
-  }
+# Print color assignments for debugging
+print("Color assignments:")
+for (i in 1:min(20, length(custom_colors))) {
+  ct_display <- names(custom_colors)[i]
+  row_idx <- which(cell_type_info$CellTypeDisplay == ct_display)[1]
+  source <- cell_type_info$CellTypeSource[row_idx]
+  print(paste(ct_display, "(", source, ") ->", custom_colors[i]))
 }
 
 # Create stacked bar plot
@@ -261,6 +297,7 @@ p <- ggplot(combined_data, aes(x=DisplayPosition, y=Proportion, fill=CellTypeDis
 
 # Save the plot with adjusted dimensions based on the number of samples
 n_samples <- length(unique(combined_data$Sample))
+num_cell_types <- length(unique(combined_data$CellTypeDisplay))
 plot_width <- max(12, n_samples * 0.4)  # Adjust width based on number of samples
 plot_height <- 7 + (num_cell_types > 20) * (num_cell_types - 20) * 0.1  # Increase height for many cell types
 
@@ -268,26 +305,3 @@ output_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_p
 ggsave(output_filename, p, width=plot_width, height=plot_height)
 
 print(paste("Plot saved to:", output_filename))
-
-# Also save a legend-only plot for easier reference
-legend_plot <- ggplot(combined_data, aes(x=1, y=1, fill=CellTypeDisplay)) +
-  geom_bar(stat="identity") +
-  theme_void() +
-  theme(legend.position="right") +
-  scale_fill_manual(values=custom_colors, name="Cell Type")
-
-legend_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_cell_type_legend.pdf"))
-ggsave(legend_filename, legend_plot, width=6, height=plot_height)
-
-print(paste("Cell type legend saved to:", legend_filename))
-
-# Optionally, create a summary table of cell type sources
-cell_type_summary <- combined_data %>%
-  group_by(CellType, CellTypeSource) %>%
-  summarise(Average_Proportion = mean(Proportion)) %>%
-  arrange(CellTypeSource, desc(Average_Proportion))
-
-summary_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_cell_type_summary.csv"))
-write.csv(cell_type_summary, summary_filename, row.names=FALSE)
-
-print(paste("Cell type summary saved to:", summary_filename))
