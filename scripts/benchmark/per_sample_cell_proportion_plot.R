@@ -46,7 +46,20 @@ overall_gt_proportions <- groundTruth$P
 load(per_sample_ground_truth_path)
 per_sample_gt_proportions <- groundTruth$P
 
-# Ensure we have the same cell types across all datasets
+# Get all unique cell types from both datasets (union instead of intersection)
+all_cell_types <- unique(c(
+  colnames(proportions),
+  colnames(overall_gt_proportions),
+  colnames(per_sample_gt_proportions)
+))
+
+# Print information about cell types for debugging
+print(paste("Number of predicted cell types:", length(colnames(proportions))))
+print(paste("Number of overall GT cell types:", length(colnames(overall_gt_proportions))))
+print(paste("Number of per-sample GT cell types:", length(colnames(per_sample_gt_proportions))))
+print(paste("Total unique cell types:", length(all_cell_types)))
+
+# Check if there are any common cell types
 common_cell_types <- Reduce(intersect, list(
   colnames(proportions),
   colnames(overall_gt_proportions),
@@ -54,13 +67,36 @@ common_cell_types <- Reduce(intersect, list(
 ))
 
 if (length(common_cell_types) == 0) {
-  stop("No common cell types found between ground truth and predicted proportions.")
+  print("WARNING: No common cell types found between ground truth and predicted proportions.")
+  print("Will continue with the union of all cell types and fill missing values with zeros.")
 }
 
-# Subset to common cell types
-proportions <- proportions[, common_cell_types, drop=FALSE]
-overall_gt_proportions <- overall_gt_proportions[, common_cell_types, drop=FALSE]
-per_sample_gt_proportions <- per_sample_gt_proportions[, common_cell_types, drop=FALSE]
+# Helper function to expand a matrix with missing cell types (filled with zeros)
+expand_matrix_with_zeros <- function(mat, all_cols) {
+  current_cols <- colnames(mat)
+  missing_cols <- setdiff(all_cols, current_cols)
+  
+  if (length(missing_cols) > 0) {
+    # Create a matrix of zeros for the missing columns
+    zero_mat <- matrix(0, nrow=nrow(mat), ncol=length(missing_cols))
+    colnames(zero_mat) <- missing_cols
+    rownames(zero_mat) <- rownames(mat)
+    
+    # Combine with the original matrix
+    expanded_mat <- cbind(mat, zero_mat)
+    # Reorder columns to match all_cols
+    expanded_mat <- expanded_mat[, all_cols, drop=FALSE]
+    return(expanded_mat)
+  } else {
+    # Reorder columns to match all_cols
+    return(mat[, all_cols, drop=FALSE])
+  }
+}
+
+# Expand all matrices to include all cell types
+proportions <- expand_matrix_with_zeros(proportions, all_cell_types)
+overall_gt_proportions <- expand_matrix_with_zeros(overall_gt_proportions, all_cell_types)
+per_sample_gt_proportions <- expand_matrix_with_zeros(per_sample_gt_proportions, all_cell_types)
 
 # Convert predicted proportions to long format
 prop_df <- as.data.frame(proportions)
@@ -127,7 +163,7 @@ for (pair in sort(unique(combined_data$PairID))) {
   pair_indices <- which(combined_data$PairID == pair)
   
   # If there's only one sample in this pair (no matching GT)
-  if (length(pair_indices) == length(common_cell_types)) {
+  if (length(pair_indices) == length(all_cell_types)) {
     combined_data$DisplayPosition[pair_indices] <- current_pos
     current_pos <- current_pos + 1  # No extra spacing for unpaired samples
   } 
@@ -151,30 +187,61 @@ for (pair in sort(unique(combined_data$PairID))) {
 overall_indices <- which(combined_data$PairID == "ZZ_Overall")
 combined_data$DisplayPosition[overall_indices] <- current_pos + 1  # Add extra spacing before Overall GT
 
-# Generate a broader color palette for cell types
-num_cell_types <- length(common_cell_types)
-custom_colors <- colorRampPalette(c(
-  "#E57373",  # Light Red
-  "#FF9933",  # Light Orange
-  "#FFD54F",  # Light Gold
-  "#AED581",  # Light Green
-  "#4CBFFF",  # Light Cyan
-  "#5999F2",  # Light Blue
-  "#BA68C8",  # Light Purple
-  "#E64CA6",  # Light Magenta
-  "#FF8CBF",  # Light Pink
-  "#7986CB"   # Light Navy Blue
-))(num_cell_types)
+# Add origin information to cell types
+cell_types_in_gt <- unique(c(colnames(overall_gt_proportions), colnames(per_sample_gt_proportions)))
+cell_types_in_pred <- colnames(proportions)
 
-# Assign colors to cell types
-names(custom_colors) <- common_cell_types
+# Create a new column to mark the source of each cell type
+combined_data$CellTypeSource <- "Both"
+combined_data$CellTypeSource[combined_data$CellType %in% setdiff(cell_types_in_gt, cell_types_in_pred)] <- "GT only"
+combined_data$CellTypeSource[combined_data$CellType %in% setdiff(cell_types_in_pred, cell_types_in_gt)] <- "Pred only"
+
+# Add a suffix to cell type names to visually distinguish them
+combined_data$CellTypeDisplay <- as.character(combined_data$CellType)
+combined_data$CellTypeDisplay[combined_data$CellTypeSource == "GT only"] <- 
+  paste0(combined_data$CellType[combined_data$CellTypeSource == "GT only"], " (GT)")
+combined_data$CellTypeDisplay[combined_data$CellTypeSource == "Pred only"] <- 
+  paste0(combined_data$CellType[combined_data$CellTypeSource == "Pred only"], " (Pred)")
+
+# Generate a color palette for all cell types
+num_cell_types <- length(unique(combined_data$CellTypeDisplay))
+
+# Create a broader palette that distinguishes between cell type sources
+base_colors <- c(
+  "#4285F4", "#34A853", "#FBBC05", "#EA4335",  # Google colors
+  "#3b5998", "#00acee", "#dd4b39", "#bb0000",  # Social media colors
+  "#5f9ea0", "#ff7f50", "#6495ed", "#ffd700",  # CSS colors
+  "#b22222", "#228b22", "#ff00ff", "#1e90ff"   # More CSS colors
+)
+
+# Extend the palette if needed
+if(num_cell_types > length(base_colors)) {
+  base_colors <- colorRampPalette(base_colors)(num_cell_types)
+}
+
+# Create the color palette
+cell_type_display_names <- unique(combined_data$CellTypeDisplay)
+custom_colors <- base_colors[1:length(cell_type_display_names)]
+names(custom_colors) <- cell_type_display_names
+
+# Adjust colors based on source for better visual distinction
+for(i in 1:length(custom_colors)) {
+  name <- names(custom_colors)[i]
+  if(grepl(" \\(GT\\)$", name)) {
+    # Make GT-only colors more saturated
+    custom_colors[i] <- colorspace::lighten(custom_colors[i], 0.2)
+  } else if(grepl(" \\(Pred\\)$", name)) {
+    # Make prediction-only colors more vibrant
+    custom_colors[i] <- colorspace::darken(custom_colors[i], 0.2)
+  }
+}
 
 # Create stacked bar plot
-p <- ggplot(combined_data, aes(x=DisplayPosition, y=Proportion, fill=CellType)) +
+p <- ggplot(combined_data, aes(x=DisplayPosition, y=Proportion, fill=CellTypeDisplay)) +
   geom_bar(stat="identity", position="stack", width=0.8) +
   theme_minimal() +
   labs(title=paste(method_name, "vs Ground Truth Cell Type Proportions"),
-       subtitle="Sample predictions paired with their corresponding ground truth",
+       subtitle="Sample predictions paired with corresponding ground truth (non-matching cell types marked)",
        x="Samples", y="Proportions") +
   scale_x_continuous(
     breaks = combined_data$DisplayPosition,
@@ -192,21 +259,35 @@ p <- ggplot(combined_data, aes(x=DisplayPosition, y=Proportion, fill=CellType)) 
   ) +
   scale_fill_manual(values=custom_colors, name="Cell Type")
 
-# Add a vertical line before the final separator
-if (any(combined_data$Sample == "Final-Separator")) {
-  separator_position <- min(combined_data$DisplayPosition[combined_data$Sample == "Final-Separator"])
-  p <- p + geom_vline(xintercept=separator_position - 0.5, 
-                      linetype="dashed", color="gray50", linewidth=0.5)
-}
-
-# Fix the separator labels - hide them without vectorized input
-# Not needed anymore as we removed the separator
-
 # Save the plot with adjusted dimensions based on the number of samples
 n_samples <- length(unique(combined_data$Sample))
 plot_width <- max(12, n_samples * 0.4)  # Adjust width based on number of samples
+plot_height <- 7 + (num_cell_types > 20) * (num_cell_types - 20) * 0.1  # Increase height for many cell types
 
 output_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_paired_ground_truth.pdf"))
-ggsave(output_filename, p, width=plot_width, height=7)
+ggsave(output_filename, p, width=plot_width, height=plot_height)
 
 print(paste("Plot saved to:", output_filename))
+
+# Also save a legend-only plot for easier reference
+legend_plot <- ggplot(combined_data, aes(x=1, y=1, fill=CellTypeDisplay)) +
+  geom_bar(stat="identity") +
+  theme_void() +
+  theme(legend.position="right") +
+  scale_fill_manual(values=custom_colors, name="Cell Type")
+
+legend_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_cell_type_legend.pdf"))
+ggsave(legend_filename, legend_plot, width=6, height=plot_height)
+
+print(paste("Cell type legend saved to:", legend_filename))
+
+# Optionally, create a summary table of cell type sources
+cell_type_summary <- combined_data %>%
+  group_by(CellType, CellTypeSource) %>%
+  summarise(Average_Proportion = mean(Proportion)) %>%
+  arrange(CellTypeSource, desc(Average_Proportion))
+
+summary_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_cell_type_summary.csv"))
+write.csv(cell_type_summary, summary_filename, row.names=FALSE)
+
+print(paste("Cell type summary saved to:", summary_filename))

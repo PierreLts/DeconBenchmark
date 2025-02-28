@@ -8,7 +8,7 @@ if (length(args) != 5) {
 path_Rlibrary <- args[1] #IMPORTANT
 input_data <- args[2]
 output_data <- args[3]
-deconv_methods <- args[4] # Now can be comma-separated list of methods
+deconv_methods <- args[4] # can be comma-separated list of methods
 sparse_conversion <- as.logical(args[5])
 
 # Libraries
@@ -17,23 +17,13 @@ library(DeconBenchmark)
 library(Matrix)
 print("CHECK: Libraries loaded")
 
-
-# # singularity_images
-# singularity_images <- list(
-#   "bseqsc" = "/scratch/lorthiois/singularity_images/bseqsc.sif",
-#   "celldistinguisher" = "/scratch/lorthiois/singularity_images/celldistinguisher.sif",
-#   "cibersort" = "/scratch/lorthiois/singularity_images/cibersort.sif",
-#   "demixt" = "/scratch/lorthiois/singularity_images/demixt.sif",
-#   "methylresolver" = "/scratch/lorthiois/singularity_images/methylresolver.sif"
-# )
-
  
 # Load input data
 loaded_objects <- load(input_data)
 print("Loaded objects:")
 print(loaded_objects)
 
-# Get the name of the loaded object (assuming it's the first/only one)
+# Get the 1st method
 data_object_name <- loaded_objects[1]
 # Access through the object name dynamically
 data_object <- get(data_object_name)
@@ -67,26 +57,26 @@ method_list <- unlist(strsplit(deconv_methods, ","))
 method_list <- trimws(method_list) # Remove any whitespace
 print(paste("Methods to run:", paste(method_list, collapse=", ")))
 
-# Generate reference if needed for multiple methods
-signature <- NULL
-if (length(method_list) > 1) {
-  # Check if any methods require a signature
-  required_inputs <- getMethodsInputs(method_list, containerEngine = "singularity")
-  needs_signature <- any(sapply(required_inputs, function(x) "signature" %in% x))
+# # Generate reference if needed for multiple methods
+# signature <- NULL
+# if (length(method_list) > 1) {
+#   # Check if any methods require a signature
+#   required_inputs <- getMethodsInputs(method_list, containerEngine = "singularity")
+#   needs_signature <- any(sapply(required_inputs, function(x) "signature" %in% x))
   
-  if (needs_signature) {
-    print("Generating reference signature for methods that require it...")
-    reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
-    signature <- reference$signature
-  }
-}
+#   if (needs_signature) {
+#     print("Generating reference signature for methods that require it...")
+#     reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
+#     signature <- reference$signature
+#   }
+# }
 ### Test fix
 reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
 signature <- reference$signature
 singleCellSubjects <- rep("subject1", length(singleCellLabels))
 
 
-# Run deconvolution using Singularity with all specified methods
+### Run deconvolution
 print(paste("Starting deconvolution with", length(method_list), "methods..."))
 deconvolutionResult <- runDeconvolution(
   methods = method_list,
