@@ -94,13 +94,56 @@ print("CHECK: Deconvolution completed for all methods")
 # Print results preview
 for (method in method_list) {
   if (!is.null(deconvolutionResult[[method]])) {
-    proportion <- deconvolutionResult[[method]]$P
-    if (!is.null(proportion)) {
-      print(paste("Preview of", method, "results:"))
+    print(paste("=== Results preview for", method, "==="))
+    
+    # Print available components
+    components <- names(deconvolutionResult[[method]])
+    print(paste("Available result components:", paste(components, collapse=", ")))
+    
+    # Preview proportions (P matrix)
+    if (!is.null(deconvolutionResult[[method]]$P)) {
+      proportion <- deconvolutionResult[[method]]$P
+      print("Cell type proportions (P) preview:")
       print(head(proportion, 3))
     } else {
-      print(paste("No proportion matrix found for", method))
+      print("No proportion matrix found")
     }
+
+    # Preview signature matrix if available
+    if (!is.null(deconvolutionResult[[method]]$S)) {
+      signature <- deconvolutionResult[[method]]$S
+      print("Signature matrix (S) preview:")
+      # Handle different dimensions appropriately
+      if (is.matrix(signature)) {
+        print(head(signature[, 1:min(3, ncol(signature))], 3))
+      } else if (is.vector(signature)) {
+        print(head(signature, 6))
+      } else {
+        print("Signature matrix has unexpected format")
+      }
+    }
+    
+    # Preview other common outputs
+    other_components <- setdiff(components, c("P", "S"))
+    for (comp in other_components) {
+      result_comp <- deconvolutionResult[[method]][[comp]]
+      
+      # Only print matrices or vectors with proper preview
+      if (is.matrix(result_comp) || is.vector(result_comp)) {
+        print(paste(comp, "preview:"))
+        if (is.matrix(result_comp)) {
+          print(head(result_comp[, 1:min(3, ncol(result_comp))], 3))
+        } else if (length(result_comp) > 6) {
+          print(result_comp[1:6])
+        } else {
+          print(result_comp)
+        }
+      } else {
+        print(paste(comp, "is available but not previewed (non-tabular format)"))
+      }
+    }
+    
+    print("") # Empty line for separation
   } else {
     print(paste("Method", method, "failed to produce results"))
   }

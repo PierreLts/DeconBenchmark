@@ -231,44 +231,63 @@ pred_colors <- c(
   "#283593"   # Dark Navy Blue
 )
 #### Wrong color assignment!!!!
-# Get actual cell types from ground truth
-gt_cell_types <- unique(c(colnames(overall_gt_proportions), colnames(per_sample_gt_proportions)))
+# Get actual cell types from both sources
+# IMPORTANT: Store original cell types BEFORE expanding matrices
+original_gt_cell_types <- unique(c(colnames(overall_gt_proportions), colnames(per_sample_gt_proportions)))
+original_pred_cell_types <- colnames(proportions)
 
-# Create custom color mapping
+# Identify cell types exclusive to each source
+pred_only_cell_types <- setdiff(original_pred_cell_types, original_gt_cell_types)
+gt_only_cell_types <- setdiff(original_gt_cell_types, original_pred_cell_types)
+both_cell_types <- intersect(original_gt_cell_types, original_pred_cell_types)
+
+# After expanding matrices and creating the combined_data dataframe...
+
+# Properly assign cell type sources based on original classification
+combined_data$CellTypeSource <- "Both"
+combined_data$CellTypeSource[combined_data$CellType %in% gt_only_cell_types] <- "GT only"
+combined_data$CellTypeSource[combined_data$CellType %in% pred_only_cell_types] <- "Pred only"
+
+# Now assign colors based on the corrected source information
 unique_cell_displays <- unique(combined_data$CellTypeDisplay)
 custom_colors <- character(length(unique_cell_displays))
 names(custom_colors) <- unique_cell_displays
 
-# Separate counters
-light_counter <- 0
-dark_counter <- 0
+gt_counter <- 0
+pred_counter <- 0
 
-# Loop through each unique cell type display name
-for (display_name in names(custom_colors)) {
-  # Extract the base cell type name (remove any suffix like " (Pred)")
+for (display_name in unique_cell_displays) {
   base_cell_type <- gsub(" \\(Pred\\)| \\(GT\\)$", "", display_name)
   
-  # If cell type appears in ground truth, use light colors
-  if (base_cell_type %in% gt_cell_types) {
-    light_counter <- light_counter + 1
-    color_idx <- ((light_counter - 1) %% length(gt_colors)) + 1
-    custom_colors[display_name] <- gt_colors[color_idx]
-  } else {
-    # Otherwise, it's prediction-only, use dark colors
-    dark_counter <- dark_counter + 1
-    color_idx <- ((dark_counter - 1) %% length(pred_colors)) + 1
+  # Check source directly from the cell type
+  if (base_cell_type %in% pred_only_cell_types) {
+    pred_counter <- pred_counter + 1
+    color_idx <- ((pred_counter - 1) %% length(pred_colors)) + 1
     custom_colors[display_name] <- pred_colors[color_idx]
+  } else {
+    gt_counter <- gt_counter + 1
+    color_idx <- ((gt_counter - 1) %% length(gt_colors)) + 1
+    custom_colors[display_name] <- gt_colors[color_idx]
   }
 }
 ###
+
+# Create cell_type_info dataframe for debugging
+cell_type_info <- combined_data %>%
+  select(CellType, CellTypeDisplay, CellTypeSource) %>%
+  distinct()
 
 # Print color assignments for debugging
 print("Color assignments:")
 for (i in 1:min(20, length(custom_colors))) {
   ct_display <- names(custom_colors)[i]
-  row_idx <- which(cell_type_info$CellTypeDisplay == ct_display)[1]
-  source <- cell_type_info$CellTypeSource[row_idx]
-  print(paste(ct_display, "(", source, ") ->", custom_colors[i]))
+  if (ct_display %in% cell_type_info$CellTypeDisplay) {
+    row_idx <- which(cell_type_info$CellTypeDisplay == ct_display)[1]
+    source <- cell_type_info$CellTypeSource[row_idx]
+    print(paste(ct_display, "(", source, ") ->", custom_colors[i]))
+  } else {
+    print(paste(ct_display, "(unknown) ->", custom_colors[i]))
+  }
 }
 
 # Create stacked bar plot

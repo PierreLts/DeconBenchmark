@@ -20,7 +20,7 @@ RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
 SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/deconv_run.R
 input_data="/work/gr-fe/lorthiois/DeconBenchmark/data/Batch1_Downsampled.rda"
 output_data="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
-deconv_method="CIBERSORT"
+deconv_method="MuSic"
 sparse_conversion=TRUE # Enable sparse matrix conversion
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/ #IMPORTANT

@@ -12,7 +12,7 @@ output_file <- args[3]  # Full path to output ground truth file
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
 
-# Find and load the Batch1.rda file which should contain all necessary data
+# Load Batch1.rda
 batch_file <- file.path(input_dir, "Batch1.rda")
 if (!file.exists(batch_file)) {
   # Try to find alternative data files
@@ -26,7 +26,7 @@ if (!file.exists(batch_file)) {
     stop("Cannot find Batch1.rda or singleCellLabels.rda in the input directory")
   }
 } else {
-  # Load the batch file which should contain all data
+  
   load(batch_file)
   
   # Extract single cell labels from the Batch1 object
