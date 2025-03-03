@@ -171,29 +171,56 @@ for (result_file in result_files) {
   all_detailed_results <- rbind(all_detailed_results, metrics_by_sample)
 }
 
-# Save results
-if (nrow(all_method_summaries) > 0) {
+# # Save results
+# if (nrow(all_method_summaries) > 0) {
+#   # Calculate composite score
+#   # First normalize all metrics to 0-1 scale
+#   normalize <- function(x, higher_is_better = TRUE) {
+#     if (length(unique(x)) == 1) return(rep(0.5, length(x)))  # Handle constant values
+#     if (higher_is_better) {
+#       return(scales::rescale(x, to = c(0, 1)))
+#     } else {
+#       return(scales::rescale(-x, to = c(0, 1)))  # Flip for lower-is-better metrics
+#     }
+#   }
+
+
+# Define the composite score function
+composite_score <- function(metrics_df) {
+  # Weight parameters
+  w_pearson <- 1.5
+  w_spearman <- 1.5
+  w_mae <- 1.5
+  w_rmse <- 1.5
+  w_r2 <- 0
+  
   # Calculate composite score
-  # First normalize all metrics to 0-1 scale
-  normalize <- function(x, higher_is_better = TRUE) {
-    if (length(unique(x)) == 1) return(rep(0.5, length(x)))  # Handle constant values
-    if (higher_is_better) {
-      return(scales::rescale(x, to = c(0, 1)))
-    } else {
-      return(scales::rescale(-x, to = c(0, 1)))  # Flip for lower-is-better metrics
-    }
-  }
+  pearson <- abs(metrics_df$Pearson)
+  spearman <- abs(metrics_df$Spearman)
+  r2 <- metrics_df$R2
   
-  all_method_summaries <- all_method_summaries %>%
-    mutate(
-      norm_pearson = normalize(Mean_PearsonCorr, TRUE),
-      norm_spearman = normalize(Mean_SpearmanCorr, TRUE),
-      norm_mae = normalize(Mean_MAE, FALSE),
-      norm_rmse = normalize(Mean_RMSE, FALSE),
-      norm_r2 = normalize(Mean_R2, TRUE),
-      CompositeScore = (norm_pearson + norm_spearman + norm_mae + norm_rmse + norm_r2) / 6
-    )
+  # Calculate composite score
+#   score <- ((w_pearson * pearson) + 
+#            (w_spearman * spearman) -
+#            (w_mae * metrics_df$MAE) -
+#            (w_rmse * metrics_df$RMSE) +
+#            (w_r2 * r2))/4
+  score <- 0 ### 0 for testing!
+  return(score)
+}
   
+# Calculate composite score
+all_method_summaries <- all_method_summaries %>%
+  mutate(
+    CompositeScore = composite_score(data.frame(
+      Pearson = Mean_PearsonCorr,
+      Spearman = Mean_SpearmanCorr,
+      MAE = Mean_MAE,
+      RMSE = Mean_RMSE,
+      R2 = Mean_R2
+    ))
+  )
+
   # Rank methods by composite score
   ranked_methods <- all_method_summaries %>%
     arrange(desc(CompositeScore))
@@ -209,7 +236,7 @@ if (nrow(all_method_summaries) > 0) {
   # Generate comparison plot with all metrics
   if (nrow(ranked_methods) > 1) {
     # Select top methods (limit to make plot readable)
-    top_n_methods <- min(13, nrow(ranked_methods))
+    top_n_methods <- min(15, nrow(ranked_methods))
     top_methods <- ranked_methods[1:top_n_methods, ]
     
     # Add ranking numbers to method names
@@ -304,11 +331,11 @@ if (nrow(all_method_summaries) > 0) {
 
     # Save plot
     comparison_plot_file <- file.path(output_dir, "method_metrics_comparison.pdf")
-    ggsave(comparison_plot_file, p, width = 22, height = 8)
+    ggsave(comparison_plot_file, p, width = 22, height = 12)
     
     # Also save as PNG for easier viewing
     comparison_plot_png <- file.path(output_dir, "method_metrics_comparison.png")
-    ggsave(comparison_plot_png, p, width = 22, height = 8, dpi = 300)
+    ggsave(comparison_plot_png, p, width = 22, height = 12, dpi = 300)
     
     cat("Comparison plot saved to:", comparison_plot_file, "and", comparison_plot_png, "\n")
   }
