@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Deconvolution and Evaluation Error Summary</title>
+    <title>Deconvolution and Paired Plot Error Summary</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1, h2 { color: #333; }
@@ -40,12 +40,12 @@
     </script>
 </head>
 <body>
-    <h1>Deconvolution and Evaluation Error Summary</h1>
-    <p>Generated on jeu 27 fév 2025 17:44:28 CET for dataset: Batch1_Downsampled</p>
+    <h1>Deconvolution and Paired Plot Error Summary</h1>
+    <p>Generated on lun 03 mar 2025 10:43:05 CET for dataset: Batch1_Downsampled</p>
     
     <div class="tabs">
         <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
-        <button class="tab" onclick="openTab(event, 'StatsTab')">Statistics Errors</button>
+        <button class="tab" onclick="openTab(event, 'PairedPlotTab')">Paired Plot Errors</button>
         <button class="tab" onclick="openTab(event, 'SummaryTab')">Error Summary</button>
     </div>
     
@@ -453,429 +453,437 @@ Error in names(SelMarker) &lt;- paste0("CellType", 1:K) : <br>
         </table>
     </div>
     
-    <div id="StatsTab" class="tab-content">
-        <h2>Statistics Calculation Errors</h2>
+    <div id="PairedPlotTab" class="tab-content">
+        <h2>Paired Plot Errors</h2>
         <table>
             <tr>
                 <th>Method</th>
-                <th>Stats Job ID</th>
+                <th>Plot Job ID</th>
                 <th>Status</th>
                 <th>Error Type</th>
                 <th>Error Details</th>
             </tr>
-    <tr>
-        <td>AdRoit</td>
-        <td>32350855</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>ARIC</td>
-            <td>32350857</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ARIC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: ARIC<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>AutoGeneS</td>
-            <td>32350859</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_AutoGeneS_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: AutoGeneS<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>BayCount</td>
-            <td>32350861</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayCount_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: Mismatch: Ground truth and predicted proportions do not have the same cell types.<br>
-Execution halted<br></td>
-        </tr>
         <tr>
             <td>BayesCCE</td>
-            <td>32350863</td>
+            <td>32412690</td>
             <td class="error">Failed</td>
             <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayesCCE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+            <td><br>
 Error: No proportion matrix found for method: BayesCCE<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>BayesPrism</td>
-        <td>32350865</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>BayICE</td>
-            <td>32350867</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BayICE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: Mismatch: Ground truth and predicted proportions do not have the same cell types.<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>BisqueMarker</td>
-            <td>32350869</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BisqueMarker_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: BisqueMarker<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>BisqueRef</td>
-        <td>32350871</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>BseqSC</td>
-            <td>32350873</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_BseqSC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: BseqSC<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>CellDistinguisher</td>
-            <td>32350875</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_CellDistinguisher_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: CellDistinguisher<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>CIBERSORT</td>
-            <td>32350877</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_CIBERSORT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: CIBERSORT<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>CPM</td>
-        <td>32350879</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>DAISM</td>
-            <td>32350881</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DAISM_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: DAISM<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>debCAM</td>
-            <td>32350883</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_debCAM_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: debCAM<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>Deblender</td>
-            <td>32350885</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_Deblender_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: Deblender<br>
 Execution halted<br></td>
         </tr>
         <tr>
             <td>DeCompress</td>
-            <td>32350887</td>
+            <td>32412691</td>
             <td class="error">Failed</td>
             <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeCompress_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+            <td><br>
 Error: No proportion matrix found for method: DeCompress<br>
 Execution halted<br></td>
         </tr>
         <tr>
-            <td>deconf</td>
-            <td>32350889</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_deconf_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: Mismatch: Ground truth and predicted proportions do not have the same cell types.<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>DeconICA</td>
-            <td>32350891</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconICA_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: Mismatch: Ground truth and predicted proportions do not have the same cell types.<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>DeconPeaker</td>
-            <td>32350893</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeconPeaker_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: DeconPeaker<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>DeconRNASeq</td>
-        <td>32350895</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-    <tr>
-        <td>deconvSeq</td>
-        <td>32350897</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>DecOT</td>
-            <td>32350899</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DecOT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: DecOT<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>DeMixT</td>
-            <td>32350901</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DeMixT_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: DeMixT<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>DESeq2</td>
-            <td>32350903</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DESeq2_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: DESeq2<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>digitalDLSorter</td>
-            <td>32350905</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_digitalDLSorter_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: digitalDLSorter<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>DSA</td>
-            <td>32350907</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_DSA_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: DSA<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>dtangle</td>
-            <td>32350909</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_dtangle_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: dtangle<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>DWLS</td>
-        <td>32350911</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>EMeth</td>
-            <td>32350913</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_EMeth_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: EMeth<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>EPIC</td>
-            <td>32350915</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_EPIC_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: EPIC<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>FARDEEP</td>
-        <td>32350917</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>ImmuCellAI</td>
-            <td>32350919</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ImmuCellAI_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: ImmuCellAI<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>LinDeconSeq</td>
-        <td>32350921</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>MCPcounter</td>
-            <td>32350923</td>
-            <td class="error">Failed</td>
-            <td>Error</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MCPcounter_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error in proportions[i, ] : subscript out of bounds<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>MethylResolver</td>
-            <td>32350925</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MethylResolver_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: MethylResolver<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>MIXTURE</td>
-        <td>32350927</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
             <td>MOMF</td>
-            <td>32350929</td>
+            <td>32412692</td>
             <td class="error">Failed</td>
             <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MOMF_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+            <td><br>
 Error: No proportion matrix found for method: MOMF<br>
 Execution halted<br></td>
         </tr>
     <tr>
-        <td>MuSic</td>
-        <td>32350931</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-        <tr>
-            <td>MySort</td>
-            <td>32350933</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_MySort_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: MySort<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>NITUMID</td>
-            <td>32350935</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_NITUMID_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: NITUMID<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>PREDE</td>
-            <td>32350937</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_PREDE_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: PREDE<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>quanTIseq</td>
-            <td>32350939</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_quanTIseq_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: quanTIseq<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
-            <td>ReFACTor</td>
-            <td>32350941</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_ReFACTor_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: ReFACTor<br>
-Execution halted<br></td>
-        </tr>
-    <tr>
-        <td>RNA-Sieve</td>
-        <td>32350943</td>
+        <td>BayCount</td>
+        <td>32412693</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>scaden</td>
-            <td>32350945</td>
+            <td>32412694</td>
             <td class="error">Failed</td>
             <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_scaden_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+            <td><br>
 Error: No proportion matrix found for method: scaden<br>
 Execution halted<br></td>
         </tr>
     <tr>
-        <td>SCDC</td>
-        <td>32350947</td>
+        <td>BayICE</td>
+        <td>32412695</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>DecOT</td>
+            <td>32412696</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: DecOT<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>TOAST</td>
+            <td>32412697</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: TOAST<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>DESeq2</td>
+            <td>32412698</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: DESeq2<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>CDSeq</td>
+        <td>32412699</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>RNA-Sieve</td>
+        <td>32412700</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>MIXTURE</td>
+        <td>32412701</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>ImmuCellAI</td>
+            <td>32412702</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: ImmuCellAI<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>BseqSC</td>
+            <td>32412703</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: BseqSC<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>MySort</td>
+            <td>32412704</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: MySort<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>CellDistinguisher</td>
+            <td>32412705</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: CellDistinguisher<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>DeconPeaker</td>
+            <td>32412706</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: DeconPeaker<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>DeconRNASeq</td>
+        <td>32412707</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>spatialDWLS</td>
-            <td>32350949</td>
+            <td>32412708</td>
             <td class="error">Failed</td>
             <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_spatialDWLS_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
+            <td><br>
 Error: No proportion matrix found for method: spatialDWLS<br>
 Execution halted<br></td>
         </tr>
+    <tr>
+        <td>AdRoit</td>
+        <td>32412709</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
         <tr>
-            <td>TOAST</td>
-            <td>32350951</td>
+            <td>DSA</td>
+            <td>32412710</td>
             <td class="error">Failed</td>
             <td>Error:</td>
-            <td>+ Rscript /work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/model_stats.R /work/gr-fe/R_4.3.1 /work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda /work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_TOAST_Batch1_Downsampled.rda /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
-Error: No proportion matrix found for method: TOAST<br>
+            <td><br>
+Error: No proportion matrix found for method: DSA<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>MuSic</td>
+        <td>32412711</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>DeMixT</td>
+            <td>32412712</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: DeMixT<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>BisqueRef</td>
+        <td>32412713</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>EMeth</td>
+            <td>32412714</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: EMeth<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>CPM</td>
+        <td>32412715</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>DWLS</td>
+        <td>32412716</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>MCPcounter</td>
+            <td>32412717</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: id variables not found in data: Sample, PairID<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>EPIC</td>
+            <td>32412718</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: EPIC<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>BayesPrism</td>
+        <td>32412719</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>DeconICA</td>
+        <td>32412720</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>DAISM</td>
+            <td>32412721</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: DAISM<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>ReFACTor</td>
+            <td>32412722</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: ReFACTor<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>NITUMID</td>
+            <td>32412723</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: NITUMID<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>quanTIseq</td>
+            <td>32412724</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: quanTIseq<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>Deblender</td>
+            <td>32412725</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: Deblender<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>debCAM</td>
+            <td>32412726</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: debCAM<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>CIBERSORT</td>
+            <td>32412727</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: CIBERSORT<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>LinDeconSeq</td>
+        <td>32412728</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>dtangle</td>
+            <td>32412729</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: dtangle<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>MethylResolver</td>
+            <td>32412730</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: MethylResolver<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>FARDEEP</td>
+        <td>32412731</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>ARIC</td>
+            <td>32412732</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: ARIC<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>deconvSeq</td>
+        <td>32412733</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>digitalDLSorter</td>
+            <td>32412734</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: digitalDLSorter<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>PREDE</td>
+            <td>32412735</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: PREDE<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>BisqueMarker</td>
+            <td>32412736</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: BisqueMarker<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>AutoGeneS</td>
+            <td>32412737</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: AutoGeneS<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>deconf</td>
+        <td>32412738</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>SCDC</td>
+        <td>32412739</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>compare_paired</td>
+            <td>32412740</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No summary statistics files found in /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results<br>
 Execution halted<br></td>
         </tr>
         </table>
@@ -908,23 +916,23 @@ Execution halted<br></td>
         
         <div class="dashboard">
             <div class="metric">
-                <div class="metric-title">Stats Total</div>
-                <div class="metric-value">49</div>
+                <div class="metric-title">Plots Total</div>
+                <div class="metric-value">51</div>
             </div>
             <div class="metric">
-                <div class="metric-title">Stats Success</div>
-                <div class="metric-value" style="color: #2ecc71">13</div>
-                <div>26.0%</div>
+                <div class="metric-title">Plots Success</div>
+                <div class="metric-value" style="color: #2ecc71">18</div>
+                <div>35.0%</div>
             </div>
             <div class="metric">
-                <div class="metric-title">Stats Warning</div>
+                <div class="metric-title">Plots Warning</div>
                 <div class="metric-value" style="color: #f39c12">0</div>
                 <div>0.0%</div>
             </div>
             <div class="metric">
-                <div class="metric-title">Stats Failed</div>
-                <div class="metric-value" style="color: #e74c3c">36</div>
-                <div>73.0%</div>
+                <div class="metric-title">Plots Failed</div>
+                <div class="metric-value" style="color: #e74c3c">33</div>
+                <div>64.0%</div>
             </div>
         </div>
         
@@ -936,13 +944,13 @@ Execution halted<br></td>
             </tr>
         <tr>
             <td>Error:</td>
-            <td>41</td>
-            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (stats), deconf (stats), DeconICA (stats), DeconPeaker (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (stats), digitalDLSorter (stats), DSA (stats), dtangle (stats), EMeth (stats), EPIC (stats), ImmuCellAI (stats), Linseed (deconv), MethylResolver (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (stats)</td>
+            <td>39</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), Deblender (deconv), DecOT (deconv), Linseed (deconv), BayesCCE (plot), DeCompress (plot), MOMF (plot), scaden (plot), DecOT (plot), TOAST (plot), DESeq2 (plot), ImmuCellAI (plot), BseqSC (plot), MySort (plot), CellDistinguisher (plot), DeconPeaker (plot), spatialDWLS (plot), DSA (plot), DeMixT (plot), EMeth (plot), MCPcounter (plot), EPIC (plot), DAISM (plot), ReFACTor (plot), NITUMID (plot), quanTIseq (plot), Deblender (plot), debCAM (plot), CIBERSORT (plot), dtangle (plot), MethylResolver (plot), ARIC (plot), digitalDLSorter (plot), PREDE (plot), BisqueMarker (plot), AutoGeneS (plot), compare_paired (plot)</td>
         </tr>
         <tr>
             <td>ERROR:</td>
-            <td>41</td>
-            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (stats), deconf (stats), DeconICA (stats), DeconPeaker (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (stats), digitalDLSorter (stats), DSA (stats), dtangle (stats), EMeth (stats), EPIC (stats), ImmuCellAI (stats), Linseed (deconv), MethylResolver (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (stats)</td>
+            <td>39</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), Deblender (deconv), DecOT (deconv), Linseed (deconv), BayesCCE (plot), DeCompress (plot), MOMF (plot), scaden (plot), DecOT (plot), TOAST (plot), DESeq2 (plot), ImmuCellAI (plot), BseqSC (plot), MySort (plot), CellDistinguisher (plot), DeconPeaker (plot), spatialDWLS (plot), DSA (plot), DeMixT (plot), EMeth (plot), MCPcounter (plot), EPIC (plot), DAISM (plot), ReFACTor (plot), NITUMID (plot), quanTIseq (plot), Deblender (plot), debCAM (plot), CIBERSORT (plot), dtangle (plot), MethylResolver (plot), ARIC (plot), digitalDLSorter (plot), PREDE (plot), BisqueMarker (plot), AutoGeneS (plot), compare_paired (plot)</td>
         </tr>
         <tr>
             <td>Exception:</td>
@@ -966,13 +974,13 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>Error</td>
-            <td>51</td>
-            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (deconv), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (deconv), DeCompress (stats), deconf (deconv), deconf (stats), DeconICA (stats), DeconPeaker (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (deconv), DESeq2 (stats), digitalDLSorter (deconv), digitalDLSorter (stats), DSA (stats), dtangle (stats), DWLS (deconv), EMeth (deconv), EMeth (stats), EPIC (stats), ImmuCellAI (deconv), ImmuCellAI (stats), Linseed (deconv), MCPcounter (stats), MethylResolver (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (deconv), TOAST (stats)</td>
+            <td>48</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DWLS (deconv), EMeth (deconv), ImmuCellAI (deconv), Linseed (deconv), TOAST (deconv), BayesCCE (plot), DeCompress (plot), MOMF (plot), scaden (plot), DecOT (plot), TOAST (plot), DESeq2 (plot), ImmuCellAI (plot), BseqSC (plot), MySort (plot), CellDistinguisher (plot), DeconPeaker (plot), spatialDWLS (plot), DSA (plot), DeMixT (plot), EMeth (plot), MCPcounter (plot), EPIC (plot), DAISM (plot), ReFACTor (plot), NITUMID (plot), quanTIseq (plot), Deblender (plot), debCAM (plot), CIBERSORT (plot), dtangle (plot), MethylResolver (plot), ARIC (plot), digitalDLSorter (plot), PREDE (plot), BisqueMarker (plot), AutoGeneS (plot), compare_paired (plot)</td>
         </tr>
         <tr>
             <td>ERROR</td>
-            <td>51</td>
-            <td>ARIC (deconv), ARIC (stats), AutoGeneS (deconv), AutoGeneS (stats), BayCount (stats), BayesCCE (deconv), BayesCCE (stats), BayICE (stats), BisqueMarker (stats), BseqSC (stats), CellDistinguisher (stats), CIBERSORT (stats), DAISM (stats), debCAM (deconv), debCAM (stats), Deblender (deconv), Deblender (stats), DeCompress (deconv), DeCompress (stats), deconf (deconv), deconf (stats), DeconICA (stats), DeconPeaker (stats), DecOT (deconv), DecOT (stats), DeMixT (stats), DESeq2 (deconv), DESeq2 (stats), digitalDLSorter (deconv), digitalDLSorter (stats), DSA (stats), dtangle (stats), DWLS (deconv), EMeth (deconv), EMeth (stats), EPIC (stats), ImmuCellAI (deconv), ImmuCellAI (stats), Linseed (deconv), MCPcounter (stats), MethylResolver (stats), MOMF (stats), MySort (stats), NITUMID (stats), PREDE (stats), quanTIseq (stats), ReFACTor (stats), scaden (stats), spatialDWLS (stats), TOAST (deconv), TOAST (stats)</td>
+            <td>48</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DWLS (deconv), EMeth (deconv), ImmuCellAI (deconv), Linseed (deconv), TOAST (deconv), BayesCCE (plot), DeCompress (plot), MOMF (plot), scaden (plot), DecOT (plot), TOAST (plot), DESeq2 (plot), ImmuCellAI (plot), BseqSC (plot), MySort (plot), CellDistinguisher (plot), DeconPeaker (plot), spatialDWLS (plot), DSA (plot), DeMixT (plot), EMeth (plot), MCPcounter (plot), EPIC (plot), DAISM (plot), ReFACTor (plot), NITUMID (plot), quanTIseq (plot), Deblender (plot), debCAM (plot), CIBERSORT (plot), dtangle (plot), MethylResolver (plot), ARIC (plot), digitalDLSorter (plot), PREDE (plot), BisqueMarker (plot), AutoGeneS (plot), compare_paired (plot)</td>
         </tr>
         <tr>
             <td>Exception</td>
@@ -1000,22 +1008,17 @@ Execution halted<br></td>
             <td>BseqSC (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
+            <td>not found</td>
+            <td>1</td>
+            <td>MCPcounter (plot)</td>
+        </tr>
+        <tr>
             <td>OOM</td>
             <td>1</td>
             <td>debCAM (deconv)</td>
         </tr>
         <tr>
             <td>Panic:</td>
-            <td>14</td>
-            <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
-        </tr>
-        <tr>
-            <td>Panic:</td>
-            <td>14</td>
-            <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
-        </tr>
-        <tr>
-            <td>Panic</td>
             <td>14</td>
             <td>BisqueMarker (deconv), DAISM (deconv), DeconPeaker (deconv), DSA (deconv), dtangle (deconv), EPIC (deconv), MOMF (deconv), MySort (deconv), NITUMID (deconv), PREDE (deconv), quanTIseq (deconv), ReFACTor (deconv), scaden (deconv), spatialDWLS (deconv)</td>
         </tr>
