@@ -93,6 +93,22 @@ expand_matrix_with_zeros <- function(mat, all_cols) {
   }
 }
 
+# Stores cell types per data
+original_gt_cell_types <- unique(c(colnames(overall_gt_proportions), colnames(per_sample_gt_proportions)))
+original_pred_cell_types <- colnames(proportions)
+
+# Debug output
+print("Original GT cell types:")
+print(original_gt_cell_types)
+print("Original prediction cell types:")
+print(original_pred_cell_types)
+
+# Identify exclusive cell types
+pred_only_cell_types <- setdiff(original_pred_cell_types, original_gt_cell_types)
+print("Prediction-only cell types:")
+print(pred_only_cell_types)
+
+
 # Expand all matrices to include all cell types
 proportions <- expand_matrix_with_zeros(proportions, all_cell_types)
 overall_gt_proportions <- expand_matrix_with_zeros(overall_gt_proportions, all_cell_types)
@@ -232,23 +248,6 @@ pred_colors <- c(
 )
 #### Wrong color assignment!!!!
 # Get actual cell types from both sources
-# IMPORTANT: Store original cell types BEFORE expanding matrices
-original_gt_cell_types <- unique(c(colnames(overall_gt_proportions), colnames(per_sample_gt_proportions)))
-original_pred_cell_types <- colnames(proportions)
-
-# Identify cell types exclusive to each source
-pred_only_cell_types <- setdiff(original_pred_cell_types, original_gt_cell_types)
-gt_only_cell_types <- setdiff(original_gt_cell_types, original_pred_cell_types)
-both_cell_types <- intersect(original_gt_cell_types, original_pred_cell_types)
-
-# After expanding matrices and creating the combined_data dataframe...
-
-# Properly assign cell type sources based on original classification
-combined_data$CellTypeSource <- "Both"
-combined_data$CellTypeSource[combined_data$CellType %in% gt_only_cell_types] <- "GT only"
-combined_data$CellTypeSource[combined_data$CellType %in% pred_only_cell_types] <- "Pred only"
-
-# Now assign colors based on the corrected source information
 unique_cell_displays <- unique(combined_data$CellTypeDisplay)
 custom_colors <- character(length(unique_cell_displays))
 names(custom_colors) <- unique_cell_displays
@@ -256,18 +255,22 @@ names(custom_colors) <- unique_cell_displays
 gt_counter <- 0
 pred_counter <- 0
 
-for (display_name in unique_cell_displays) {
-  base_cell_type <- gsub(" \\(Pred\\)| \\(GT\\)$", "", display_name)
+for (cell_display in unique_cell_displays) {
+  # Extract base cell type name without suffixes
+  base_cell_type <- gsub(" \\(Pred\\)| \\(GT\\)$", "", cell_display)
   
-  # Check source directly from the cell type
   if (base_cell_type %in% pred_only_cell_types) {
+    # Use dark colors for prediction-only cell types
     pred_counter <- pred_counter + 1
     color_idx <- ((pred_counter - 1) %% length(pred_colors)) + 1
-    custom_colors[display_name] <- pred_colors[color_idx]
+    custom_colors[cell_display] <- pred_colors[color_idx]
+    print(paste(cell_display, "(Pred only) ->", pred_colors[color_idx]))
   } else {
+    # Use light colors for ground truth cell types
     gt_counter <- gt_counter + 1
     color_idx <- ((gt_counter - 1) %% length(gt_colors)) + 1
-    custom_colors[display_name] <- gt_colors[color_idx]
+    custom_colors[cell_display] <- gt_colors[color_idx]
+    print(paste(cell_display, "(GT) ->", gt_colors[color_idx]))
   }
 }
 ###
