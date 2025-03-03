@@ -111,7 +111,7 @@ for (result_file in result_files) {
     spearman_cor <- cor(pred_vector, gt_vector, method = "spearman")
     mae <- mean(abs(pred_vector - gt_vector))
     rmse <- sqrt(mean((pred_vector - gt_vector)^2))
-    r_squared <- cor(pred_vector, gt_vector, method = "pearson")^2
+    r_squared <- 1 - (sum((gt_vector - pred_vector)^2) / sum((gt_vector - mean(gt_vector))^2))
     
     # Calculate Jensen-Shannon Divergence
     # Note: JSD requires positive values that sum to 1
