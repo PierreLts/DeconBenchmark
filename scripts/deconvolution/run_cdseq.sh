@@ -14,7 +14,7 @@ set -x # Print each line of code being computed
 
 RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
 SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/run_cdseq.R
-input_data="/work/gr-fe/lorthiois/DeconBenchmark/data/Batch1.rda"
+input_data="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/Batch1.rda"
 output_data="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/ #IMPORTANT

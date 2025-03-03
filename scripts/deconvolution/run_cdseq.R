@@ -68,6 +68,6 @@ if (!is.null(deconvolutionResult$CDSeq$S) && nrow(deconvolutionResult$CDSeq$S) !
 }
 
 # Save results
-results_filename <- file.path(output_data, paste0("results_CDSeq_Batch1_Downsampled.rda"))
+results_filename <- file.path(output_data, paste0("results_CDSeq_Batch1.rda"))
 save(deconvolutionResult, file=results_filename, compress=TRUE)
 print(paste("Results saved to:", results_filename))
