@@ -191,7 +191,7 @@ if (nrow(all_method_summaries) > 0) {
       norm_mae = normalize(Mean_MAE, FALSE),
       norm_rmse = normalize(Mean_RMSE, FALSE),
       norm_r2 = normalize(Mean_R2, TRUE),
-      CompositeScore = (norm_pearson + norm_spearman + norm_mae + norm_rmse + norm_r2) / 5
+      CompositeScore = (norm_pearson + norm_spearman + norm_mae + norm_rmse + norm_r2) / 8
     )
   
   # Rank methods by composite score
@@ -264,9 +264,9 @@ if (nrow(all_method_summaries) > 0) {
     
     # Create plot
     p <- ggplot(plot_data_long, aes(x = RankedName, y = MetricValue, fill = MetricType)) +
-      geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+      geom_bar(stat = "identity", position = position_dodge(width = 0.85), width = 0.8) +
       geom_errorbar(aes(ymin = MetricValue - ErrorValue, ymax = MetricValue + ErrorValue), 
-                   position = position_dodge(width = 0.8), width = 0.25) +
+                   position = position_dodge(width = 0.8), width = 0) +
       labs(
         title = "Performance Metrics Comparison Across Deconvolution Methods",
         subtitle = "(+) higher is better, (-) lower is better",
@@ -294,7 +294,7 @@ if (nrow(all_method_summaries) > 0) {
     
     # Also save as PNG for easier viewing
     comparison_plot_png <- file.path(output_dir, "method_metrics_comparison.png")
-    ggsave(comparison_plot_png, p, width = 18, height = 8, dpi = 300)
+    ggsave(comparison_plot_png, p, width = 22, height = 8, dpi = 300)
     
     cat("Comparison plot saved to:", comparison_plot_file, "and", comparison_plot_png, "\n")
   }
