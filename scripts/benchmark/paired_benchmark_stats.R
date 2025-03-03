@@ -191,7 +191,7 @@ if (nrow(all_method_summaries) > 0) {
       norm_mae = normalize(Mean_MAE, FALSE),
       norm_rmse = normalize(Mean_RMSE, FALSE),
       norm_r2 = normalize(Mean_R2, TRUE),
-      CompositeScore = (norm_pearson + norm_spearman + norm_mae + norm_rmse + norm_r2) / 8
+      CompositeScore = (norm_pearson + norm_spearman + norm_mae + norm_rmse + norm_r2) / 6
     )
   
   # Rank methods by composite score
@@ -262,20 +262,28 @@ if (nrow(all_method_summaries) > 0) {
     plot_data_long$RankedName <- factor(plot_data_long$RankedName, 
                                        levels = plot_data$RankedName)
     
+    # Find adaptive y-axis limits based on data
+    max_abs_value <- max(abs(plot_data_long$MetricValue), na.rm = TRUE)
+    # Add buffer and round up
+    max_abs_value <- ceiling(max_abs_value * 1.1)
+    # Create sensible breaks
+    break_step <- max(1, round(max_abs_value/5))
+    break_sequence <- seq(-max_abs_value, max_abs_value, by=break_step)
+
     # Create plot
     p <- ggplot(plot_data_long, aes(x = RankedName, y = MetricValue, fill = MetricType)) +
-      geom_bar(stat = "identity", position = position_dodge(width = 0.85), width = 0.8) +
-      geom_errorbar(aes(ymin = MetricValue - ErrorValue, ymax = MetricValue + ErrorValue), 
-                   position = position_dodge(width = 0.8), width = 0) +
-      labs(
+    geom_bar(stat = "identity", position = position_dodge(width = 0.85), width = 0.8) +
+    geom_errorbar(aes(ymin = MetricValue - ErrorValue, ymax = MetricValue + ErrorValue), 
+                position = position_dodge(width = 0.8), width = 0) +
+    labs(
         title = "Performance Metrics Comparison Across Deconvolution Methods",
         subtitle = "(+) higher is better, (-) lower is better",
         x = "",
         y = "Score Value"
-      ) +
-      scale_fill_manual(values = metric_colors, name = "MetricDisplay") +
-      theme_minimal() +
-      theme(
+    ) +
+    scale_fill_manual(values = metric_colors, name = "MetricDisplay") +
+    theme_minimal() +
+    theme(
         axis.text.x = element_text(angle = 45, hjust = 1),
         legend.title = element_blank(),
         legend.position = "bottom",
@@ -284,10 +292,13 @@ if (nrow(all_method_summaries) > 0) {
         panel.grid.major.y = element_line(color = "lightgray"),
         panel.grid.minor.y = element_line(color = "lightgray"),
         panel.grid.major.x = element_blank()
-      ) +
-      geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
-      scale_y_continuous(limits = c(-15, 5), breaks = seq(-15, 5, 5))
-    
+    ) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+    scale_y_continuous(
+        limits = c(-max_abs_value, max_abs_value),
+        breaks = break_sequence
+    )
+
     # Save plot
     comparison_plot_file <- file.path(output_dir, "method_metrics_comparison.pdf")
     ggsave(comparison_plot_file, p, width = 22, height = 8)
