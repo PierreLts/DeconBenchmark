@@ -173,9 +173,30 @@ for (result_file in result_files) {
 
 # Save results
 if (nrow(all_method_summaries) > 0) {
-  # Rank methods by Pearson correlation
+  # Calculate composite score
+  # First normalize all metrics to 0-1 scale
+  normalize <- function(x, higher_is_better = TRUE) {
+    if (length(unique(x)) == 1) return(rep(0.5, length(x)))  # Handle constant values
+    if (higher_is_better) {
+      return(scales::rescale(x, to = c(0, 1)))
+    } else {
+      return(scales::rescale(-x, to = c(0, 1)))  # Flip for lower-is-better metrics
+    }
+  }
+  
+  all_method_summaries <- all_method_summaries %>%
+    mutate(
+      norm_pearson = normalize(Mean_PearsonCorr, TRUE),
+      norm_spearman = normalize(Mean_SpearmanCorr, TRUE),
+      norm_mae = normalize(Mean_MAE, FALSE),
+      norm_rmse = normalize(Mean_RMSE, FALSE),
+      norm_r2 = normalize(Mean_R2, TRUE),
+      CompositeScore = (norm_pearson + norm_spearman + norm_mae + norm_rmse + norm_r2) / 5
+    )
+  
+  # Rank methods by composite score
   ranked_methods <- all_method_summaries %>%
-    arrange(desc(Mean_PearsonCorr))
+    arrange(desc(CompositeScore))
   
   # Save detailed results
   detailed_output_file <- file.path(output_dir, "paired_sample_detailed_metrics.csv")
@@ -185,91 +206,64 @@ if (nrow(all_method_summaries) > 0) {
   summary_output_file <- file.path(output_dir, "paired_sample_method_summary.csv")
   write.csv(ranked_methods, summary_output_file, row.names = FALSE)
   
-  # Generate a single comparison plot with all metrics
+  # Generate comparison plot with all metrics
   if (nrow(ranked_methods) > 1) {
     # Select top methods (limit to make plot readable)
     top_n_methods <- min(13, nrow(ranked_methods))
     top_methods <- ranked_methods[1:top_n_methods, ]
     
+    # Add ranking numbers to method names
+    top_methods$RankedName <- paste0(1:nrow(top_methods), ". ", top_methods$Method)
+    
     # Prepare data for plotting
     plot_data <- top_methods %>%
-      select(Method, 
+      select(Method, RankedName,
              Mean_PearsonCorr, SD_PearsonCorr, 
              Mean_SpearmanCorr, SD_SpearmanCorr,
              Mean_MAE, SD_MAE,
              Mean_RMSE, SD_RMSE,
-             Mean_R2, SD_R2) %>%
-      mutate(Method = factor(Method, levels = Method))
+             Mean_R2, SD_R2,
+             CompositeScore)
     
     # Reshape data for plotting
     plot_data_long <- data.frame(
-      Method = rep(plot_data$Method, 5),
+      Method = rep(plot_data$Method, 6),
+      RankedName = rep(plot_data$RankedName, 6),
       MetricValue = c(
         plot_data$Mean_PearsonCorr,
         plot_data$Mean_SpearmanCorr,
         -plot_data$Mean_MAE,       # Negate MAE for visualization (lower is better)
         -plot_data$Mean_RMSE,      # Negate RMSE for visualization (lower is better)
-        plot_data$Mean_R2
+        plot_data$Mean_R2,
+        plot_data$CompositeScore * 10 - 5  # Scale to match other metrics
       ),
       ErrorValue = c(
         plot_data$SD_PearsonCorr,
         plot_data$SD_SpearmanCorr,
         plot_data$SD_MAE,
         plot_data$SD_RMSE,
-        plot_data$SD_R2
+        plot_data$SD_R2,
+        rep(0.5, nrow(plot_data))  # Fixed error bar for composite
       ),
-      MetricType = rep(c("Pearson (+)", "Spearman (+)", "MAE (-)", "RMSE (-)", "R² (+)"), each = nrow(plot_data))
+      MetricType = rep(c("Pearson (+)", "Spearman (+)", "MAE (-)", "RMSE (-)", "R² (+)", "Composite (+)"), each = nrow(plot_data))
     )
     
-    # Calculate composite score (weighted average of normalized metrics)
-    # First normalize all metrics to 0-1 scale
-    normalize <- function(x, higher_is_better = TRUE) {
-      if (length(unique(x)) == 1) return(rep(0.5, length(x)))  # Handle constant values
-      if (higher_is_better) {
-        return(scales::rescale(x, to = c(0, 1)))
-      } else {
-        return(scales::rescale(-x, to = c(0, 1)))  # Flip for lower-is-better metrics
-      }
-    }
-    
-    normalized_metrics <- plot_data %>%
-      mutate(
-        norm_pearson = normalize(Mean_PearsonCorr, TRUE),
-        norm_spearman = normalize(Mean_SpearmanCorr, TRUE),
-        norm_mae = normalize(Mean_MAE, FALSE),
-        norm_rmse = normalize(Mean_RMSE, FALSE),
-        norm_r2 = normalize(Mean_R2, TRUE)
-      )
-    
-    # Calculate composite score (equal weights)
-    normalized_metrics <- normalized_metrics %>%
-      mutate(
-        CompositeScore = (norm_pearson + norm_spearman + norm_mae + norm_rmse + norm_r2) / 5
-      )
-    
-    # Add composite score to plot data
-    composite_data <- data.frame(
-      Method = normalized_metrics$Method,
-      MetricValue = normalized_metrics$CompositeScore * 10 - 5,  # Scale to match other metrics
-      ErrorValue = rep(0.5, nrow(normalized_metrics)),  # Fixed error bar
-      MetricType = rep("Composite (+)", nrow(normalized_metrics))
-    )
-    
-    # Combine with other metrics
-    plot_data_long <- rbind(plot_data_long, composite_data)
-    
-    # Set up color palette for metrics
+    # Set up color palette for metrics - match the image
     metric_colors <- c(
-      "Pearson (+)" = "#4DA6FF",  # Blue
-      "Spearman (+)" = "#7DCCA0",  # Green
-      "MAE (-)" = "#FF9999",      # Red
-      "RMSE (-)" = "#FFCC99",     # Orange
-      "R² (+)" = "#CC99FF",       # Purple
-      "Composite (+)" = "#FF66B2"  # Pink
+    "Pearson (+)" = "#4CBFFF",
+    "Spearman (+)" = "#AED581",
+    "MAE (-)" = "#FF8CBF",
+    "RMSE (-)" = "#FF9933",
+    "R² (+)" = "#BA68C8",
+    "Composite (+)" = "#E64CA6"
     )
+    
+    # Order methods by composite score (best to worst)
+    plot_data_long$RankedName <- factor(plot_data_long$RankedName, 
+                                       levels = plot_data$RankedName)
     
     # Create plot
-    p <- ggplot(plot_data_long, aes(x = Method, y = MetricValue, fill = MetricType)) +
+    p <- ggplot(plot_data_long, aes(x = RankedName, y = MetricValue, fill = MetricType)) +
       geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
       geom_errorbar(aes(ymin = MetricValue - ErrorValue, ymax = MetricValue + ErrorValue), 
                    position = position_dodge(width = 0.8), width = 0.25) +
@@ -277,34 +271,37 @@ if (nrow(all_method_summaries) > 0) {
         title = "Performance Metrics Comparison Across Deconvolution Methods",
         subtitle = "(+) higher is better, (-) lower is better",
         x = "",
-        y = "Score Value",
-        fill = "MetricDisplay"
+        y = "Score Value"
       ) +
-      scale_fill_manual(values = metric_colors) +
+      scale_fill_manual(values = metric_colors, name = "MetricDisplay") +
       theme_minimal() +
       theme(
         axis.text.x = element_text(angle = 45, hjust = 1),
         legend.title = element_blank(),
         legend.position = "bottom",
         plot.title = element_text(hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5)
+        plot.subtitle = element_text(hjust = 0.5),
+        panel.grid.major.y = element_line(color = "lightgray"),
+        panel.grid.minor.y = element_line(color = "lightgray"),
+        panel.grid.major.x = element_blank()
       ) +
-      geom_hline(yintercept = 0, linetype = "dashed", color = "gray")
+      geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+      scale_y_continuous(limits = c(-15, 5), breaks = seq(-15, 5, 5))
     
     # Save plot
     comparison_plot_file <- file.path(output_dir, "method_metrics_comparison.pdf")
-    ggsave(comparison_plot_file, p, width = 12, height = 8)
+    ggsave(comparison_plot_file, p, width = 22, height = 8)
     
     # Also save as PNG for easier viewing
     comparison_plot_png <- file.path(output_dir, "method_metrics_comparison.png")
-    ggsave(comparison_plot_png, p, width = 12, height = 8, dpi = 300)
+    ggsave(comparison_plot_png, p, width = 18, height = 8, dpi = 300)
     
     cat("Comparison plot saved to:", comparison_plot_file, "and", comparison_plot_png, "\n")
   }
   
   cat("Results saved to:", output_dir, "\n")
-  cat("Top performing methods by Pearson correlation:\n")
-  print(head(ranked_methods[, c("Method", "Mean_PearsonCorr", "Mean_MAE", "SampleCount")], 5))
+  cat("Top performing methods by Composite Score:\n")
+  print(head(ranked_methods[, c("Method", "CompositeScore", "Mean_PearsonCorr", "Mean_MAE", "SampleCount")], 5))
 } else {
   cat("No valid results found to save\n")
 }

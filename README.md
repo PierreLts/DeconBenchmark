@@ -2,7 +2,7 @@
 This pipeline aims at running and benchmarking reference and reference-free deconvolution models with Tuberculosis RNA data.
 The pipeline is build on the [tinnlab/DeconBenchmark](https://github.com/tinnlab/DeconBenchmark) package which unifies the running of 50 deconvolution models.
 
-To this day, 18 models ran properly.
+To this day, 19 models ran properly.
 
 Pierre Lorthiois
 

@@ -3,7 +3,7 @@
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 8
 #SBATCH --mem 32G
-#SBATCH --time 2:00:00
+#SBATCH --time 00:15:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
 #SBATCH --job-name=paired_benchmark
