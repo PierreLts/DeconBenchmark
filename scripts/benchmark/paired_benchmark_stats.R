@@ -263,9 +263,12 @@ if (nrow(all_method_summaries) > 0) {
                                        levels = plot_data$RankedName)
     
     # Find adaptive y-axis limits based on data
-    max_abs_value <- max(abs(plot_data_long$MetricValue), na.rm = TRUE)
+    max_with_error <- max(abs(plot_data_long$MetricValue) + plot_data_long$ErrorValue, na.rm = TRUE)
+
     # Add buffer and round up
-    max_abs_value <- ceiling(max_abs_value * 1.1)
+    max_abs_value <- ceiling(max_with_error * 1.02)
+    # Ensure a minimum range for visibility
+    max_abs_value <- max(max_abs_value, 1.0)  # Set minimum to 1.0
     # Create sensible breaks
     break_step <- max(1, round(max_abs_value/5))
     break_sequence <- seq(-max_abs_value, max_abs_value, by=break_step)
