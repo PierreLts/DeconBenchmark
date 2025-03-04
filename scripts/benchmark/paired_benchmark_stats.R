@@ -199,13 +199,13 @@ composite_score <- function(metrics_df) {
   spearman <- abs(metrics_df$Spearman)
   r2 <- metrics_df$R2
   
-  # Calculate composite score
-#   score <- ((w_pearson * pearson) + 
-#            (w_spearman * spearman) -
-#            (w_mae * metrics_df$MAE) -
-#            (w_rmse * metrics_df$RMSE) +
-#            (w_r2 * r2))/4
-  score <- 0 ### 0 for testing!
+  #Calculate composite score
+  score <- ((w_pearson * pearson) + 
+           (w_spearman * spearman) -
+           (w_mae * metrics_df$MAE) -
+           (w_rmse * metrics_df$RMSE) +
+           (w_r2 * r2))/4
+
   return(score)
 }
   
