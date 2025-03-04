@@ -24,7 +24,7 @@ data_object_name <- loaded_objects[1]
 # Access through the object name dynamically
 data_object <- get(data_object_name)
 bulk <- data_object$bulk
-singleCellExpr <- data_object$singleCellExpr
+#singleCellExpr <- data_object$singleCellExpr
 singleCellLabels <- data_object$singleCellLabels
 print("CHECK: Data extracted successfully")
 
@@ -36,30 +36,30 @@ print(paste("Number of cell types detected:", n_cell_types))
 print("Starting CDSeq deconvolution...")
 cdseq_result <- CDSeq(
   bulk_data = bulk,
-  cell_type_number = seq(max(2, n_cell_types-3), min(n_cell_types+3, 15), 3),  # Try a range around the known number
-  beta = 0.5,                        # Recommended setting
-  alpha = 5,                         # Recommended setting  
-  mcmc_iterations = 700,             # Recommended setting (700-2000)
-  dilution_factor = 5,               # Recommended setting (2-10)
-  gene_subset_size = 300,            # Recommended setting (200-500)
-  block_number = 5,                  # Recommended setting (>5)
-  cpu_number = 16                    # Use multiple cores
+  cell_type_number = n_cell_types, #seq(max(2, n_cell_types-3), min(n_cell_types+3, 15), 3),  # Try a range around the known number
+  beta = 0.5,                 
+  alpha = 5,                           
+  mcmc_iterations = 700,             # (700-2000)
+  dilution_factor = 5,               # (2-10)
+  gene_subset_size = 300,            # (200-500)
+  block_number = 5,                  # (>5)
+  cpu_number = 16                    # CPUs
 )
 
 print("CHECK: CDSeq deconvolution completed")
 
-# Structure the results to match DeconBenchmark format
-# IMPORTANT: Need to transpose the matrices to match DeconBenchmark's expected format
+# Structure the results to match plotting format
+# Transpose the matrices
 deconvolutionResult <- list()
 deconvolutionResult$CDSeq <- list(
   P = t(cdseq_result$estProp),  # TRANSPOSED: Now samples in rows, cell types in columns
   S = cdseq_result$estGEP       # Check if this has genes in rows and cell types in columns
 )
 
-# Add proper column names to the proportion matrix
-if (ncol(deconvolutionResult$CDSeq$P) > 0) {
-  colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType_", 1:ncol(deconvolutionResult$CDSeq$P))
-}
+# # Cell type column naming
+# if (ncol(deconvolutionResult$CDSeq$P) > 0) {
+#   colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType_", 1:ncol(deconvolutionResult$CDSeq$P))
+# }
 
 # Check if S needs to be transposed too
 if (!is.null(deconvolutionResult$CDSeq$S) && nrow(deconvolutionResult$CDSeq$S) != nrow(bulk)) {

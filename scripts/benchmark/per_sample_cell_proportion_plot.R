@@ -246,7 +246,7 @@ pred_colors <- c(
   "#AD1457",  # Dark Pink
   "#283593"   # Dark Navy Blue
 )
-#### Wrong color assignment!!!!
+#### Color assignment
 # Get actual cell types from both sources
 unique_cell_displays <- unique(combined_data$CellTypeDisplay)
 custom_colors <- character(length(unique_cell_displays))

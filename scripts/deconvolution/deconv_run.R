@@ -32,25 +32,25 @@ singleCellExpr <- data_object$singleCellExpr
 singleCellLabels <- data_object$singleCellLabels
 print("CHECK: Data extracted successfully")
 
-if (sparse_conversion) {
-  print("Converting to sparse matrices for memory efficiency...")
-  # Convert to sparse format for memory efficiency
-  sparse_singleCellExpr <- Matrix(singleCellExpr, sparse=TRUE)
-  sparse_bulk <- Matrix(bulk, sparse=TRUE)
+# if (sparse_conversion) {
+#   print("Converting to sparse matrices for memory efficiency...")
+#   # Convert to sparse format for memory efficiency
+#   sparse_singleCellExpr <- Matrix(singleCellExpr, sparse=TRUE)
+#   sparse_bulk <- Matrix(bulk, sparse=TRUE)
   
-  # Clear originals to free memory
-  rm(singleCellExpr, bulk)
-  gc()
+#   # Clear originals to free memory
+#   rm(singleCellExpr, bulk)
+#   gc()
   
-  # Convert back to dense only when passing to container
-  singleCellExpr <- as.matrix(sparse_singleCellExpr)
-  bulk <- as.matrix(sparse_bulk)
+#   # Convert back to dense only when passing to container
+#   singleCellExpr <- as.matrix(sparse_singleCellExpr)
+#   bulk <- as.matrix(sparse_bulk)
   
-  # Clear sparse versions
-  rm(sparse_singleCellExpr, sparse_bulk)
-  gc()
-  print("Memory optimization complete")
-}
+#   # Clear sparse versions
+#   rm(sparse_singleCellExpr, sparse_bulk)
+#   gc()
+#   print("Memory optimization complete")
+# }
 
 # Split the comma-separated method names
 method_list <- unlist(strsplit(deconv_methods, ","))

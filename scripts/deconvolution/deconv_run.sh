@@ -3,7 +3,7 @@
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 64
 #SBATCH --mem 256G ##for 1
-#SBATCH --time 6:00:00
+#SBATCH --time 12:00:00
 ##SBATCH --mail-user=pierre.lorthiois@epfl.ch
 ##SBATCH --mail-type=END,FAIL 
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
@@ -21,7 +21,7 @@ SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/deconv_run.R
 input_data="/work/gr-fe/lorthiois/DeconBenchmark/data/Batch1.rda"
 output_data="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 deconv_method="MuSic"
-sparse_conversion=TRUE # Enable sparse matrix conversion
+sparse_conversion=FALSE # Enable sparse matrix conversion
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/ #IMPORTANT
 module load r #IMPORTANT
