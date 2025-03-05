@@ -4,7 +4,7 @@ if (length(args) != 5) {
   stop(paste("5 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
-####### Parameter of script (ORDER IS IMPORTANT)
+####### Parameter of script
 path_Rlibrary <- args[1] #IMPORTANT
 input_data <- args[2]
 output_data <- args[3]
@@ -17,64 +17,96 @@ library(DeconBenchmark)
 library(Matrix)
 print("CHECK: Libraries loaded")
 
- 
 # Load input data
 loaded_objects <- load(input_data)
-print("Loaded objects:")
-print(loaded_objects)
-
-# Get the 1st method
 data_object_name <- loaded_objects[1]
-# Access through the object name dynamically
 data_object <- get(data_object_name)
 bulk <- data_object$bulk
 singleCellExpr <- data_object$singleCellExpr
 singleCellLabels <- data_object$singleCellLabels
 print("CHECK: Data extracted successfully")
 
-# if (sparse_conversion) {
-#   print("Converting to sparse matrices for memory efficiency...")
-#   # Convert to sparse format for memory efficiency
-#   sparse_singleCellExpr <- Matrix(singleCellExpr, sparse=TRUE)
-#   sparse_bulk <- Matrix(bulk, sparse=TRUE)
-  
-#   # Clear originals to free memory
-#   rm(singleCellExpr, bulk)
-#   gc()
-  
-#   # Convert back to dense only when passing to container
-#   singleCellExpr <- as.matrix(sparse_singleCellExpr)
-#   bulk <- as.matrix(sparse_bulk)
-  
-#   # Clear sparse versions
-#   rm(sparse_singleCellExpr, sparse_bulk)
-#   gc()
-#   print("Memory optimization complete")
-# }
+# Load additional required inputs
+markers <- NULL
+markers_file <- file.path(dirname(input_data), "markers.rda")
+if (file.exists(markers_file)) {
+  load(markers_file)
+  print("Marker genes loaded successfully")
+}
 
-# Split the comma-separated method names
+significantGenes <- NULL
+sig_genes_file <- file.path(dirname(input_data), "significant_genes.rda")
+if (file.exists(sig_genes_file)) {
+  load(sig_genes_file)
+  print("Significant genes loaded successfully")
+}
+
+cellTypeExpr <- NULL
+celltype_expr_file <- file.path(dirname(input_data), "celltype_expression.rda")
+if (file.exists(celltype_expr_file)) {
+  load(celltype_expr_file)
+  print("Cell type expression loaded successfully")
+}
+
+singleCellSubjects <- NULL
+subjects_file <- file.path(dirname(input_data), "single_cell_subjects.rda")
+if (file.exists(subjects_file)) {
+  load(subjects_file)
+  print("Single cell subject IDs loaded successfully")
+} else {
+  singleCellSubjects <- rep("subject1", length(singleCellLabels))
+  print("Created default subject IDs")
+}
+
+# Split method names
 method_list <- unlist(strsplit(deconv_methods, ","))
-method_list <- trimws(method_list) # Remove any whitespace
+method_list <- trimws(method_list)
 print(paste("Methods to run:", paste(method_list, collapse=", ")))
 
-# # Generate reference if needed for multiple methods
-# signature <- NULL
-# if (length(method_list) > 1) {
-#   # Check if any methods require a signature
-#   required_inputs <- getMethodsInputs(method_list, containerEngine = "singularity")
-#   needs_signature <- any(sapply(required_inputs, function(x) "signature" %in% x))
-  
-#   if (needs_signature) {
-#     print("Generating reference signature for methods that require it...")
-#     reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
-#     signature <- reference$signature
-#   }
-# }
-### Test fix
+# Generate references
 reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
 signature <- reference$signature
-singleCellSubjects <- rep("subject1", length(singleCellLabels))
 
+# Generate missing inputs if needed
+if (is.null(cellTypeExpr)) {
+  print("Generating cell type expression matrix...")
+  # Code to generate cellTypeExpr from singleCellExpr and singleCellLabels
+  cell_types <- unique(singleCellLabels)
+  cellTypeExpr <- t(sapply(rownames(singleCellExpr), function(gene) {
+    sapply(cell_types, function(ct) {
+      mean(singleCellExpr[gene, singleCellLabels == ct])
+    })
+  }))
+  colnames(cellTypeExpr) <- cell_types
+}
+
+if (is.null(markers)) {
+  print("Generating marker genes...")
+  markers <- list()
+  cell_types <- unique(singleCellLabels)
+  
+  for (ct in cell_types) {
+    # Get fold change between this cell type and others
+    cells_this_type <- which(singleCellLabels == ct)
+    cells_other_types <- which(singleCellLabels != ct)
+    
+    # Calculate mean expression
+    mean_expr_this_type <- rowMeans(singleCellExpr[, cells_this_type, drop=FALSE])
+    mean_expr_other_types <- rowMeans(singleCellExpr[, cells_other_types, drop=FALSE])
+    
+    # Calculate simple fold change
+    fold_change <- mean_expr_this_type / (mean_expr_other_types + 0.1)
+    
+    # Get top genes 
+    top_genes <- names(sort(fold_change, decreasing=TRUE)[1:20])
+    markers[[ct]] <- top_genes
+  }
+}
+
+if (is.null(significantGenes)) {
+  print("Using all genes as significant genes...")
+  significantGenes <- rownames(singleCellExpr)
+}
 
 ### Run deconvolution
 print(paste("Starting deconvolution with", length(method_list), "methods..."))
@@ -84,12 +116,19 @@ deconvolutionResult <- runDeconvolution(
   singleCellExpr = singleCellExpr,
   singleCellLabels = singleCellLabels,
   signature = signature,
-  #reference = reference,
-  nCellTypes = length(unique(singleCellLabels)), ### Test fix
-  singleCellSubjects = singleCellSubjects, ### Test fix
+  markers = markers,
+  #significantGenes = significantGenes,
+  cellTypeExpr = cellTypeExpr,
+  nCellTypes = length(unique(singleCellLabels)),
+  singleCellSubjects = singleCellSubjects,
+  isMethylation = FALSE,
+  matlabLicenseFile = "303238", # MATLAB license
   containerEngine = "singularity"
 )
 print("CHECK: Deconvolution completed for all methods")
+
+# Save results as before
+# [Existing code for saving results]
 
 # Print results preview
 for (method in method_list) {

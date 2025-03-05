@@ -54,7 +54,8 @@ for MODEL in "${MODELS[@]}"; do
         sed "s|output_data=.*|output_data=\"$OUTPUT_DIR\"|" | \
         sed "s|deconv_method=.*|deconv_method=\"$MODEL\"|" | \
         sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=${MODEL}_deconv|" | \
-        sed "s|#SBATCH --time=.*|#SBATCH --time=48:00:00|" > "$TEMP_SCRIPT"
+        sed "s|#SBATCH --time=.*|#SBATCH --time=48:00:00|" | \
+        sed "s|sparse_conversion=.*|sparse_conversion=FALSE matlab_license=303238|" > "$TEMP_SCRIPT"
         
     # Make executable
     chmod +x "$TEMP_SCRIPT"
