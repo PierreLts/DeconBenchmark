@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DeconBenchmark Models Overview</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #f2f2f2; font-weight: bold; position: sticky; top: 0; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    .reference-based { background-color: #e6f7ff; }
+    .reference-free { background-color: #f0fff0; }
+    .semi-reference-free { background-color: #fff0f0; }
+    .unknown { background-color: #f0f0f0; }
+    .summary { margin-bottom: 20px; }
+    .model-group { background-color: #333; color: white; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>DeconBenchmark Models Overview</h1>
+  <p>Generated on: 2025-03-05 13:57:51</p>
+  
+  <div class="summary">
+    <h2>Summary</h2>
+    <p>Total models: 50</p>
+    <p>Reference-based: 6 | Reference-free: 43 | Semi-reference-free: 1</p>
+  </div>
+  
+  <table>
+    <tr>
+      <th>Model</th>
+      <th>Required Inputs</th>
+      <th>Model Type</th>
+      <th>Expected Outputs</th>
+    </tr>
+
+    <tr class="model-group">
+      <td colspan="4">Reference-based Models</td>
+    </tr>
+    
+    <tr class="reference-based">
+      <td>ARIC</td>
+      <td>bulk, cellTypeExpr, isMethylation</td>
+      <td>Reference-based</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-based">
+      <td>AutoGeneS</td>
+      <td>bulk, cellTypeExpr</td>
+      <td>Reference-based</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-based">
+      <td>BayesCCE</td>
+      <td>bulk, cellTypeExpr</td>
+      <td>Reference-based</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-based">
+      <td>DeconPeaker</td>
+      <td>bulk, signature</td>
+      <td>Reference-based</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-based">
+      <td>DecOT</td>
+      <td>bulk, singleCellExpr, singleCellLabels, singleCellSubjects</td>
+      <td>Reference-based</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-based">
+      <td>RNA-Sieve</td>
+      <td>bulk, singleCellExpr, singleCellLabels</td>
+      <td>Reference-based</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="model-group">
+      <td colspan="4">Semi-reference-free Models</td>
+    </tr>
+    
+    <tr class="semi-reference-free">
+      <td>Deblender</td>
+      <td>bulk, nCellTypes, markers</td>
+      <td>Semi-reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="model-group">
+      <td colspan="4">Reference-free Models</td>
+    </tr>
+    
+    <tr class="reference-free">
+      <td>AdRoit</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>BayCount</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>BayesPrism</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>BayICE</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>BisqueMarker</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>BisqueRef</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>BseqSC</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>CellDistinguisher</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>CIBERSORT</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>CPM</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DAISM</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>debCAM</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DeCompress</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>deconf</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DeconICA</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DeconRNASeq</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>deconvSeq</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DeMixT</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DESeq2</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>digitalDLSorter</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DSA</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>dtangle</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>DWLS</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>EMeth</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>EPIC</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>FARDEEP</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>ImmuCellAI</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>LinDeconSeq</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>Linseed</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>MCPcounter</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>MethylResolver</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>MIXTURE</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>MOMF</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>MuSic</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>MySort</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>NITUMID</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>PREDE</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>quanTIseq</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>ReFACTor</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>scaden</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>SCDC</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>spatialDWLS</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+    <tr class="reference-free">
+      <td>TOAST</td>
+      <td></td>
+      <td>Reference-free</td>
+      <td>Cell type proportions (P) , Signature matrix (S)</td>
+    </tr>
+  
+  </table>
+  
+  <div style="margin-top: 20px;">
+    <h3>Legend</h3>
+    <ul>
+      <li><span style="background-color: #e6f7ff; padding: 2px 5px;">Reference-based</span>: Requires reference data (single-cell expression, signatures, etc.)</li>
+      <li><span style="background-color: #f0fff0; padding: 2px 5px;">Reference-free</span>: Only requires bulk data and number of cell types</li>
+      <li><span style="background-color: #fff0f0; padding: 2px 5px;">Semi-reference-free</span>: Requires only marker genes</li>
+    </ul>
+  </div>
+</body>
+</html>
+
