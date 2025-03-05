@@ -13,7 +13,7 @@ set -e # Exit the script if any statement returns a non-true return value
 set -x # Print each line of code being computed
 
 RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
-SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/run_cdseq.R
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/single_models/run_cdseq.R
 input_data="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/Batch1.rda"
 output_data="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 

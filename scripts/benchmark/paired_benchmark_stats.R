@@ -236,7 +236,7 @@ all_method_summaries <- all_method_summaries %>%
   # Generate comparison plot with all metrics
   if (nrow(ranked_methods) > 1) {
     # Select top methods (limit to make plot readable)
-    top_n_methods <- min(15, nrow(ranked_methods))
+    top_n_methods <- min(14, nrow(ranked_methods))
     top_methods <- ranked_methods[1:top_n_methods, ]
     
     # Add ranking numbers to method names

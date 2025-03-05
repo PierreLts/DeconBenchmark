@@ -22,7 +22,8 @@ seurat_obj <- readRDS(seurat_file)
 valid_cells <- !seurat_obj@meta.data$Sample_Tag %in% c("Undetermined", "Multiplet")
 filtered_obj <- subset(seurat_obj, cells = rownames(seurat_obj@meta.data)[valid_cells])
 
-# Load gene mapping file - follow successful approach from scRNA_generation.R
+### Mapping
+# Load gene mapping file
 mapping_df <- read.table(mapping_file, sep="\t", header=TRUE, stringsAsFactors=FALSE)
 colnames(mapping_df) <- c("Ensembl_ID", "Gene_Name")
 mapping_df <- mapping_df[!duplicated(mapping_df$Gene_Name), ]
@@ -39,6 +40,7 @@ save(singleCellSubjects, file=file.path(output_dir, "single_cell_subjects.rda"))
 cell_barcodes <- colnames(filtered_obj)
 subjects_df <- data.frame(Cell=cell_barcodes, Subject=singleCellSubjects)
 write.csv(subjects_df, file=file.path(output_dir, "single_cell_subjects.csv"), row.names=FALSE)
+###
 
 # Find marker genes
 Idents(filtered_obj) <- filtered_obj@meta.data$Cell_Type_Experimental
