@@ -61,11 +61,11 @@ deconvolutionResult$CDSeq <- list(
 #   colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType_", 1:ncol(deconvolutionResult$CDSeq$P))
 # }
 
-# Check if S needs to be transposed too
-if (!is.null(deconvolutionResult$CDSeq$S) && nrow(deconvolutionResult$CDSeq$S) != nrow(bulk)) {
-  print("Transposing S matrix to match expected format (genes in rows)")
-  deconvolutionResult$CDSeq$S <- t(deconvolutionResult$CDSeq$S)
-}
+# # Check if S needs to be transposed too
+# if (!is.null(deconvolutionResult$CDSeq$S) && nrow(deconvolutionResult$CDSeq$S) != nrow(bulk)) {
+#   print("Transposing S matrix to match expected format (genes in rows)")
+#   deconvolutionResult$CDSeq$S <- t(deconvolutionResult$CDSeq$S)
+# }
 
 # Save results
 results_filename <- file.path(output_data, paste0("results_CDSeq_Batch1.rda"))
