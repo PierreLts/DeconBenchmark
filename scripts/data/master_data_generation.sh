@@ -21,10 +21,12 @@ RLIBRARY=${6:-$DEFAULT_RLIBRARY}
 SUBDIR_PATH="$OUTPUT_DIR/$PREFIX"
 mkdir -p $SUBDIR_PATH
 
-# Log file setup
-LOG_DIR="$SUBDIR_PATH/logs"
-mkdir -p $LOG_DIR
-MAIN_LOG="$LOG_DIR/master_data_generation_$(date +%Y%m%d_%H%M%S).log"
+# Set up log directories
+SCRATCH_LOG_DIR="/scratch/lorthiois/logs"
+mkdir -p $SCRATCH_LOG_DIR
+LOCAL_LOG_DIR="$SUBDIR_PATH/logs"
+mkdir -p $LOCAL_LOG_DIR
+MAIN_LOG="$LOCAL_LOG_DIR/master_data_generation_$(date +%Y%m%d_%H%M%S).log"
 
 echo "==== Starting master data generation $(date) ====" | tee -a "$MAIN_LOG"
 echo "Seurat file: $SEURAT_FILE" | tee -a "$MAIN_LOG"
@@ -33,6 +35,7 @@ echo "Mapping file: $MAPPING_FILE" | tee -a "$MAIN_LOG"
 echo "Output directory: $SUBDIR_PATH" | tee -a "$MAIN_LOG"
 echo "File prefix: $PREFIX" | tee -a "$MAIN_LOG"
 echo "R library path: $RLIBRARY" | tee -a "$MAIN_LOG"
+echo "Log directory: $SCRATCH_LOG_DIR" | tee -a "$MAIN_LOG"
 echo "" | tee -a "$MAIN_LOG"
 
 # Base directory where scripts are located
@@ -47,10 +50,10 @@ submit_job() {
     echo "Submitting job: $job_name" | tee -a "$MAIN_LOG"
     echo "Command: Rscript $script $args" | tee -a "$MAIN_LOG"
     
-    # Submit job using sbatch
+    # Submit job using sbatch with logs redirected to scratch directory
     JOB_ID=$(sbatch --job-name=$job_name \
-                    --output=$LOG_DIR/%j.out \
-                    --error=$LOG_DIR/%j.err \
+                    --output=$SCRATCH_LOG_DIR/%j.o \
+                    --error=$SCRATCH_LOG_DIR/%j.e \
                     --nodes=1 \
                     --ntasks=1 \
                     --cpus-per-task=8 \
@@ -122,12 +125,12 @@ JOBS+=($JOB_ID)
 # 6. Wait for marker job to complete before running significant genes
 if [ ! -z "$MARKER_JOB_ID" ]; then
     # Create a temporary script that waits for the marker job
-    TEMP_SCRIPT="$LOG_DIR/run_significant_genes_after_markers.sh"
+    TEMP_SCRIPT="$LOCAL_LOG_DIR/run_significant_genes_after_markers.sh"
     cat > $TEMP_SCRIPT << EOF
 #!/bin/bash
 #SBATCH --job-name=sig_genes_gen
-#SBATCH --output=$LOG_DIR/%j.out
-#SBATCH --error=$LOG_DIR/%j.err
+#SBATCH --output=$SCRATCH_LOG_DIR/%j.o
+#SBATCH --error=$SCRATCH_LOG_DIR/%j.e
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -157,12 +160,12 @@ JOB_ID=$(submit_job "$SCRIPT_DIR/seurat_celltype_expression_generation.R" \
 JOBS+=($JOB_ID)
 
 # 8. Ground truth generation - depends on single cell labels being ready
-TEMP_SCRIPT="$LOG_DIR/run_ground_truth.sh"
+TEMP_SCRIPT="$LOCAL_LOG_DIR/run_ground_truth.sh"
 cat > $TEMP_SCRIPT << EOF
 #!/bin/bash
 #SBATCH --job-name=ground_truth
-#SBATCH --output=$LOG_DIR/%j.out
-#SBATCH --error=$LOG_DIR/%j.err
+#SBATCH --output=$SCRATCH_LOG_DIR/%j.o
+#SBATCH --error=$SCRATCH_LOG_DIR/%j.err
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -192,12 +195,12 @@ JOBS+=($JOB_ID)
 # Create comma-separated list of job IDs for dependency
 JOB_DEPS=$(IFS=,; echo "${JOBS[*]}")
 
-FINAL_SCRIPT="$LOG_DIR/run_final_rda.sh"
+FINAL_SCRIPT="$LOCAL_LOG_DIR/run_final_rda.sh"
 cat > $FINAL_SCRIPT << EOF
 #!/bin/bash
 #SBATCH --job-name=finalRDA
-#SBATCH --output=$LOG_DIR/%j.out
-#SBATCH --error=$LOG_DIR/%j.err
+#SBATCH --output=$SCRATCH_LOG_DIR/%j.o
+#SBATCH --error=$SCRATCH_LOG_DIR/%j.err
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -214,6 +217,6 @@ chmod +x $FINAL_SCRIPT
 FINAL_JOB_ID=$(sbatch $FINAL_SCRIPT | grep -o '[0-9]*')
 echo "Submitted job $FINAL_JOB_ID for final RDA generation (dependent on all previous jobs)" | tee -a "$MAIN_LOG"
 
-echo "All data generation jobs submitted. Check individual logs for progress." | tee -a "$MAIN_LOG"
+echo "All data generation jobs submitted. Check individual logs in $SCRATCH_LOG_DIR for progress." | tee -a "$MAIN_LOG"
 echo "Final RDA will be generated after all other jobs complete." | tee -a "$MAIN_LOG"
 echo "All generated files will be stored in: $SUBDIR_PATH" | tee -a "$MAIN_LOG"

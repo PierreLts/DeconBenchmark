@@ -2,7 +2,7 @@
 # parallel_deconv.sh - Run multiple deconvolution methods in parallel
 
 # Default parameters
-DEFAULT_DATASET_PREFIX="TB"
+DEFAULT_DATASET_PREFIX="TB1"
 DEFAULT_METHODS="MuSic,DWLS,CIBERSORT,BayesPrism,DeconRNASeq,LinDeconSeq,FARDEEP,MIXTURE,BisqueRef,SCDC,RNA-Sieve,DeconICA,Linseed,BayCount"
 
 # Parse command line arguments
