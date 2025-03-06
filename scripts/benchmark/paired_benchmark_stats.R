@@ -327,9 +327,6 @@ if (nrow(all_method_summaries) > 0) {
     comparison_plot_file <- file.path(output_dir, paste0(dataset_prefix, "_method_metrics_comparison.pdf"))
     ggsave(comparison_plot_file, p, width = 22, height = 12)
     
-    # Also save as PNG for easier viewing
-    comparison_plot_png <- file.path(output_dir, paste0(dataset_prefix, "_method_metrics_comparison.png"))
-    ggsave(comparison_plot_png, p, width = 22, height = 12, dpi = 300)
     
     cat("Comparison plots saved to:", comparison_plot_file, "and", comparison_plot_png, "\n")
   }

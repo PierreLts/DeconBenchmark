@@ -330,8 +330,4 @@ plot_height <- 7 + (num_cell_types > 20) * (num_cell_types - 20) * 0.1  # Increa
 pdf_filename <- file.path(output_dir, paste0(dataset_prefix, "_", method_name, "_paired_ground_truth.pdf"))
 ggsave(pdf_filename, p, width=plot_width, height=plot_height)
 
-# Also save as PNG for easier viewing
-png_filename <- file.path(output_dir, paste0(method_name, "_paired_ground_truth.png"))
-ggsave(png_filename, p, width=plot_width, height=plot_height, dpi=300)
-
 print(paste("Plots saved to:", output_dir))

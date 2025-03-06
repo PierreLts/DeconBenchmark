@@ -27,7 +27,7 @@ start=`date +%s`
 echo "START AT $(date)"
 
 # Create output directory
-OUTPUT_DIR="${OUTPUT_BASE_DIR}/${DATASET_PREFIX}/${METHOD}"
+OUTPUT_DIR="${OUTPUT_BASE_DIR}/${DATASET_PREFIX}"
 mkdir -p ${OUTPUT_DIR}
 
 # Run the R script (ORDER IS IMPORTANT)
