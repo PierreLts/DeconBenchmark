@@ -3,7 +3,7 @@
 
 # Default parameters
 DEFAULT_DATASET_PREFIX="TB1"
-DEFAULT_METHODS="AdRoit,ARIC,AutoGeneS,BayCount,BayesCCE,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CellDistinguisher,CIBERSORT,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MethylResolver,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,ReFACTor,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
+DEFAULT_METHODS="AdRoit,ARIC,AutoGeneS,BayCount,BayesCCE,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CDSeq,CellDistinguisher,CIBERSORT,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MethylResolver,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,ReFACTor,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
 
 # "AdRoit,ARIC,AutoGeneS,BayCount,BayesCCE,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CellDistinguisher,CIBERSORT,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MethylResolver,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,ReFACTor,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
 

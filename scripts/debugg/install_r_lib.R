@@ -42,10 +42,14 @@ if(do_install == 1){
   required_packages <- c("dplyr", "tidyr", "readr", "stringr", "gridExtra")
   
   lapply(required_packages, install_if_missing)
+  # Add to Singularity container definition or add this to run script
+  if (!requireNamespace("devtools", quietly = TRUE))
+    install.packages("devtools")
+  devtools::install_github("cartof/digitalDLSorter")
   # # babelwhale
   # install_if_missing("babelwhale")
   # babelwhale::test_singularity_installation(detailed = TRUE)
-  library(CDSeq)
+  #library(CDSeq)
   # # DeconBenchmark
   # install_if_missing("devtools")
   # devtools::install_github("tinnlab/DeconBenchmark")
