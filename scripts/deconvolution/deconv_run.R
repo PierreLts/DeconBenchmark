@@ -97,44 +97,6 @@ print(paste("Methods to run:", paste(method_list, collapse=", ")))
 reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
 signature <- reference$signature
 
-# # Generate missing inputs if needed
-# if (is.null(cellTypeExpr) && any(grep("cellTypeExpr", unlist(getMethodsInputs(method_list))))) {
-#   print("Auto-generating cell type expression matrix...")
-#   # Code to generate cellTypeExpr
-#   cell_types <- unique(singleCellLabels)
-#   cellTypeExpr <- t(sapply(rownames(singleCellExpr), function(gene) {
-#     sapply(cell_types, function(ct) {
-#       mean(singleCellExpr[gene, singleCellLabels == ct])
-#     })
-#   }))
-#   colnames(cellTypeExpr) <- cell_types
-# }
-
-# if (is.null(markers) && any(grep("markers", unlist(getMethodsInputs(method_list))))) {
-#   print("Auto-generating marker genes...")
-#   # Create a simple version of markers based on differential expression
-#   markers <- list()
-#   cell_types <- unique(singleCellLabels)
-  
-#   for (ct in cell_types) {
-#     # Basic approach to find markers
-#     cells_this_type <- singleCellLabels == ct
-#     mean_expr_this <- rowMeans(singleCellExpr[, cells_this_type, drop=FALSE])
-#     mean_expr_other <- rowMeans(singleCellExpr[, !cells_this_type, drop=FALSE])
-    
-#     # Calculate fold change
-#     fold_change <- mean_expr_this / (mean_expr_other + 0.1)
-    
-#     # Get top genes by fold change
-#     top_genes <- names(sort(fold_change, decreasing=TRUE)[1:min(20, length(fold_change))])
-#     markers[[ct]] <- top_genes
-#   }
-# }
-
-# if (is.null(significantGenes) && any(grep("significantGenes", unlist(getMethodsInputs(method_list))))) {
-#   print("Using all genes as significant genes...")
-#   significantGenes <- rownames(singleCellExpr)
-# }
 
 
 ### Get common genes between bulk and single-cell data
@@ -151,7 +113,152 @@ message(paste("Filtered scRNA matrix dimensions:", paste(dim(singleCellExpr), co
 ###
 
 ### Run deconvolution
-print(paste("Starting deconvolution with", length(method_list), "methods..."))
+#####
+#####
+# Applying fixes based on the specific method being run
+
+print(paste("Applying pre-processing fixes for method:", method))
+
+# For DeconPeaker: Thread count fix
+if (method == "DeconPeaker") {
+  print("Applying DeconPeaker thread count fix")
+  # Set environment variable to limit threads to prevent "nthreads cannot be larger than NUMEXPR_MAX_THREADS" error
+  Sys.setenv(NUMEXPR_MAX_THREADS="64")
+}
+
+# For DESeq2 and EMeth: Ensure gene dimensions match
+if (method %in% c("DESeq2", "EMeth")) {
+  print("Applying gene dimension fix for DESeq2/EMeth")
+  if (!is.null(cellTypeExpr)) {
+    common_genes <- intersect(rownames(bulk), rownames(cellTypeExpr))
+    print(paste("Common genes between bulk and cellTypeExpr:", length(common_genes)))
+    
+    if (length(common_genes) > 0) {
+      # Subset both matrices to common genes
+      bulk <- bulk[common_genes, , drop=FALSE]
+      cellTypeExpr <- cellTypeExpr[common_genes, , drop=FALSE]
+      
+      # Verify dimensions match
+      print(paste("Fixed bulk matrix dimensions:", paste(dim(bulk), collapse=" x ")))
+      print(paste("Fixed cellTypeExpr matrix dimensions:", paste(dim(cellTypeExpr), collapse=" x ")))
+    } else {
+      print("WARNING: No common genes found between bulk and cellTypeExpr!")
+    }
+  } else {
+    print("WARNING: cellTypeExpr is NULL, cannot apply fix")
+  }
+}
+
+# For DeCompress: Fix duplicate row names
+if (method == "DeCompress") {
+  print("Applying DeCompress duplicate rownames fix")
+  
+  # Check for duplicate rownames
+  if (any(duplicated(rownames(bulk)))) {
+    print(paste("Found", sum(duplicated(rownames(bulk))), "duplicate rownames in bulk data"))
+    
+    # Make rownames unique
+    rownames(bulk) <- make.unique(rownames(bulk))
+    
+    # If cellTypeExpr exists, fix that too
+    if (!is.null(cellTypeExpr) && any(duplicated(rownames(cellTypeExpr)))) {
+      print(paste("Found", sum(duplicated(rownames(cellTypeExpr))), "duplicate rownames in cellTypeExpr"))
+      rownames(cellTypeExpr) <- make.unique(rownames(cellTypeExpr))
+    }
+    
+    print("Fixed duplicate rownames")
+  } else {
+    print("No duplicate rownames found, skipping fix")
+  }
+}
+
+# For MIXTURE and EPIC: Ensure proper signature mapping
+if (method %in% c("MIXTURE", "EPIC")) {
+  print("Applying signature mapping fix for MIXTURE/EPIC")
+  
+  if (!is.null(signature)) {
+    # Check if signature genes exist in bulk
+    common_genes <- intersect(rownames(bulk), rownames(signature))
+    print(paste("Common genes between bulk and signature:", length(common_genes)))
+    
+    if (length(common_genes) < 50) {
+      print("WARNING: Few common genes found between bulk and signature!")
+      
+      # Try removing version numbers from Ensembl IDs if present
+      if (any(grepl("\\.", rownames(bulk)))) {
+        print("Attempting to remove Ensembl ID version numbers...")
+        clean_rownames_bulk <- sub("\\..*", "", rownames(bulk))
+        
+        # Create temporary mapping from clean to original names
+        temp_map <- setNames(rownames(bulk), clean_rownames_bulk)
+        
+        # Update bulk rownames temporarily for matching
+        orig_rownames <- rownames(bulk)
+        rownames(bulk) <- clean_rownames_bulk
+        
+        # Re-check common genes
+        common_genes <- intersect(rownames(bulk), rownames(signature))
+        print(paste("Common genes after Ensembl ID cleaning:", length(common_genes)))
+        
+        if (length(common_genes) >= 50) {
+          # Keep only the common genes with cleaned IDs
+          bulk <- bulk[common_genes, , drop=FALSE]
+          signature <- signature[common_genes, , drop=FALSE]
+          
+          # Re-map bulk rownames back to original (but only for retained genes)
+          remapped_rownames <- temp_map[rownames(bulk)]
+          rownames(bulk) <- remapped_rownames
+          
+          print("Successfully fixed signature gene mapping")
+        } else {
+          # Revert to original rownames if fix didn't help
+          rownames(bulk) <- orig_rownames
+          print("Cleaning Ensembl IDs didn't improve gene matching")
+        }
+      }
+    } else {
+      # If enough common genes, just use those
+      bulk <- bulk[common_genes, , drop=FALSE]
+      signature <- signature[common_genes, , drop=FALSE]
+      print("Signature gene mapping fixed")
+    }
+  } else {
+    print("WARNING: signature is NULL, cannot apply fix")
+  }
+}
+
+# Additional check for common genes between bulk and single-cell data
+# Common gene matching for all methods - fundamental preprocessing step
+common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
+print(paste("Common genes between bulk and scRNA-seq data:", length(common_genes)))
+
+# Only modify if we have some common genes but not all
+if (length(common_genes) > 0 && 
+    (length(common_genes) < nrow(bulk) || length(common_genes) < nrow(singleCellExpr))) {
+  
+  print("Applying gene matching between bulk and single-cell data")
+  # Subset both matrices to common genes
+  bulk <- bulk[common_genes, , drop=FALSE]
+  singleCellExpr <- singleCellExpr[common_genes, , drop=FALSE]
+  
+  print(paste("Fixed bulk matrix dimensions:", paste(dim(bulk), collapse=" x ")))
+  print(paste("Fixed scRNA matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
+}
+
+# Also match signature if it exists
+if (!is.null(signature)) {
+  common_genes_sig <- intersect(rownames(bulk), rownames(signature))
+  if (length(common_genes_sig) > 0 && length(common_genes_sig) < nrow(signature)) {
+    print("Applying gene matching between bulk and signature")
+    bulk <- bulk[common_genes_sig, , drop=FALSE]
+    signature <- signature[common_genes_sig, , drop=FALSE]
+  }
+}
+#######
+#######
+
+# Now proceed with the deconvolution run
+print("Pre-processing complete, starting deconvolution...")
 deconvolutionResult <- runDeconvolution(
   methods = method_list,
   bulk = bulk,
