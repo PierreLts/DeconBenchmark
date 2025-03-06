@@ -41,7 +41,7 @@
 </head>
 <body>
     <h1>Deconvolution, Paired Plot, and Stats Error Summary</h1>
-    <p>Generated on jeu 06 mar 2025 18:45:55 CET for dataset: TB1</p>
+    <p>Generated on jeu 06 mar 2025 19:07:01 CET for dataset: TB1</p>
     
     <div class="tabs">
         <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
@@ -60,27 +60,20 @@
                 <th>Error Type</th>
                 <th>Error Details</th>
             </tr>
-        <tr>
-            <td>MuSic</td>
-            <td>32660819</td>
-            <td class="warning">Completed with warnings</td>
-            <td>Unknown</td>
-            <td><br>
-INFO:    Using cached SIF image<br>
-<br>
-INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
-<br></td>
-        </tr>
+            <tr>
+                <td>MuSic</td>
+                <td>32660819</td>
+                <td class="success">Success</td>
+                <td>None</td>
+                <td>Standard execution log (no errors)</td>
+            </tr>
         <tr>
             <td>DWLS</td>
             <td>32660820</td>
-            <td class="warning">Completed with warnings</td>
-            <td>Unknown</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
             <td><br>
-INFO:    Using cached SIF image<br>
-<br>
-INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
-<br></td>
+slurmstepd: error: *** JOB 32660820 ON jst164 CANCELLED AT 2025-03-06T19:06:14 ***<br></td>
         </tr>
         <tr>
             <td>CIBERSORT</td>
@@ -90,17 +83,13 @@ INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINEREN
             <td><br>
 FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to get checksum for docker://deconvolution/cibersort:latest: reading manifest latest in docker.io/deconvolution/cibersort: requested access to the resource is denied<br></td>
         </tr>
-        <tr>
-            <td>BayesPrism</td>
-            <td>32660822</td>
-            <td class="warning">Completed with warnings</td>
-            <td>Unknown</td>
-            <td><br>
-<br>
-snowfall 1.84-6.3 initialized (using snow 0.4-4): parallel execution on 8 CPUs.<br>
-<br>
-<br></td>
-        </tr>
+            <tr>
+                <td>BayesPrism</td>
+                <td>32660822</td>
+                <td class="success">Success</td>
+                <td>None</td>
+                <td>Standard execution log (no errors)</td>
+            </tr>
             <tr>
                 <td>DeconRNASeq</td>
                 <td>32660823</td>
@@ -162,25 +151,18 @@ Calls: MIXTURE -&gt; rownames<br></td>
         <tr>
             <td>Linseed</td>
             <td>32660831</td>
-            <td class="warning">Completed with warnings</td>
-            <td>Unknown</td>
-            <td>INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
-<br>
-Setting options('download.file.method.GEOquery'='auto')<br>
-Setting options('GEOquery.inmemory.gpl'=FALSE)<br>
-<br></td>
-        </tr>
-        <tr>
-            <td>BayCount</td>
-            <td>32660832</td>
-            <td class="warning">Completed with warnings</td>
-            <td>Unknown</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
             <td><br>
-INFO:    Using cached SIF image<br>
-<br>
-INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
-<br></td>
+slurmstepd: error: *** JOB 32660831 ON jst094 CANCELLED AT 2025-03-06T19:06:14 ***<br></td>
         </tr>
+            <tr>
+                <td>BayCount</td>
+                <td>32660832</td>
+                <td class="success">Success</td>
+                <td>None</td>
+                <td>Standard execution log (no errors)</td>
+            </tr>
         <tr>
             <td>CDSeq</td>
             <td>32660833</td>
@@ -201,8 +183,118 @@ FATAL:   Unable to handle docker://deconvolution/cdseq:latest uri: failed to get
     
     <div id="PairedPlotTab" class="tab-content">
         <h2>Paired Plot Errors</h2>
-        <p class="warning">Warning: Paired plot job mapping file not found at: /work/gr-fe/lorthiois/DeconBenchmark/logs/TB1/paired_plot_job_mapping.txt</p>
-        <p class="warning">No paired plot job mapping file found at /work/gr-fe/lorthiois/DeconBenchmark/logs/TB1/paired_plot_job_mapping.txt</p>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Plot Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+    <tr>
+        <td>FARDEEP</td>
+        <td>32662815</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>CDSeq</td>
+            <td>32662816</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: CDSeq<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>BisqueRef</td>
+        <td>32662817</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>LinDeconSeq</td>
+        <td>32662818</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>DeconRNASeq</td>
+        <td>32662819</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>SCDC</td>
+        <td>32662820</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>BayesPrism</td>
+        <td>32662821</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>MuSic</td>
+        <td>32662822</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>RNA-Sieve</td>
+        <td>32662823</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>BayCount</td>
+        <td>32662824</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>CIBERSORT</td>
+            <td>32662825</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: CIBERSORT<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>MIXTURE</td>
+            <td>32662826</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: MIXTURE<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>DeconICA</td>
+        <td>32662827</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>compare_TB1</td>
+            <td></td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
+        </tr>
         </table>
     </div>
     
@@ -236,40 +328,40 @@ FATAL:   Unable to handle docker://deconvolution/cdseq:latest uri: failed to get
             </div>
             <div class="metric">
                 <div class="metric-title">Success</div>
-                <div class="metric-value" style="color: #2ecc71">8</div>
-                <div>50.0%</div>
+                <div class="metric-value" style="color: #2ecc71">11</div>
+                <div>68.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Warning</div>
-                <div class="metric-value" style="color: #f39c12">5</div>
-                <div>31.0%</div>
+                <div class="metric-value" style="color: #f39c12">0</div>
+                <div>0.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Failed</div>
-                <div class="metric-value" style="color: #e74c3c">3</div>
-                <div>18.0%</div>
+                <div class="metric-value" style="color: #e74c3c">5</div>
+                <div>31.0%</div>
             </div>
         </div>
         
         <div class="dashboard">
             <div class="metric">
                 <div class="metric-title">Plots Total</div>
-                <div class="metric-value">0</div>
+                <div class="metric-value">14</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Plots Success</div>
-                <div class="metric-value" style="color: #2ecc71">0</div>
-                <div>0.0%</div>
+                <div class="metric-value" style="color: #2ecc71">10</div>
+                <div>71.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Plots Warning</div>
-                <div class="metric-value" style="color: #f39c12">0</div>
-                <div>0.0%</div>
+                <div class="metric-value" style="color: #f39c12">1</div>
+                <div>7.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Plots Failed</div>
-                <div class="metric-value" style="color: #e74c3c">0</div>
-                <div>0.0%</div>
+                <div class="metric-value" style="color: #e74c3c">3</div>
+                <div>21.0%</div>
             </div>
         </div>
         
@@ -302,6 +394,16 @@ FATAL:   Unable to handle docker://deconvolution/cdseq:latest uri: failed to get
                 <th>Affected Methods</th>
             </tr>
         <tr>
+            <td>Error:</td>
+            <td>5</td>
+            <td>DWLS (deconv), Linseed (deconv), CDSeq (plot), CIBERSORT (plot), MIXTURE (plot)</td>
+        </tr>
+        <tr>
+            <td>ERROR:</td>
+            <td>5</td>
+            <td>DWLS (deconv), Linseed (deconv), CDSeq (plot), CIBERSORT (plot), MIXTURE (plot)</td>
+        </tr>
+        <tr>
             <td>fatal:</td>
             <td>2</td>
             <td>CIBERSORT (deconv), CDSeq (deconv)</td>
@@ -318,13 +420,13 @@ FATAL:   Unable to handle docker://deconvolution/cdseq:latest uri: failed to get
         </tr>
         <tr>
             <td>Error</td>
-            <td>1</td>
-            <td>MIXTURE (deconv)</td>
+            <td>6</td>
+            <td>DWLS (deconv), MIXTURE (deconv), Linseed (deconv), CDSeq (plot), CIBERSORT (plot), MIXTURE (plot)</td>
         </tr>
         <tr>
             <td>ERROR</td>
-            <td>1</td>
-            <td>MIXTURE (deconv)</td>
+            <td>6</td>
+            <td>DWLS (deconv), MIXTURE (deconv), Linseed (deconv), CDSeq (plot), CIBERSORT (plot), MIXTURE (plot)</td>
         </tr>
         <tr>
             <td>Failed</td>
@@ -345,6 +447,11 @@ FATAL:   Unable to handle docker://deconvolution/cdseq:latest uri: failed to get
             <td>FATAL</td>
             <td>2</td>
             <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>CANCELLED</td>
+            <td>2</td>
+            <td>DWLS (deconv), Linseed (deconv)</td>
         </tr>
         </table>
     </div>
