@@ -4,8 +4,12 @@
 # Usage: ./run_benchmarks.sh [DATASET_PREFIX] [INCLUDE_OVERALL_GT]
 
 # Default parameters
-DATASET_PREFIX="${1:-TB}"
-INCLUDE_OVERALL_GT="${2:-TRUE}"
+DEFAULT_DATASET_PREFIX="TB1"
+DEFAULT_INCLUDE_OVERALL_GT="TRUE"
+
+# Parse command line arguments
+DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"
+INCLUDE_OVERALL_GT="${2:-$DEFAULT_INCLUDE_OVERALL_GT}"
 
 # Paths
 SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark"
