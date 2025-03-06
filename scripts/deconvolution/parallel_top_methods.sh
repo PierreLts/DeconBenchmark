@@ -4,7 +4,7 @@
 # Usage: ./run_top_methods.sh [INPUT_RDA_FILE]
 
 # Default input file
-DEFAULT_INPUT="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/Batch1.rda"
+DEFAULT_INPUT="/work/gr-fe/lorthiois/DeconBenchmark/data/BloodExample.rda"
 INPUT_RDA_FILE=${1:-$DEFAULT_INPUT}
 # Methods to run
 TOP_METHODS="AdRoit,ARIC,AutoGeneS,BayCount,BayesCCE,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CellDistinguisher,CIBERSORT,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MethylResolver,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,ReFACTor,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"

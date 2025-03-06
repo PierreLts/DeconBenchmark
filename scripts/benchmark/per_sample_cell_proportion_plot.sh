@@ -17,7 +17,7 @@ RLIBRARY="/work/gr-fe/R_4.3.1" # R library path
 SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/per_sample_cell_proportion_plot.R
 OVERALL_GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
 PER_SAMPLE_GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/per_sample_ground_truth_proportions.rda"
-RESULTS="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_CDSeq_Batch1_Downsampled.rda"
+RESULTS="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results/results_AdRoit_BloodExample.rda"
 OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 
 # Extract method and data names from the results filename

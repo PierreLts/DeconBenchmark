@@ -12,7 +12,7 @@ set -e
 set -x
 
 RLIBRARY="/work/gr-fe/R_4.3.1"
-SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/prepare_seurat_inputs.R
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/prepare_seurat_inputs.R
 SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds"
 OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
 MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt"
