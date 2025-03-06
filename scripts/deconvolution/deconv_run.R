@@ -88,6 +88,7 @@ if (file.exists(subjects_file)) {
 }
 
 # Split method names
+# THE PIPELINE ONLY RUNS A METHOD AT ONCE
 method_list <- unlist(strsplit(deconv_methods, ","))
 method_list <- trimws(method_list)
 print(paste("Methods to run:", paste(method_list, collapse=", ")))
