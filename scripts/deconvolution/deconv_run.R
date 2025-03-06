@@ -135,6 +135,20 @@ signature <- reference$signature
 #   significantGenes <- rownames(singleCellExpr)
 # }
 
+
+### Get common genes between bulk and single-cell data
+common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
+message(paste("Common genes between datasets:", length(common_genes)))
+
+# Subset both matrices to common genes
+bulk <- bulk[common_genes, , drop=FALSE]
+singleCellExpr <- singleCellExpr[common_genes, , drop=FALSE]
+
+# Verify dimensions match
+message(paste("Filtered bulk matrix dimensions:", paste(dim(bulk), collapse=" x ")))
+message(paste("Filtered scRNA matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
+###
+
 ### Run deconvolution
 print(paste("Starting deconvolution with", length(method_list), "methods..."))
 deconvolutionResult <- runDeconvolution(
