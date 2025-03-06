@@ -3,7 +3,7 @@
 
 # Default parameters
 DEFAULT_DATASET_PREFIX="TB1"
-DEFAULT_METHODS="MuSic,DWLS,CIBERSORT,BayesPrism,DeconRNASeq,LinDeconSeq,FARDEEP,MIXTURE,BisqueRef,SCDC,RNA-Sieve,DeconICA,Linseed,BayCount"
+DEFAULT_METHODS="MuSic,DWLS,CIBERSORT,BayesPrism,DeconRNASeq,LinDeconSeq,FARDEEP,MIXTURE,BisqueRef,SCDC,RNA-Sieve,DeconICA,Linseed,BayCount,CDSeq"
 
 # Parse command line arguments
 DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"

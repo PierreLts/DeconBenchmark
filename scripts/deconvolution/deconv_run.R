@@ -167,24 +167,34 @@ deconvolutionResult <- runDeconvolution(
 )
 print("CHECK: Deconvolution completed for all methods")
 
-# Save results as before
-# Create unified output with all methods
-combined_method_name <- paste(method_list, collapse="_")
-results_filename <- file.path(output_dir, paste0("results_", combined_method_name, ".rda"))
-save(deconvolutionResult, file=results_filename)
-print(paste("Results for all methods saved to:", results_filename))
+# Save as RDA format
+results_filename <- file.path(output_dir, paste0("results_", method, ".rda"))
+save(deconvolutionResult, file=results_filename, compress=TRUE)
+print(paste("Results saved to:", results_filename))
 
-# Also save individual method results for backward compatibility
-for (method in method_list) {
-  # Create a new list with the same structure as deconvolutionResult
-  # but containing only the current method
-  single_method_result <- list()
-  single_method_result[[method]] <- deconvolutionResult[[method]]
+# Save as CSV format
+# Extract the proportions matrix (P) and convert to dataframe
+if (!is.null(deconvolutionResult[[method]]$P)) {
+  proportions_df <- as.data.frame(deconvolutionResult[[method]]$P)
   
-  # Use the same variable name as the combined results
-  temp_deconvolutionResult <- single_method_result
+  # Add sample names as a column
+  proportions_df$Sample <- rownames(proportions_df)
   
-  single_results_filename <- file.path(output_dir, paste0("results_", method, ".rda"))
-  save(temp_deconvolutionResult, file=single_results_filename, compress=TRUE)
-  print(paste("Results for", method, "saved to:", single_results_filename))
+  # Save as CSV
+  csv_filename <- file.path(output_dir, paste0("results_", method, "_proportions.csv"))
+  write.csv(proportions_df, file=csv_filename, row.names=FALSE)
+  print(paste("Proportions CSV saved to:", csv_filename))
+}
+
+# If signature matrix exists, save it too
+if (!is.null(deconvolutionResult[[method]]$S)) {
+  signature_df <- as.data.frame(deconvolutionResult[[method]]$S)
+  
+  # Add gene names as a column
+  signature_df$Gene <- rownames(signature_df)
+  
+  # Save as CSV
+  sig_csv_filename <- file.path(output_dir, paste0("results_", method, "_signature.csv"))
+  write.csv(signature_df, file=sig_csv_filename, row.names=FALSE)
+  print(paste("Signature CSV saved to:", sig_csv_filename))
 }
