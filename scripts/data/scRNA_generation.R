@@ -51,14 +51,22 @@ print(singleCellExpr[1:6, 1:6])
 print(paste("Matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
 print(paste("Matrix class:", class(singleCellExpr)))
 
+# Save a small subset (50x50) of the dense matrix as CSV
+max_rows <- min(50, nrow(singleCellExpr))
+max_cols <- min(50, ncol(singleCellExpr))
+small_dense_matrix <- singleCellExpr[1:max_rows, 1:max_cols, drop=FALSE]
+small_dense_csv <- file.path(output_dir, paste0(prefix, "_singleCellExpr_dense_50x50.csv"))
+write.csv(small_dense_matrix, file = small_dense_csv)
+
 # Save as RDA
 rda_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr.rda"))
 save(singleCellExpr, file = rda_filename)
 
-# Save as CSV (this might be a large file) - sparse format
-csv_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr_sparse.csv"))
-sparse_df <- as.data.frame(summary(as(singleCellExpr, "sparseMatrix")))
-colnames(sparse_df) <- c("Row", "Column", "Value")
-write.csv(sparse_df, file = csv_filename, row.names = FALSE)
+# # Save as CSV (this might be a large file) - sparse format
+# csv_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr_sparse.csv"))
+# sparse_df <- as.data.frame(summary(as(singleCellExpr, "sparseMatrix")))
+# colnames(sparse_df) <- c("Row", "Column", "Value")
+# write.csv(sparse_df, file = csv_filename, row.names = FALSE)
 
-print(paste("Expression matrix saved to:", rda_filename, "and sparse representation to", csv_filename))
+# print(paste("Expression matrix saved to:", rda_filename, "and sparse representation to", csv_filename))
+# print(paste("Small dense subset (", max_rows, "x", max_cols, ") saved to:", small_dense_csv))
