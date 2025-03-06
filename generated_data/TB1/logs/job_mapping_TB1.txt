@@ -1,0 +1,17 @@
+# Job mapping file for TB1 data generation - Created jeu 06 mar 2025 14:50:08 CET
+bulk_gen:Submitted bulk_gen job: 32637548
+32637548
+labels_gen:Submitted labels_gen job: 32637549
+32637549
+scRNA_gen:Submitted scRNA_gen job: 32637550
+32637550
+subjects_gen:Submitted subjects_gen job: 32637551
+32637551
+markers_gen:Submitted markers_gen job: 32637552
+32637552
+celltype_expr_gen:Submitted celltype_expr_gen job: 32637553
+32637553
+ground_truth:Submitted ground_truth job: 32637554
+32637554
+sample_gt_gen:Submitted sample_gt_gen job: 32637555
+32637555

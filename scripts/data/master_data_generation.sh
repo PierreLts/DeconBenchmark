@@ -17,14 +17,22 @@ OUTPUT_DIR=${4:-$DEFAULT_OUTPUT_DIR}
 PREFIX=${5:-$DEFAULT_PREFIX}
 RLIBRARY=${6:-$DEFAULT_RLIBRARY}
 
-# Create prefix-specific subdirectory
+# Create prefix-specific subdirectory for output data
 SUBDIR_PATH="$OUTPUT_DIR/$PREFIX"
 mkdir -p $SUBDIR_PATH
 
-# Log file setup
-LOG_DIR="$SUBDIR_PATH/logs"
-mkdir -p $LOG_DIR
-MAIN_LOG="$LOG_DIR/master_data_generation_$(date +%Y%m%d_%H%M%S).log"
+# Set up scratch log directory
+SCRATCH_LOG_DIR="/scratch/lorthiois/logs"
+mkdir -p $SCRATCH_LOG_DIR
+
+# Create prefix-specific subdirectory for temporary scripts
+SCRATCH_SCRIPT_DIR="/scratch/lorthiois/scripts/${PREFIX}"
+mkdir -p $SCRATCH_SCRIPT_DIR
+
+# Set up log file in output directory for logging the script execution
+OUTPUT_LOG_DIR="$SUBDIR_PATH/logs"
+mkdir -p $OUTPUT_LOG_DIR
+MAIN_LOG="$OUTPUT_LOG_DIR/master_data_generation_$(date +%Y%m%d_%H%M%S).log"
 
 echo "==== Starting master data generation $(date) ====" | tee -a "$MAIN_LOG"
 echo "Seurat file: $SEURAT_FILE" | tee -a "$MAIN_LOG"
@@ -33,134 +41,117 @@ echo "Mapping file: $MAPPING_FILE" | tee -a "$MAIN_LOG"
 echo "Output directory: $SUBDIR_PATH" | tee -a "$MAIN_LOG"
 echo "File prefix: $PREFIX" | tee -a "$MAIN_LOG"
 echo "R library path: $RLIBRARY" | tee -a "$MAIN_LOG"
+echo "Scratch log directory: $SCRATCH_LOG_DIR" | tee -a "$MAIN_LOG"
+echo "Scratch script directory: $SCRATCH_SCRIPT_DIR" | tee -a "$MAIN_LOG"
 echo "" | tee -a "$MAIN_LOG"
 
 # Base directory where scripts are located
 SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data"
 
-# Submit all jobs independently
+# Function to create temp script and submit job
+submit_job() {
+    local job_name=$1
+    local script_content=$2
+    local cpus=$3
+    local mem=$4
+    local time=$5
+    local dependency=$6
+    
+    # Create temporary script
+    local temp_script="$SCRATCH_SCRIPT_DIR/${job_name}_${PREFIX}.sh"
+    echo "#!/bin/bash" > "$temp_script"
+    echo "#SBATCH --job-name=${job_name}_${PREFIX}" >> "$temp_script"
+    echo "#SBATCH --output=${SCRATCH_LOG_DIR}/%j.o" >> "$temp_script"
+    echo "#SBATCH --error=${SCRATCH_LOG_DIR}/%j.e" >> "$temp_script"
+    echo "#SBATCH --nodes=1" >> "$temp_script"
+    echo "#SBATCH --ntasks=1" >> "$temp_script"
+    echo "#SBATCH --cpus-per-task=${cpus}" >> "$temp_script"
+    echo "#SBATCH --mem=${mem}" >> "$temp_script"
+    echo "#SBATCH --time=${time}" >> "$temp_script"
+    
+    # Add dependency if provided
+    if [ ! -z "$dependency" ]; then
+        echo "#SBATCH --dependency=afterok:${dependency}" >> "$temp_script"
+    fi
+    
+    # Add module loading and script execution
+    echo "module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/" >> "$temp_script"
+    echo "module load r" >> "$temp_script"
+    echo "" >> "$temp_script"
+    echo "$script_content" >> "$temp_script"
+    
+    # Make script executable
+    chmod +x "$temp_script"
+    
+    # Submit job and capture output with proper error handling
+    local sbatch_output=$(sbatch "$temp_script" 2>&1)
+    local sbatch_status=$?
+    
+    if [ $sbatch_status -ne 0 ]; then
+        echo "ERROR: Failed to submit job: $sbatch_output" | tee -a "$MAIN_LOG"
+        return 1
+    fi
+    
+    # Extract job ID with robust pattern matching
+    local job_id=$(echo "$sbatch_output" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
+    
+    if [ -z "$job_id" ]; then
+        echo "WARNING: Could not extract job ID from sbatch output: $sbatch_output" | tee -a "$MAIN_LOG"
+        return 1
+    fi
+    
+    echo "Submitted ${job_name} job: $job_id" | tee -a "$MAIN_LOG"
+    echo "$job_id"
+}
+
+# Submit all jobs using the function
 echo "Submitting bulk RNA generation job..." | tee -a "$MAIN_LOG"
-BULK_JOB_ID=$(sbatch --job-name="bulk_gen_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=8 \
-    --mem=16G \
-    --time=1:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/bulkRNA_generation.R $RLIBRARY $BULK_FILE $SUBDIR_PATH $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted bulk job: $BULK_JOB_ID" | tee -a "$MAIN_LOG"
+BULK_JOB_ID=$(submit_job "bulk_gen" "Rscript $SCRIPT_DIR/bulkRNA_generation.R $RLIBRARY $BULK_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
 echo "Submitting labels RNA generation job..." | tee -a "$MAIN_LOG"
-LABELS_JOB_ID=$(sbatch --job-name="labels_gen_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=8 \
-    --mem=16G \
-    --time=1:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/labelsRNA_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted labels job: $LABELS_JOB_ID" | tee -a "$MAIN_LOG"
+LABELS_JOB_ID=$(submit_job "labels_gen" "Rscript $SCRIPT_DIR/labelsRNA_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
 echo "Submitting scRNA generation job..." | tee -a "$MAIN_LOG"
-SCRNA_JOB_ID=$(sbatch --job-name="scRNA_gen_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=16 \
-    --mem=48G \
-    --time=2:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/scRNA_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $MAPPING_FILE $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted scRNA job: $SCRNA_JOB_ID" | tee -a "$MAIN_LOG"
+SCRNA_JOB_ID=$(submit_job "scRNA_gen" "Rscript $SCRIPT_DIR/scRNA_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $MAPPING_FILE $PREFIX" 16 "48G" "2:00:00")
 
 echo "Submitting subject information generation job..." | tee -a "$MAIN_LOG"
-SUBJECTS_JOB_ID=$(sbatch --job-name="subjects_gen_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=8 \
-    --mem=16G \
-    --time=1:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/seurat_subjects_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted subjects job: $SUBJECTS_JOB_ID" | tee -a "$MAIN_LOG"
+SUBJECTS_JOB_ID=$(submit_job "subjects_gen" "Rscript $SCRIPT_DIR/seurat_subjects_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
 echo "Submitting marker genes generation job..." | tee -a "$MAIN_LOG"
-MARKER_JOB_ID=$(sbatch --job-name="markers_gen_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=16 \
-    --mem=32G \
-    --time=2:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/seurat_markers_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $MAPPING_FILE $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted markers job: $MARKER_JOB_ID" | tee -a "$MAIN_LOG"
+MARKER_JOB_ID=$(submit_job "markers_gen" "Rscript $SCRIPT_DIR/seurat_markers_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $MAPPING_FILE $PREFIX" 16 "32G" "2:00:00")
 
 # Only submit dependent job if we have a valid MARKER_JOB_ID
 if [[ -n "$MARKER_JOB_ID" && "$MARKER_JOB_ID" =~ ^[0-9]+$ ]]; then
     echo "Submitting significant genes generation job (dependent on markers)..." | tee -a "$MAIN_LOG"
-    SIG_GENES_JOB_ID=$(sbatch --job-name="sig_genes_gen_${PREFIX}" \
-        --output="$LOG_DIR/%j.out" \
-        --error="$LOG_DIR/%j.err" \
-        --nodes=1 \
-        --ntasks=1 \
-        --cpus-per-task=8 \
-        --mem=16G \
-        --time=1:00:00 \
-        --dependency=afterok:$MARKER_JOB_ID \
-        --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/seurat_significant_genes_generation.R $RLIBRARY $SUBDIR_PATH/${PREFIX}_markers.rda $SUBDIR_PATH $PREFIX" \
-        | grep -o '[0-9]*')
-    echo "Submitted significant genes job: $SIG_GENES_JOB_ID" | tee -a "$MAIN_LOG"
+    SIG_GENES_JOB_ID=$(submit_job "sig_genes_gen" "Rscript $SCRIPT_DIR/seurat_significant_genes_generation.R $RLIBRARY $SUBDIR_PATH/${PREFIX}_markers.rda $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00" "$MARKER_JOB_ID")
 else
     echo "WARNING: Invalid marker job ID. Skipping significant genes generation." | tee -a "$MAIN_LOG"
 fi
 
 echo "Submitting cell type expression generation job..." | tee -a "$MAIN_LOG"
-CELLTYPE_JOB_ID=$(sbatch --job-name="celltype_expr_gen_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=16 \
-    --mem=32G \
-    --time=2:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/seurat_celltype_expression_generation.R $RLIBRARY $SEURAT_FILE $MAPPING_FILE $SUBDIR_PATH $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted cell type expression job: $CELLTYPE_JOB_ID" | tee -a "$MAIN_LOG"
+CELLTYPE_JOB_ID=$(submit_job "celltype_expr_gen" "Rscript $SCRIPT_DIR/seurat_celltype_expression_generation.R $RLIBRARY $SEURAT_FILE $MAPPING_FILE $SUBDIR_PATH $PREFIX" 16 "32G" "2:00:00")
 
 echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
-GT_JOB_ID=$(sbatch --job-name="ground_truth_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=8 \
-    --mem=16G \
-    --time=1:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/ground_truth.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted ground truth job: $GT_JOB_ID" | tee -a "$MAIN_LOG"
+GT_JOB_ID=$(submit_job "ground_truth" "Rscript $SCRIPT_DIR/ground_truth.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
 echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
-SAMPLE_GT_JOB_ID=$(sbatch --job-name="sample_gt_gen_${PREFIX}" \
-    --output="$LOG_DIR/%j.out" \
-    --error="$LOG_DIR/%j.err" \
-    --nodes=1 \
-    --ntasks=1 \
-    --cpus-per-task=8 \
-    --mem=32G \
-    --time=1:00:00 \
-    --wrap="module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/; module load r; Rscript $SCRIPT_DIR/per_sample_ground_truth.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" \
-    | grep -o '[0-9]*')
-echo "Submitted per-sample ground truth job: $SAMPLE_GT_JOB_ID" | tee -a "$MAIN_LOG"
+SAMPLE_GT_JOB_ID=$(submit_job "sample_gt_gen" "Rscript $SCRIPT_DIR/per_sample_ground_truth.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "32G" "1:00:00")
+
+# Save job IDs to a mapping file for future reference
+JOB_MAPPING_FILE="$OUTPUT_LOG_DIR/job_mapping_${PREFIX}.txt"
+echo "# Job mapping file for ${PREFIX} data generation - Created $(date)" > "$JOB_MAPPING_FILE"
+[ -n "$BULK_JOB_ID" ] && echo "bulk_gen:${BULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$LABELS_JOB_ID" ] && echo "labels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SCRNA_JOB_ID" ] && echo "scRNA_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SUBJECTS_JOB_ID" ] && echo "subjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$MARKER_JOB_ID" ] && echo "markers_gen:${MARKER_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SIG_GENES_JOB_ID" ] && echo "sig_genes_gen:${SIG_GENES_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$CELLTYPE_JOB_ID" ] && echo "celltype_expr_gen:${CELLTYPE_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$GT_JOB_ID" ] && echo "ground_truth:${GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SAMPLE_GT_JOB_ID" ] && echo "sample_gt_gen:${SAMPLE_GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
 
 echo "All data generation jobs submitted successfully." | tee -a "$MAIN_LOG"
 echo "All generated files will be stored in: $SUBDIR_PATH" | tee -a "$MAIN_LOG"
+echo "All log files will be stored in: $SCRATCH_LOG_DIR" | tee -a "$MAIN_LOG"
+echo "All temporary scripts are stored in: $SCRATCH_SCRIPT_DIR" | tee -a "$MAIN_LOG"
+echo "Job mapping saved to: $JOB_MAPPING_FILE" | tee -a "$MAIN_LOG"
