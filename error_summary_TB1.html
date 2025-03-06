@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deconvolution, Paired Plot, and Stats Error Summary</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .error { color: #e74c3c; }
+        .success { color: #2ecc71; }
+        .warning { color: #f39c12; }
+        .missing { color: #95a5a6; }
+        .dashboard { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .metric { border: 1px solid #ddd; padding: 15px; text-align: center; flex: 1; margin: 0 5px; }
+        .metric-title { font-weight: bold; }
+        .metric-value { font-size: 24px; margin: 10px 0; }
+        .tabs { margin-top: 20px; }
+        .tab { display: inline-block; padding: 10px 20px; cursor: pointer; background: #f2f2f2; border: 1px solid #ddd; }
+        .tab.active { background: white; border-bottom: 1px solid white; }
+        .tab-content { display: none; border: 1px solid #ddd; padding: 15px; margin-top: -1px; }
+        .tab-content.active { display: block; }
+    </style>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</head>
+<body>
+    <h1>Deconvolution, Paired Plot, and Stats Error Summary</h1>
+    <p>Generated on jeu 06 mar 2025 18:18:22 CET for dataset: TB1</p>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
+        <button class="tab" onclick="openTab(event, 'PairedPlotTab')">Paired Plot Errors</button>
+        <button class="tab" onclick="openTab(event, 'StatsTab')">Stats Errors</button>
+        <button class="tab" onclick="openTab(event, 'SummaryTab')">Error Summary</button>
+    </div>
+    
+    <div id="DeconvolutionTab" class="tab-content active">
+        <h2>Deconvolution Run Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+        <tr>
+            <td>MuSic</td>
+            <td>32646077</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>DWLS</td>
+            <td>32646078</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+slurmstepd: error: *** JOB 32646078 ON jst102 CANCELLED AT 2025-03-06T18:16:18 ***<br></td>
+        </tr>
+        <tr>
+            <td>CIBERSORT</td>
+            <td>32646079</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>BayesPrism</td>
+            <td>32646080</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>DeconRNASeq</td>
+            <td>32646081</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>LinDeconSeq</td>
+            <td>32646082</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>FARDEEP</td>
+            <td>32646083</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>MIXTURE</td>
+            <td>32646084</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>BisqueRef</td>
+            <td>32646085</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>SCDC</td>
+            <td>32646086</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>RNA-Sieve</td>
+            <td>32646087</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>DeconICA</td>
+            <td>32646088</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>Linseed</td>
+            <td>32646089</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+slurmstepd: error: *** JOB 32646089 ON jst354 CANCELLED AT 2025-03-06T18:16:18 ***<br></td>
+        </tr>
+        <tr>
+            <td>BayCount</td>
+            <td>32646090</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>CDSeq</td>
+            <td>32646091</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: object 'method' not found<br>
+Execution halted<br></td>
+        </tr>
+            <tr>
+                <td>CDSeq</td>
+                <td>32646092</td>
+                <td class="success">Success</td>
+                <td>None</td>
+                <td>Standard execution log (no errors)</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div id="PairedPlotTab" class="tab-content">
+        <h2>Paired Plot Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Plot Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+    <tr>
+        <td>CDSeq</td>
+        <td>32656549</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+    <tr>
+        <td>compare_TB1</td>
+        <td>32656550</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        </table>
+    </div>
+    
+    <div id="StatsTab" class="tab-content">
+        <h2>Statistics Calculation Errors</h2>
+        <table>
+            <tr>
+                <th>Job Name</th>
+                <th>Stats Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+        <tr>
+            <td># Auto-generated stats job mapping</td>
+            <td></td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
+        </tr>
+        </table>
+    </div>
+    
+    <div id="SummaryTab" class="tab-content">
+        <h2>Error Pattern Summary</h2>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Deconv Methods</div>
+                <div class="metric-value">16</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Success</div>
+                <div class="metric-value" style="color: #2ecc71">1</div>
+                <div>6.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Warning</div>
+                <div class="metric-value" style="color: #f39c12">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Failed</div>
+                <div class="metric-value" style="color: #e74c3c">15</div>
+                <div>93.0%</div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Plots Total</div>
+                <div class="metric-value">2</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Plots Success</div>
+                <div class="metric-value" style="color: #2ecc71">2</div>
+                <div>100.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Plots Warning</div>
+                <div class="metric-value" style="color: #f39c12">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Plots Failed</div>
+                <div class="metric-value" style="color: #e74c3c">0</div>
+                <div>0.0%</div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Stats Total</div>
+                <div class="metric-value">1</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Success</div>
+                <div class="metric-value" style="color: #2ecc71">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Warning</div>
+                <div class="metric-value" style="color: #f39c12">1</div>
+                <div>100.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Failed</div>
+                <div class="metric-value" style="color: #e74c3c">0</div>
+                <div>0.0%</div>
+            </div>
+        </div>
+        
+        <table>
+            <tr>
+                <th>Error Pattern</th>
+                <th>Count</th>
+                <th>Affected Methods</th>
+            </tr>
+        <tr>
+            <td>Error:</td>
+            <td>15</td>
+            <td>MuSic (deconv), DWLS (deconv), CIBERSORT (deconv), BayesPrism (deconv), DeconRNASeq (deconv), LinDeconSeq (deconv), FARDEEP (deconv), MIXTURE (deconv), BisqueRef (deconv), SCDC (deconv), RNA-Sieve (deconv), DeconICA (deconv), Linseed (deconv), BayCount (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>ERROR:</td>
+            <td>15</td>
+            <td>MuSic (deconv), DWLS (deconv), CIBERSORT (deconv), BayesPrism (deconv), DeconRNASeq (deconv), LinDeconSeq (deconv), FARDEEP (deconv), MIXTURE (deconv), BisqueRef (deconv), SCDC (deconv), RNA-Sieve (deconv), DeconICA (deconv), Linseed (deconv), BayCount (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>fatal:</td>
+            <td>2</td>
+            <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>Fatal:</td>
+            <td>2</td>
+            <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>FATAL:</td>
+            <td>2</td>
+            <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>Error</td>
+            <td>15</td>
+            <td>MuSic (deconv), DWLS (deconv), CIBERSORT (deconv), BayesPrism (deconv), DeconRNASeq (deconv), LinDeconSeq (deconv), FARDEEP (deconv), MIXTURE (deconv), BisqueRef (deconv), SCDC (deconv), RNA-Sieve (deconv), DeconICA (deconv), Linseed (deconv), BayCount (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>ERROR</td>
+            <td>15</td>
+            <td>MuSic (deconv), DWLS (deconv), CIBERSORT (deconv), BayesPrism (deconv), DeconRNASeq (deconv), LinDeconSeq (deconv), FARDEEP (deconv), MIXTURE (deconv), BisqueRef (deconv), SCDC (deconv), RNA-Sieve (deconv), DeconICA (deconv), Linseed (deconv), BayCount (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>Failed</td>
+            <td>2</td>
+            <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>fatal</td>
+            <td>2</td>
+            <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>Fatal</td>
+            <td>2</td>
+            <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>FATAL</td>
+            <td>2</td>
+            <td>CIBERSORT (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>not found</td>
+            <td>13</td>
+            <td>MuSic (deconv), CIBERSORT (deconv), BayesPrism (deconv), DeconRNASeq (deconv), LinDeconSeq (deconv), FARDEEP (deconv), MIXTURE (deconv), BisqueRef (deconv), SCDC (deconv), RNA-Sieve (deconv), DeconICA (deconv), BayCount (deconv), CDSeq (deconv)</td>
+        </tr>
+        <tr>
+            <td>CANCELLED</td>
+            <td>2</td>
+            <td>DWLS (deconv), Linseed (deconv)</td>
+        </tr>
+        </table>
+    </div>
+    
+    <script>
+        // Open first tab by default
+        document.getElementsByClassName("tab")[0].click();
+    </script>
+</body>
+</html>
