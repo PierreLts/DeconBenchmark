@@ -1,13 +1,14 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 3) {
-  stop(paste("3 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 4) {
+  stop(paste("4 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
 input_dir <- args[2]  # Directory containing the generated data
-output_file <- args[3]  # Full path to output ground truth file
+output_dir <- args[3]  # Output directory
+prefix <- args[4]  # Prefix for output files
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
@@ -26,7 +27,6 @@ if (!file.exists(batch_file)) {
     stop("Cannot find Batch1.rda or singleCellLabels.rda in the input directory")
   }
 } else {
-  
   load(batch_file)
   
   # Extract single cell labels from the Batch1 object
@@ -59,6 +59,16 @@ print(groundTruth$P)
 print(paste("Total cell types:", length(cell_types)))
 print(paste("Sum of proportions:", sum(proportions)))
 
-# Save the ground truth
-save(groundTruth, file = output_file)
-print(paste("Ground truth saved to:", output_file))
+# Save as RDA
+rda_filename <- file.path(output_dir, paste0(prefix, "_ground_truth_proportions.rda"))
+save(groundTruth, file = rda_filename)
+
+# Save as CSV
+csv_filename <- file.path(output_dir, paste0(prefix, "_ground_truth_proportions.csv"))
+gt_df <- as.data.frame(t(groundTruth$P))
+gt_df$CellType <- rownames(gt_df)
+colnames(gt_df) <- c("Proportion", "CellType")
+gt_df <- gt_df[, c("CellType", "Proportion")]
+write.csv(gt_df, file = csv_filename, row.names = FALSE)
+
+print(paste("Ground truth saved to:", rda_filename, "and", csv_filename))

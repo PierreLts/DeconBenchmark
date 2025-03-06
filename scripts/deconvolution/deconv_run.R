@@ -4,11 +4,11 @@ if (length(args) != 5) {
   stop(paste("5 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
-####### Parameter of script
+####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
-input_data <- args[2]
-output_data <- args[3]
-deconv_methods <- args[4] # can be comma-separated list of methods
+dataset_prefix <- args[2] # Dataset prefix/subfolder name
+output_base_dir <- args[3] # Base output directory (deconv_results)
+deconv_methods <- args[4] # Deconvolution method(s) - can be comma-separated list of methods
 sparse_conversion <- as.logical(args[5])
 
 # Libraries
@@ -17,43 +17,72 @@ library(DeconBenchmark)
 library(Matrix)
 print("CHECK: Libraries loaded")
 
-# Load input data
-loaded_objects <- load(input_data)
-data_object_name <- loaded_objects[1]
-data_object <- get(data_object_name)
-bulk <- data_object$bulk
-singleCellExpr <- data_object$singleCellExpr
-singleCellLabels <- data_object$singleCellLabels
-print("CHECK: Data extracted successfully")
+# Create dataset-specific output directory
+output_dir <- file.path(output_base_dir, dataset_prefix)
+dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+print(paste("Results will be saved to:", output_dir))
 
-# Load additional required inputs
+# Determine base path for loading files
+base_data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
+print(paste("Loading data from:", base_data_dir))
+
+# Load individual files
+bulk_path <- file.path(base_data_dir, paste0(dataset_prefix, "_bulk.rda"))
+singleCellExpr_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellExpr.rda"))
+singleCellLabels_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellLabels.rda"))
+
+# Check if files exist
+if (!file.exists(bulk_path)) {
+  stop(paste("Bulk data file not found:", bulk_path))
+}
+if (!file.exists(singleCellExpr_path)) {
+  stop(paste("Single-cell expression file not found:", singleCellExpr_path))
+}
+if (!file.exists(singleCellLabels_path)) {
+  stop(paste("Single-cell labels file not found:", singleCellLabels_path))
+}
+
+# Load data from individual files
+load(bulk_path)
+load(singleCellExpr_path)
+load(singleCellLabels_path)
+
+print("CHECK: Data loaded successfully")
+
+# Check data dimensions for verification
+print(paste("Bulk data dimensions:", paste(dim(bulk), collapse=" x ")))
+print(paste("singleCellExpr dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
+print(paste("singleCellLabels length:", length(singleCellLabels)))
+
+# Load additional optional files if they exist
 markers <- NULL
-markers_file <- file.path(dirname(input_data), "markers.rda")
+markers_file <- file.path(base_data_dir, paste0(dataset_prefix, "_markers.rda"))
 if (file.exists(markers_file)) {
   load(markers_file)
   print("Marker genes loaded successfully")
 }
 
 significantGenes <- NULL
-sig_genes_file <- file.path(dirname(input_data), "significant_genes.rda")
+sig_genes_file <- file.path(base_data_dir, paste0(dataset_prefix, "_significant_genes.rda"))
 if (file.exists(sig_genes_file)) {
   load(sig_genes_file)
   print("Significant genes loaded successfully")
 }
 
 cellTypeExpr <- NULL
-celltype_expr_file <- file.path(dirname(input_data), "celltype_expression.rda")
+celltype_expr_file <- file.path(base_data_dir, paste0(dataset_prefix, "_celltype_expression.rda"))
 if (file.exists(celltype_expr_file)) {
   load(celltype_expr_file)
   print("Cell type expression loaded successfully")
 }
 
 singleCellSubjects <- NULL
-subjects_file <- file.path(dirname(input_data), "single_cell_subjects.rda")
+subjects_file <- file.path(base_data_dir, paste0(dataset_prefix, "_single_cell_subjects.rda"))
 if (file.exists(subjects_file)) {
   load(subjects_file)
   print("Single cell subject IDs loaded successfully")
 } else {
+  # Create default subjects if not available
   singleCellSubjects <- rep("subject1", length(singleCellLabels))
   print("Created default subject IDs")
 }
@@ -68,9 +97,9 @@ reference <- generateReference(singleCellExpr, singleCellLabels, type="signature
 signature <- reference$signature
 
 # Generate missing inputs if needed
-if (is.null(cellTypeExpr)) {
-  print("Generating cell type expression matrix...")
-  # Code to generate cellTypeExpr from singleCellExpr and singleCellLabels
+if (is.null(cellTypeExpr) && any(grep("cellTypeExpr", unlist(getMethodsInputs(method_list))))) {
+  print("Auto-generating cell type expression matrix...")
+  # Code to generate cellTypeExpr
   cell_types <- unique(singleCellLabels)
   cellTypeExpr <- t(sapply(rownames(singleCellExpr), function(gene) {
     sapply(cell_types, function(ct) {
@@ -80,30 +109,28 @@ if (is.null(cellTypeExpr)) {
   colnames(cellTypeExpr) <- cell_types
 }
 
-if (is.null(markers)) {
-  print("Generating marker genes...")
+if (is.null(markers) && any(grep("markers", unlist(getMethodsInputs(method_list))))) {
+  print("Auto-generating marker genes...")
+  # Create a simple version of markers based on differential expression
   markers <- list()
   cell_types <- unique(singleCellLabels)
   
   for (ct in cell_types) {
-    # Get fold change between this cell type and others
-    cells_this_type <- which(singleCellLabels == ct)
-    cells_other_types <- which(singleCellLabels != ct)
+    # Basic approach to find markers
+    cells_this_type <- singleCellLabels == ct
+    mean_expr_this <- rowMeans(singleCellExpr[, cells_this_type, drop=FALSE])
+    mean_expr_other <- rowMeans(singleCellExpr[, !cells_this_type, drop=FALSE])
     
-    # Calculate mean expression
-    mean_expr_this_type <- rowMeans(singleCellExpr[, cells_this_type, drop=FALSE])
-    mean_expr_other_types <- rowMeans(singleCellExpr[, cells_other_types, drop=FALSE])
+    # Calculate fold change
+    fold_change <- mean_expr_this / (mean_expr_other + 0.1)
     
-    # Calculate simple fold change
-    fold_change <- mean_expr_this_type / (mean_expr_other_types + 0.1)
-    
-    # Get top genes 
-    top_genes <- names(sort(fold_change, decreasing=TRUE)[1:20])
+    # Get top genes by fold change
+    top_genes <- names(sort(fold_change, decreasing=TRUE)[1:min(20, length(fold_change))])
     markers[[ct]] <- top_genes
   }
 }
 
-if (is.null(significantGenes)) {
+if (is.null(significantGenes) && any(grep("significantGenes", unlist(getMethodsInputs(method_list))))) {
   print("Using all genes as significant genes...")
   significantGenes <- rownames(singleCellExpr)
 }
@@ -117,7 +144,6 @@ deconvolutionResult <- runDeconvolution(
   singleCellLabels = singleCellLabels,
   signature = signature,
   markers = markers,
-  #significantGenes = significantGenes,
   cellTypeExpr = cellTypeExpr,
   nCellTypes = length(unique(singleCellLabels)),
   singleCellSubjects = singleCellSubjects,
@@ -128,75 +154,9 @@ deconvolutionResult <- runDeconvolution(
 print("CHECK: Deconvolution completed for all methods")
 
 # Save results as before
-# [Existing code for saving results]
-
-# Print results preview
-for (method in method_list) {
-  if (!is.null(deconvolutionResult[[method]])) {
-    print(paste("=== Results preview for", method, "==="))
-    
-    # Print available components
-    components <- names(deconvolutionResult[[method]])
-    print(paste("Available result components:", paste(components, collapse=", ")))
-    
-    # Preview proportions (P matrix)
-    if (!is.null(deconvolutionResult[[method]]$P)) {
-      proportion <- deconvolutionResult[[method]]$P
-      print("Cell type proportions (P) preview:")
-      print(head(proportion, 3))
-    } else {
-      print("No proportion matrix found")
-    }
-
-    # Preview signature matrix if available
-    if (!is.null(deconvolutionResult[[method]]$S)) {
-      signature <- deconvolutionResult[[method]]$S
-      print("Signature matrix (S) preview:")
-      # Handle different dimensions appropriately
-      if (is.matrix(signature)) {
-        print(head(signature[, 1:min(3, ncol(signature))], 3))
-      } else if (is.vector(signature)) {
-        print(head(signature, 6))
-      } else {
-        print("Signature matrix has unexpected format")
-      }
-    }
-    
-    # Preview other common outputs
-    other_components <- setdiff(components, c("P", "S"))
-    for (comp in other_components) {
-      result_comp <- deconvolutionResult[[method]][[comp]]
-      
-      # Only print matrices or vectors with proper preview
-      if (is.matrix(result_comp) || is.vector(result_comp)) {
-        print(paste(comp, "preview:"))
-        if (is.matrix(result_comp)) {
-          print(head(result_comp[, 1:min(3, ncol(result_comp))], 3))
-        } else if (length(result_comp) > 6) {
-          print(result_comp[1:6])
-        } else {
-          print(result_comp)
-        }
-      } else {
-        print(paste(comp, "is available but not previewed (non-tabular format)"))
-      }
-    }
-    
-    print("") # Empty line for separation
-  } else {
-    print(paste("Method", method, "failed to produce results"))
-  }
-}
-
-# Save results
-# Extract the file name without the path
-input_filename <- basename(input_data)
-input_filename <- tools::file_path_sans_ext(input_filename) # Remove file extension
-
 # Create unified output with all methods
-results_filename <- file.path(output_data, paste0("results_", 
-                                             paste(method_list, collapse="_"), 
-                                             "_", input_filename, ".rda"))
+combined_method_name <- paste(method_list, collapse="_")
+results_filename <- file.path(output_dir, paste0("results_", combined_method_name, ".rda"))
 save(deconvolutionResult, file=results_filename)
 print(paste("Results for all methods saved to:", results_filename))
 
@@ -208,12 +168,9 @@ for (method in method_list) {
   single_method_result[[method]] <- deconvolutionResult[[method]]
   
   # Use the same variable name as the combined results
-  deconvolutionResult <- single_method_result
+  temp_deconvolutionResult <- single_method_result
   
-  single_results_filename <- file.path(output_data, paste0("results_", method, "_", input_filename, ".rda"))
-  save(deconvolutionResult, file=single_results_filename, compress=TRUE)
+  single_results_filename <- file.path(output_dir, paste0("results_", method, ".rda"))
+  save(temp_deconvolutionResult, file=single_results_filename, compress=TRUE)
   print(paste("Results for", method, "saved to:", single_results_filename))
 }
-
-# Restore the full results for the final output message
-deconvolutionResult <- get("deconvolutionResult", inherits=FALSE)

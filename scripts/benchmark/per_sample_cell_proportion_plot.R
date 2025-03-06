@@ -6,10 +6,10 @@ if (length(args) != 5) {
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
-overall_ground_truth_path <- args[2]
-per_sample_ground_truth_path <- args[3]
-results_path <- args[4]
-output_dir <- args[5]
+dataset_prefix <- args[2] # Dataset prefix (e.g., TB1)
+method_name <- args[3]    # Method name (e.g., MuSiC)
+output_base_dir <- args[4] # Base benchmark output directory
+include_overall_gt <- as.logical(args[5]) # Whether to include overall ground truth
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
@@ -17,16 +17,40 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 
-# Load deconvolution results
-load(results_path)
+# Setup paths based on dataset prefix
+data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
+results_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/deconv_results", dataset_prefix)
+output_dir <- file.path(output_base_dir, dataset_prefix, method_name)
 
-# Extract method name from results file path
-method_name <- basename(results_path)
-method_name <- gsub("results_", "", method_name)
-method_name <- gsub("\\.rda$", "", method_name)
-parts <- strsplit(method_name, "_")[[1]]
-method_name <- parts[1]
-data_name <- paste(parts[-1], collapse="_")
+# Create output directory
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+
+# Load ground truth files
+overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_ground_truth_proportions.rda"))
+per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_per_sample_ground_truth_proportions.rda"))
+
+# Check if ground truth files exist
+if (!file.exists(overall_ground_truth_path)) {
+  stop(paste("Overall ground truth file not found:", overall_ground_truth_path))
+}
+if (!file.exists(per_sample_ground_truth_path)) {
+  stop(paste("Per-sample ground truth file not found:", per_sample_ground_truth_path))
+}
+
+# Load ground truth data
+load(overall_ground_truth_path)
+overall_gt_proportions <- groundTruth$P
+
+load(per_sample_ground_truth_path)
+per_sample_gt_proportions <- groundTruth$P
+
+# Load deconvolution results
+results_path <- file.path(results_dir, paste0("results_", method_name, ".rda"))
+if (!file.exists(results_path)) {
+  stop(paste("Results file not found:", results_path))
+}
+
+load(results_path)
 
 # Extract the proportions matrix
 if (!exists("deconvolutionResult")) {
@@ -37,14 +61,6 @@ proportions <- deconvolutionResult[[method_name]]$P
 if (is.null(proportions)) {
   stop(paste("No proportion matrix found for method:", method_name))
 }
-
-# Load overall ground truth
-load(overall_ground_truth_path)
-overall_gt_proportions <- groundTruth$P
-
-# Load per-sample ground truth
-load(per_sample_ground_truth_path)
-per_sample_gt_proportions <- groundTruth$P
 
 # Get all unique cell types from both datasets (union instead of intersection)
 all_cell_types <- unique(c(
@@ -108,7 +124,6 @@ pred_only_cell_types <- setdiff(original_pred_cell_types, original_gt_cell_types
 print("Prediction-only cell types:")
 print(pred_only_cell_types)
 
-
 # Expand all matrices to include all cell types
 proportions <- expand_matrix_with_zeros(proportions, all_cell_types)
 overall_gt_proportions <- expand_matrix_with_zeros(overall_gt_proportions, all_cell_types)
@@ -124,15 +139,6 @@ prop_long <- melt(prop_df, id.vars=c("Sample", "PairID"),
 prop_long$Source <- "Predicted"
 prop_long$DisplayOrder <- 1  # First in each pair
 
-# Create overall ground truth data frame
-overall_gt_df <- as.data.frame(overall_gt_proportions)
-overall_gt_df$Sample <- "Overall GT"
-overall_gt_df$PairID <- "ZZ_Overall" # Ensure it's at the end
-overall_gt_long <- melt(overall_gt_df, id.vars=c("Sample", "PairID"), 
-                       variable.name="CellType", value.name="Proportion")
-overall_gt_long$Source <- "Ground Truth"
-overall_gt_long$DisplayOrder <- 1  # Only one overall
-
 # Create per-sample ground truth data frame
 per_sample_gt_df <- as.data.frame(per_sample_gt_proportions)
 per_sample_gt_df$Sample <- rownames(per_sample_gt_df)
@@ -142,6 +148,18 @@ per_sample_gt_long <- melt(per_sample_gt_df, id.vars=c("Sample", "PairID"),
                           variable.name="CellType", value.name="Proportion")
 per_sample_gt_long$Source <- "Ground Truth"
 per_sample_gt_long$DisplayOrder <- 2  # Second in each pair
+
+# Include overall ground truth if requested
+if (include_overall_gt) {
+  # Create overall ground truth data frame
+  overall_gt_df <- as.data.frame(overall_gt_proportions)
+  overall_gt_df$Sample <- "Overall GT"
+  overall_gt_df$PairID <- "ZZ_Overall" # Ensure it's at the end
+  overall_gt_long <- melt(overall_gt_df, id.vars=c("Sample", "PairID"), 
+                         variable.name="CellType", value.name="Proportion")
+  overall_gt_long$Source <- "Ground Truth"
+  overall_gt_long$DisplayOrder <- 1  # Only one overall
+}
 
 # Get list of predicted samples and GT samples
 predicted_samples <- unique(prop_long$Sample)
@@ -161,8 +179,12 @@ per_sample_gt_long$Sample <- ifelse(
 # Exclude non-matching GT samples for simplicity
 per_sample_gt_long <- per_sample_gt_long[!grepl("^Unmatched-", per_sample_gt_long$Sample), ]
 
-# Combine all data (without final separator)
-combined_data <- rbind(prop_long, per_sample_gt_long, overall_gt_long)
+# Combine data
+if (include_overall_gt) {
+  combined_data <- rbind(prop_long, per_sample_gt_long, overall_gt_long)
+} else {
+  combined_data <- rbind(prop_long, per_sample_gt_long)
+}
 
 # Create a new column for actual display position with pair grouping
 combined_data$DisplayPosition <- NA
@@ -200,8 +222,10 @@ for (pair in sort(unique(combined_data$PairID))) {
 }
 
 # Handle overall GT position at the end
-overall_indices <- which(combined_data$PairID == "ZZ_Overall")
-combined_data$DisplayPosition[overall_indices] <- current_pos + 1  # Add extra spacing before Overall GT
+if (include_overall_gt) {
+  overall_indices <- which(combined_data$PairID == "ZZ_Overall")
+  combined_data$DisplayPosition[overall_indices] <- current_pos + 1  # Add extra spacing before Overall GT
+}
 
 # Add origin information to cell types
 cell_types_in_gt <- unique(c(colnames(overall_gt_proportions), colnames(per_sample_gt_proportions)))
@@ -246,6 +270,7 @@ pred_colors <- c(
   "#AD1457",  # Dark Pink
   "#283593"   # Dark Navy Blue
 )
+
 #### Color assignment
 # Get actual cell types from both sources
 unique_cell_displays <- unique(combined_data$CellTypeDisplay)
@@ -264,32 +289,11 @@ for (cell_display in unique_cell_displays) {
     pred_counter <- pred_counter + 1
     color_idx <- ((pred_counter - 1) %% length(pred_colors)) + 1
     custom_colors[cell_display] <- pred_colors[color_idx]
-    print(paste(cell_display, "(Pred only) ->", pred_colors[color_idx]))
   } else {
     # Use light colors for ground truth cell types
     gt_counter <- gt_counter + 1
     color_idx <- ((gt_counter - 1) %% length(gt_colors)) + 1
     custom_colors[cell_display] <- gt_colors[color_idx]
-    print(paste(cell_display, "(GT) ->", gt_colors[color_idx]))
-  }
-}
-###
-
-# Create cell_type_info dataframe for debugging
-cell_type_info <- combined_data %>%
-  select(CellType, CellTypeDisplay, CellTypeSource) %>%
-  distinct()
-
-# Print color assignments for debugging
-print("Color assignments:")
-for (i in 1:min(20, length(custom_colors))) {
-  ct_display <- names(custom_colors)[i]
-  if (ct_display %in% cell_type_info$CellTypeDisplay) {
-    row_idx <- which(cell_type_info$CellTypeDisplay == ct_display)[1]
-    source <- cell_type_info$CellTypeSource[row_idx]
-    print(paste(ct_display, "(", source, ") ->", custom_colors[i]))
-  } else {
-    print(paste(ct_display, "(unknown) ->", custom_colors[i]))
   }
 }
 
@@ -298,7 +302,7 @@ p <- ggplot(combined_data, aes(x=DisplayPosition, y=Proportion, fill=CellTypeDis
   geom_bar(stat="identity", position="stack", width=0.8) +
   theme_minimal() +
   labs(title=paste(method_name, "vs Ground Truth Cell Type Proportions"),
-       subtitle="Sample predictions paired with corresponding ground truth (non-matching cell types marked)",
+       subtitle=paste("Dataset:", dataset_prefix, "- Sample predictions paired with corresponding ground truth"),
        x="Samples", y="Proportions") +
   scale_x_continuous(
     breaks = combined_data$DisplayPosition,
@@ -316,13 +320,18 @@ p <- ggplot(combined_data, aes(x=DisplayPosition, y=Proportion, fill=CellTypeDis
   ) +
   scale_fill_manual(values=custom_colors, name="Cell Type")
 
-# Save the plot with adjusted dimensions based on the number of samples
+# Save the plot with adjusted dimensions
 n_samples <- length(unique(combined_data$Sample))
 num_cell_types <- length(unique(combined_data$CellTypeDisplay))
 plot_width <- max(12, n_samples * 0.4)  # Adjust width based on number of samples
 plot_height <- 7 + (num_cell_types > 20) * (num_cell_types - 20) * 0.1  # Increase height for many cell types
 
-output_filename <- file.path(output_dir, paste0(method_name, "_", data_name, "_paired_ground_truth.pdf"))
-ggsave(output_filename, p, width=plot_width, height=plot_height)
+# Save as PDF
+pdf_filename <- file.path(output_dir, paste0(method_name, "_paired_ground_truth.pdf"))
+ggsave(pdf_filename, p, width=plot_width, height=plot_height)
 
-print(paste("Plot saved to:", output_filename))
+# Also save as PNG for easier viewing
+png_filename <- file.path(output_dir, paste0(method_name, "_paired_ground_truth.png"))
+ggsave(png_filename, p, width=plot_width, height=plot_height, dpi=300)
+
+print(paste("Plots saved to:", output_dir))

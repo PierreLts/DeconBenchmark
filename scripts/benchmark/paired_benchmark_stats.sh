@@ -10,11 +10,12 @@
 
 RLIBRARY="/work/gr-fe/R_4.3.1" 
 SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/paired_benchmark_stats.R
-RESULTS_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
-PER_SAMPLE_GT="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/per_sample_ground_truth_proportions.rda"
-OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/paired_benchmarks"
+DATASET_PREFIX="${1:-TB}"
+OUTPUT_BASE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
+INCLUDE_OVERALL_GT="${2:-TRUE}"
 
-# Create output directory if it doesn't exist
+# Create output directory
+OUTPUT_DIR="${OUTPUT_BASE_DIR}/${DATASET_PREFIX}/benchmarks"
 mkdir -p $OUTPUT_DIR
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/
@@ -23,8 +24,9 @@ module load r
 start=`date +%s`
 echo "START AT $(date)"
 
-Rscript ${SCRIPT} ${RLIBRARY} ${RESULTS_DIR} ${PER_SAMPLE_GT} ${OUTPUT_DIR}
+Rscript ${SCRIPT} ${RLIBRARY} ${DATASET_PREFIX} ${OUTPUT_BASE_DIR} ${INCLUDE_OVERALL_GT}
 
 end=`date +%s`
 runtime=$((end-start))
 echo "Runtime: $runtime seconds"
+echo "Benchmark results saved to: $OUTPUT_DIR"

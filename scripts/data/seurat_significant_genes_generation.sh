@@ -6,15 +6,15 @@
 #SBATCH --time 1:00:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
-#SBATCH --job-name=labelsRNA_gen
+#SBATCH --job-name=sig_genes_gen
 
 set -e
 set -x
 
 # Default parameters (can be overridden by command line arguments)
 RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
-SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/labelsRNA_generation.R"
-INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds}"
+SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/seurat_significant_genes_generation.R"
+MARKERS_FILE="${2:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data/TB_markers.rda}"
 OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
 PREFIX="${4:-TB}"
 
@@ -28,7 +28,7 @@ module load r
 start=`date +%s`
 echo "START AT $(date)"
 
-Rscript ${SCRIPT} ${RLIBRARY} ${INPUT_DATA} ${OUTPUT_DIR} ${PREFIX}
+Rscript ${SCRIPT} ${RLIBRARY} ${MARKERS_FILE} ${OUTPUT_DIR} ${PREFIX}
 
 end=`date +%s`
 runtime=$((end-start))

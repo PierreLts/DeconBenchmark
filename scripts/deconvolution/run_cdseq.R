@@ -6,27 +6,38 @@ if (length(args) != 3) {
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
-input_data <- args[2]
-output_data <- args[3]
+input_dir <- args[2]     # Directory containing the generated data files
+output_base_dir <- args[3]   # Base output directory for results
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
 library(CDSeq)
 print("CHECK: Libraries loaded")
 
-# Load input data
-loaded_objects <- load(input_data)
-print("Loaded objects:")
-print(loaded_objects)
+# Extract dataset prefix from the input directory name
+dataset_prefix <- basename(input_dir)
 
-# Get the 1st object
-data_object_name <- loaded_objects[1]
-# Access through the object name dynamically
-data_object <- get(data_object_name)
-bulk <- data_object$bulk
-#singleCellExpr <- data_object$singleCellExpr
-singleCellLabels <- data_object$singleCellLabels
-print("CHECK: Data extracted successfully")
+# Create dataset-specific output directory
+output_dir <- file.path(output_base_dir, dataset_prefix)
+dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+print(paste("Results will be saved to:", output_dir))
+
+# Load individual files from the directory
+bulk_path <- file.path(input_dir, paste0(dataset_prefix, "_bulk.rda"))
+singleCellLabels_path <- file.path(input_dir, paste0(dataset_prefix, "_singleCellLabels.rda"))
+
+if (!file.exists(bulk_path)) {
+  stop(paste("Bulk data file not found at:", bulk_path))
+}
+if (!file.exists(singleCellLabels_path)) {
+  stop(paste("Single cell labels file not found at:", singleCellLabels_path))
+}
+
+# Load the data
+load(bulk_path)
+load(singleCellLabels_path)
+
+print("CHECK: Data loaded successfully")
 
 # Get number of cell types from the single-cell data
 n_cell_types <- length(unique(singleCellLabels))
@@ -56,18 +67,7 @@ deconvolutionResult$CDSeq <- list(
   S = cdseq_result$estGEP       # Check if this has genes in rows and cell types in columns
 )
 
-# # Cell type column naming
-# if (ncol(deconvolutionResult$CDSeq$P) > 0) {
-#   colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType_", 1:ncol(deconvolutionResult$CDSeq$P))
-# }
-
-# # Check if S needs to be transposed too
-# if (!is.null(deconvolutionResult$CDSeq$S) && nrow(deconvolutionResult$CDSeq$S) != nrow(bulk)) {
-#   print("Transposing S matrix to match expected format (genes in rows)")
-#   deconvolutionResult$CDSeq$S <- t(deconvolutionResult$CDSeq$S)
-# }
-
 # Save results
-results_filename <- file.path(output_data, paste0("results_CDSeq_Batch1.rda"))
+results_filename <- file.path(output_dir, "results_CDSeq.rda")
 save(deconvolutionResult, file=results_filename, compress=TRUE)
 print(paste("Results saved to:", results_filename))

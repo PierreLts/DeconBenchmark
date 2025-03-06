@@ -6,9 +6,9 @@ if (length(args) != 4) {
 
 ####### Parameter of script
 path_Rlibrary <- args[1] #IMPORTANT
-results_dir <- args[2]    # Directory containing deconvolution results
-ground_truth_path <- args[3]  # Path to per-sample ground truth file
-output_dir <- args[4]     # Output directory for results
+dataset_prefix <- args[2] # Dataset prefix (e.g., TB1)
+output_base_dir <- args[3] # Base output directory for benchmark results
+include_overall_gt <- as.logical(args[4]) # Whether to include overall ground truth
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
@@ -20,12 +20,24 @@ library(Metrics)  # For common error metrics
 library(scales)   # For rescaling data
 print("Check Libraries")
 
+# Setup paths
+results_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/deconv_results", dataset_prefix)
+data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
+output_dir <- file.path(output_base_dir, dataset_prefix, "benchmarks")
+
+# Create output directory
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+
 # Load per-sample ground truth
-load(ground_truth_path)
+per_sample_gt_path <- file.path(data_dir, paste0(dataset_prefix, "_per_sample_ground_truth_proportions.rda"))
+if (!file.exists(per_sample_gt_path)) {
+  stop(paste("Per-sample ground truth file not found:", per_sample_gt_path))
+}
+load(per_sample_gt_path)
 per_sample_gt_proportions <- groundTruth$P
 
 # Find all result files
-result_files <- list.files(results_dir, pattern="results_.*\\.rda", full.names=TRUE)
+result_files <- list.files(results_dir, pattern="results_[^_]+\\.rda", full.names=TRUE)
 cat("Found", length(result_files), "result files to analyze\n")
 
 # Initialize data frames for summary results
@@ -37,11 +49,6 @@ for (result_file in result_files) {
   method_name <- basename(result_file)
   method_name <- gsub("results_", "", method_name)
   method_name <- gsub("\\.rda$", "", method_name)
-  
-  # Extract main method name from potentially composite name
-  parts <- strsplit(method_name, "_")[[1]]
-  method_name <- parts[1]
-  data_name <- paste(parts[-1], collapse="_")
   
   cat("Processing method:", method_name, "\n")
   
@@ -171,20 +178,6 @@ for (result_file in result_files) {
   all_detailed_results <- rbind(all_detailed_results, metrics_by_sample)
 }
 
-# # Save results
-# if (nrow(all_method_summaries) > 0) {
-#   # Calculate composite score
-#   # First normalize all metrics to 0-1 scale
-#   normalize <- function(x, higher_is_better = TRUE) {
-#     if (length(unique(x)) == 1) return(rep(0.5, length(x)))  # Handle constant values
-#     if (higher_is_better) {
-#       return(scales::rescale(x, to = c(0, 1)))
-#     } else {
-#       return(scales::rescale(-x, to = c(0, 1)))  # Flip for lower-is-better metrics
-#     }
-#   }
-
-
 # Define the composite score function
 composite_score <- function(metrics_df) {
   # Weight parameters
@@ -208,35 +201,36 @@ composite_score <- function(metrics_df) {
 
   return(score)
 }
-  
-# Calculate composite score
-all_method_summaries <- all_method_summaries %>%
-  mutate(
-    CompositeScore = composite_score(data.frame(
-      Pearson = Mean_PearsonCorr,
-      Spearman = Mean_SpearmanCorr,
-      MAE = Mean_MAE,
-      RMSE = Mean_RMSE,
-      R2 = Mean_R2
-    ))
-  )
+
+if (nrow(all_method_summaries) > 0) {
+  # Calculate composite score
+  all_method_summaries <- all_method_summaries %>%
+    mutate(
+      CompositeScore = composite_score(data.frame(
+        Pearson = Mean_PearsonCorr,
+        Spearman = Mean_SpearmanCorr,
+        MAE = Mean_MAE,
+        RMSE = Mean_RMSE,
+        R2 = Mean_R2
+      ))
+    )
 
   # Rank methods by composite score
   ranked_methods <- all_method_summaries %>%
     arrange(desc(CompositeScore))
   
   # Save detailed results
-  detailed_output_file <- file.path(output_dir, "paired_sample_detailed_metrics.csv")
+  detailed_output_file <- file.path(output_dir, paste0(dataset_prefix, "_detailed_metrics.csv"))
   write.csv(all_detailed_results, detailed_output_file, row.names = FALSE)
   
   # Save summary results
-  summary_output_file <- file.path(output_dir, "paired_sample_method_summary.csv")
+  summary_output_file <- file.path(output_dir, paste0(dataset_prefix, "_method_summary.csv"))
   write.csv(ranked_methods, summary_output_file, row.names = FALSE)
   
   # Generate comparison plot with all metrics
   if (nrow(ranked_methods) > 1) {
     # Select top methods (limit to make plot readable)
-    top_n_methods <- min(14, nrow(ranked_methods))
+    top_n_methods <- min(15, nrow(ranked_methods))
     top_methods <- ranked_methods[1:top_n_methods, ]
     
     # Add ranking numbers to method names
@@ -275,7 +269,7 @@ all_method_summaries <- all_method_summaries %>%
       MetricType = rep(c("Pearson (+)", "Spearman (+)", "MAE (-)", "RMSE (-)", "R² (+)", "Composite (+)"), each = nrow(plot_data))
     )
     
-    # Set up color palette for metrics - match the image
+    # Set up color palette for metrics
     metric_colors <- c(
     "Pearson (+)" = "#4CBFFF",
     "Spearman (+)" = "#AED581",
@@ -306,7 +300,7 @@ all_method_summaries <- all_method_summaries %>%
     geom_errorbar(aes(ymin = MetricValue - ErrorValue, ymax = MetricValue + ErrorValue), 
                 position = position_dodge(width = 0.8), width = 0) +
     labs(
-        title = "Performance Metrics Comparison Across Deconvolution Methods",
+        title = paste("Performance Metrics Comparison -", dataset_prefix),
         subtitle = "(+) higher is better, (-) lower is better",
         x = "",
         y = "Score Value"
@@ -329,15 +323,15 @@ all_method_summaries <- all_method_summaries %>%
         breaks = break_sequence
     )
 
-    # Save plot
-    comparison_plot_file <- file.path(output_dir, "method_metrics_comparison.pdf")
+    # Save plot as PDF
+    comparison_plot_file <- file.path(output_dir, paste0(dataset_prefix, "_method_metrics_comparison.pdf"))
     ggsave(comparison_plot_file, p, width = 22, height = 12)
     
     # Also save as PNG for easier viewing
-    comparison_plot_png <- file.path(output_dir, "method_metrics_comparison.png")
+    comparison_plot_png <- file.path(output_dir, paste0(dataset_prefix, "_method_metrics_comparison.png"))
     ggsave(comparison_plot_png, p, width = 22, height = 12, dpi = 300)
     
-    cat("Comparison plot saved to:", comparison_plot_file, "and", comparison_plot_png, "\n")
+    cat("Comparison plots saved to:", comparison_plot_file, "and", comparison_plot_png, "\n")
   }
   
   cat("Results saved to:", output_dir, "\n")

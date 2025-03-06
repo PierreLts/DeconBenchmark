@@ -1,22 +1,20 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 4) {
-  stop(paste("4 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 5) {
+  stop(paste("5 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
-
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
 input_data <- args[2]
-output_data <- args[3]
+output_dir <- args[3]
 mapping_file <- args[4]
+prefix <- args[5]  # New: prefix for output files
 
-###### MuSiC
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
 library(Seurat)
 print("CHECK: Libraries")
-
 
 # Load the single-cell dataset
 sc_data <- readRDS(input_data)
@@ -24,12 +22,6 @@ sc_data <- readRDS(input_data)
 # Filter out "Undetermined" and "Multiplet" cells
 cell_filter <- !sc_data@meta.data$Sample_Tag %in% c("Undetermined", "Multiplet")
 filtered_sc <- subset(sc_data, cells = rownames(sc_data@meta.data)[cell_filter])
-
-# # Downsample to 5% of cells
-# num_cells <- ncol(filtered_sc)
-# selected_indices <- seq(1, num_cells, length.out = floor(0.05 * num_cells))
-# selected_cells <- colnames(filtered_sc)[selected_indices]
-# filtered_sc <- subset(filtered_sc, cells = selected_cells)
 
 # Remove unused factor levels
 filtered_sc@meta.data$Sample_Tag <- droplevels(filtered_sc@meta.data$Sample_Tag)
@@ -53,16 +45,20 @@ rownames(filtered_sc@assays$RNA@counts) <- unname(new_gene_names)
 # Convert sparse matrix to dense matrix
 singleCellExpr <- as.matrix(filtered_sc@assays$RNA@counts)
 
-
 # Checks
 print("Preview of expression matrix (6x6):")
 print(singleCellExpr[1:6, 1:6])
 print(paste("Matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
 print(paste("Matrix class:", class(singleCellExpr)))
-# Save
-output_file <- file.path(output_data, "singleCellExpr.rda")
-save(singleCellExpr, file = output_file)
-print(paste("Expression matrix saved to:", output_file))
 
+# Save as RDA
+rda_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr.rda"))
+save(singleCellExpr, file = rda_filename)
 
+# Save as CSV (this might be a large file) - sparse format
+csv_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr_sparse.csv"))
+sparse_df <- as.data.frame(summary(as(singleCellExpr, "sparseMatrix")))
+colnames(sparse_df) <- c("Row", "Column", "Value")
+write.csv(sparse_df, file = csv_filename, row.names = FALSE)
 
+print(paste("Expression matrix saved to:", rda_filename, "and sparse representation to", csv_filename))

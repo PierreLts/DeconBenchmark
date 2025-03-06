@@ -8,29 +8,28 @@
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
 
+# Default parameters
+DATASET_PREFIX="${1:-TB}"
+INCLUDE_OVERALL_GT="${2:-TRUE}"
+
 # Set paths
 SCRIPT_DIR="/scratch/lorthiois/scripts"
 mkdir -p "$SCRIPT_DIR"
 TEMPLATE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark"
-DECONV_RESULTS_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
+DECONV_RESULTS_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results/${DATASET_PREFIX}"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
-OVERALL_GT="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/ground_truth_proportions.rda"
-PER_SAMPLE_GT="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/per_sample_ground_truth_proportions.rda"
-LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs"
+LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}"
 
 # Create directories
-mkdir -p "$BENCHMARK_DIR"
+mkdir -p "${BENCHMARK_DIR}/${DATASET_PREFIX}"
 mkdir -p "$LOG_DIR"
 
 # Start with clean mapping file
 MAPPING_FILE="$LOG_DIR/paired_plot_job_mapping.txt"
 > "$MAPPING_FILE"
 
-# Get data name pattern from the first results file
-DATA_NAME=$(basename $(ls $DECONV_RESULTS_DIR/results_*_*.rda 2>/dev/null | head -1) | sed -E 's/results_[^_]+_(.+)\.rda/\1/')
-
-# Find all result files
-RESULT_FILES=$(find $DECONV_RESULTS_DIR -name "results_*_${DATA_NAME}.rda")
+# Find all result files for this dataset
+RESULT_FILES=$(find $DECONV_RESULTS_DIR -name "results_*.rda" -not -name "*_${DATASET_PREFIX}.rda")
 
 # Check if we found any files
 if [ -z "$RESULT_FILES" ]; then
@@ -43,21 +42,19 @@ echo "Found $(echo "$RESULT_FILES" | wc -l) result files to process"
 # Process each result file
 for RESULTS_FILE in $RESULT_FILES; do
     # Extract method name from filename
-    METHOD=$(basename $RESULTS_FILE | sed -E 's/results_([^_]+)_.+\.rda/\1/')
+    METHOD=$(basename $RESULTS_FILE | sed -E 's/results_([^_]+)\.rda/\1/')
     
     echo "Processing $METHOD..."
     
     # Create temporary script for this method
-    TEMP_SCRIPT="$SCRIPT_DIR/temp_${METHOD}_paired_plot.sh"
+    TEMP_SCRIPT="$SCRIPT_DIR/temp_${METHOD}_${DATASET_PREFIX}_paired_plot.sh"
     
     # Copy the template and modify parameters
     cat "$TEMPLATE_DIR/per_sample_cell_proportion_plot.sh" | \
-        sed "s|OVERALL_GROUND_TRUTH=.*|OVERALL_GROUND_TRUTH=\"$OVERALL_GT\"|" | \
-        sed "s|PER_SAMPLE_GROUND_TRUTH=.*|PER_SAMPLE_GROUND_TRUTH=\"$PER_SAMPLE_GT\"|" | \
-        sed "s|RESULTS=.*|RESULTS=\"$RESULTS_FILE\"|" | \
-        sed "s|OUTPUT_DIR=.*|OUTPUT_DIR=\"$BENCHMARK_DIR\"|" | \
-        sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=${METHOD}_paired_plot|" | \
-        sed "s|#SBATCH --time=.*|#SBATCH --time=1:00:00|" > "$TEMP_SCRIPT"
+        sed "s|DATASET_PREFIX=.*|DATASET_PREFIX=\"$DATASET_PREFIX\"|" | \
+        sed "s|METHOD=.*|METHOD=\"$METHOD\"|" | \
+        sed "s|INCLUDE_OVERALL_GT=.*|INCLUDE_OVERALL_GT=\"$INCLUDE_OVERALL_GT\"|" | \
+        sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=${METHOD}_${DATASET_PREFIX}_plot|" > "$TEMP_SCRIPT"
         
     chmod +x "$TEMP_SCRIPT"
     
@@ -77,12 +74,12 @@ done
 echo "All paired plot jobs submitted. Mapping saved to $MAPPING_FILE"
 
 # Submit a comparison job to run after all plots are created
-COMPARE_SCRIPT="$SCRIPT_DIR/temp_compare_paired_plots.sh"
+COMPARE_SCRIPT="$SCRIPT_DIR/temp_compare_${DATASET_PREFIX}_paired_plots.sh"
 cat "$TEMPLATE_DIR/compare_models.sh" | \
-    sed "s|BENCHMARK_DIR=.*|BENCHMARK_DIR=\"$BENCHMARK_DIR\"|" | \
-    sed "s|OUTPUT_DIR=.*|OUTPUT_DIR=\"$BENCHMARK_DIR/paired_comparison\"|" | \
-    sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=compare_paired|" | \
-    sed "s|#SBATCH --time=.*|#SBATCH --time=1:00:00|" > "$COMPARE_SCRIPT"
+    sed "s|DATASET_PREFIX=.*|DATASET_PREFIX=\"$DATASET_PREFIX\"|" | \
+    sed "s|BENCHMARK_DIR=.*|BENCHMARK_DIR=\"$BENCHMARK_DIR/${DATASET_PREFIX}\"|" | \
+    sed "s|OUTPUT_DIR=.*|OUTPUT_DIR=\"$BENCHMARK_DIR/${DATASET_PREFIX}/comparison\"|" | \
+    sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=compare_${DATASET_PREFIX}|" > "$COMPARE_SCRIPT"
 
 chmod +x "$COMPARE_SCRIPT"
 
@@ -94,7 +91,7 @@ if [ -n "$JOB_IDS" ]; then
     echo "Submitted comparison job $COMPARE_JOB_ID, dependent on all plot jobs"
     
     # Add comparison job to mapping file
-    echo "compare_paired:${COMPARE_JOB_ID}" >> "$MAPPING_FILE"
+    echo "compare_${DATASET_PREFIX}:${COMPARE_JOB_ID}" >> "$MAPPING_FILE"
 else
     echo "No plot jobs were submitted successfully, skipping comparison job"
 fi
