@@ -33,48 +33,11 @@ colnames(mapping_df) <- c("Ensembl_ID", "Gene_Name")
 # Remove duplicates from mapping
 mapping_df <- mapping_df[!duplicated(mapping_df$Gene_Name), ]
 
+# Map gene names to Ensembl IDs
 gene_names <- rownames(filtered_sc@assays$RNA@counts)
 gene_map <- setNames(mapping_df$Ensembl_ID, mapping_df$Gene_Name)
 new_gene_names <- gene_map[gene_names]
 new_gene_names[is.na(new_gene_names)] <- gene_names[is.na(new_gene_names)]
-
-# Detect and handle duplicate gene IDs
-duplicate_genes <- new_gene_names[duplicated(new_gene_names)]
-if(length(duplicate_genes) > 0) {
-  cat("Detected", length(duplicate_genes), "duplicate gene IDs in single-cell data\n")
-  
-  # Get counts matrix
-  counts_mat <- filtered_sc@assays$RNA@counts
-  
-  # Print all rows with duplicate gene IDs
-  for(gene in unique(duplicate_genes)) {
-    duplicate_indices <- which(new_gene_names == gene)
-    cat("Duplicate gene:", gene, "appears", length(duplicate_indices), "times\n")
-    cat("Expression values (sample of first 3 cells, max 5 values per cell):\n")
-    
-    for(idx in duplicate_indices) {
-      # Get non-zero counts for this gene across cells (sparse matrix efficient)
-      gene_counts <- counts_mat[idx, ]
-      non_zero_cells <- which(gene_counts > 0)[1:min(3, sum(gene_counts > 0))]
-      
-      if(length(non_zero_cells) > 0) {
-        cat("  Original gene:", gene_names[idx], "-> Ensembl ID:", new_gene_names[idx], "\n")
-        cat("    Sample counts:", paste(sapply(non_zero_cells, function(cell) 
-          paste0(colnames(counts_mat)[cell], ":", gene_counts[cell])), collapse=", "), "...\n")
-      } else {
-        cat("  Original gene:", gene_names[idx], "-> Ensembl ID:", new_gene_names[idx], "(All zeros)\n")
-      }
-    }
-  }
-  
-  # Create a mask for first occurrences of each gene ID
-  keep_mask <- !duplicated(new_gene_names)
-  
-  # Keep only the first occurrence of each gene
-  cat("Keeping only the first occurrence of each duplicate gene ID\n")
-  new_gene_names <- new_gene_names[keep_mask]
-  filtered_sc@assays$RNA@counts <- filtered_sc@assays$RNA@counts[keep_mask, ]
-}
 
 # Assign Ensembl IDs as rownames
 rownames(filtered_sc@assays$RNA@counts) <- unname(new_gene_names)

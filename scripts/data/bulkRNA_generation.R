@@ -16,29 +16,7 @@ library(Matrix)
 
 feature_counts <- read.csv(input_data, row.names = 1, check.names = FALSE)
 # Gene version removal
-
-# After gene version removal and before creating the dense matrix
 rownames(feature_counts) <- sub("\\..*", "", rownames(feature_counts))
-
-# Detect and handle duplicate gene IDs
-duplicate_genes <- rownames(feature_counts)[duplicated(rownames(feature_counts))]
-if(length(duplicate_genes) > 0) {
-  cat("Detected", length(duplicate_genes), "duplicate gene IDs\n")
-  
-  # Print all rows with duplicate gene IDs
-  for(gene in unique(duplicate_genes)) {
-    duplicate_indices <- which(rownames(feature_counts) == gene)
-    cat("Duplicate gene:", gene, "appears", length(duplicate_indices), "times\n")
-    cat("Expression values (first 5 samples):\n")
-    for(idx in duplicate_indices) {
-      cat("  Row", idx, ":", paste(feature_counts[idx, 1:min(5, ncol(feature_counts))], collapse=", "), "...\n")
-    }
-  }
-  
-  # Keep the first occurrence and remove duplicates
-  cat("Keeping only the first occurrence of each duplicate gene ID\n")
-  feature_counts <- feature_counts[!duplicated(rownames(feature_counts)),]
-}
 
 # Create dense matrix
 bulk <- as.matrix(feature_counts)
