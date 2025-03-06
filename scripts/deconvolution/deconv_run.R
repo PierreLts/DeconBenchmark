@@ -167,6 +167,8 @@ deconvolutionResult <- runDeconvolution(
 )
 print("CHECK: Deconvolution completed for all methods")
 
+
+method <- method_list[1]
 # Save as RDA format
 results_filename <- file.path(output_dir, paste0("results_", method, ".rda"))
 save(deconvolutionResult, file=results_filename, compress=TRUE)
