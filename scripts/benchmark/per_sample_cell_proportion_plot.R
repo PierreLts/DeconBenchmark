@@ -20,7 +20,7 @@ library(dplyr)
 # Setup paths based on dataset prefix
 data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
 results_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/deconv_results", dataset_prefix)
-output_dir <- file.path(output_base_dir, dataset_prefix, method_name)
+output_dir <- file.path(output_base_dir, dataset_prefix)
 
 # Create output directory
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
@@ -327,7 +327,7 @@ plot_width <- max(12, n_samples * 0.4)  # Adjust width based on number of sample
 plot_height <- 7 + (num_cell_types > 20) * (num_cell_types - 20) * 0.1  # Increase height for many cell types
 
 # Save as PDF
-pdf_filename <- file.path(output_dir, paste0(method_name, "_paired_ground_truth.pdf"))
+pdf_filename <- file.path(output_dir, paste0(dataset_prefix, "_", method_name, "_paired_ground_truth.pdf"))
 ggsave(pdf_filename, p, width=plot_width, height=plot_height)
 
 # Also save as PNG for easier viewing

@@ -17,11 +17,11 @@ SCRIPT_DIR="/scratch/lorthiois/scripts"
 mkdir -p "$SCRIPT_DIR"
 TEMPLATE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark"
 DECONV_RESULTS_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results/${DATASET_PREFIX}"
-BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
+BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/${DATASET_PREFIX}"
 LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}"
 
 # Create directories
-mkdir -p "${BENCHMARK_DIR}/${DATASET_PREFIX}"
+mkdir -p "${BENCHMARK_DIR}"
 mkdir -p "$LOG_DIR"
 
 # Start with clean mapping file
