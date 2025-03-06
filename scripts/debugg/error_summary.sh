@@ -10,7 +10,8 @@
 
 # Path configuration
 LOG_DIR="/scratch/lorthiois/logs"
-DATASET_PREFIX="${1:-TB}"  # Default to TB if not provided
+DEFAULT_DATASET_PREFIX="TB1"
+DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"  # Use default prefix if not provided
 OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/error_summary_${DATASET_PREFIX}.html"
 JOB_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}/model_job_mapping.txt"
 PAIRED_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}/paired_plot_job_mapping.txt"

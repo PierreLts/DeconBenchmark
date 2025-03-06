@@ -137,8 +137,12 @@ GT_JOB_ID=$(submit_job "ground_truth" "Rscript $SCRIPT_DIR/ground_truth.R $RLIBR
 echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
 SAMPLE_GT_JOB_ID=$(submit_job "sample_gt_gen" "Rscript $SCRIPT_DIR/per_sample_ground_truth.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "32G" "1:00:00")
 
-# Save job IDs to a mapping file for future reference
-JOB_MAPPING_FILE="$OUTPUT_LOG_DIR/job_mapping_${PREFIX}.txt"
+# Create consistent logs directory structure
+GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${PREFIX}"
+mkdir -p $GLOBAL_LOG_DIR
+
+# Change where the job mapping file is saved
+JOB_MAPPING_FILE="$GLOBAL_LOG_DIR/data_job_mapping.txt"
 echo "# Job mapping file for ${PREFIX} data generation - Created $(date)" > "$JOB_MAPPING_FILE"
 [ -n "$BULK_JOB_ID" ] && echo "bulk_gen:${BULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$LABELS_JOB_ID" ] && echo "labels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
@@ -149,6 +153,7 @@ echo "# Job mapping file for ${PREFIX} data generation - Created $(date)" > "$JO
 [ -n "$CELLTYPE_JOB_ID" ] && echo "celltype_expr_gen:${CELLTYPE_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$GT_JOB_ID" ] && echo "ground_truth:${GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SAMPLE_GT_JOB_ID" ] && echo "sample_gt_gen:${SAMPLE_GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
+
 
 echo "All data generation jobs submitted successfully." | tee -a "$MAIN_LOG"
 echo "All generated files will be stored in: $SUBDIR_PATH" | tee -a "$MAIN_LOG"
