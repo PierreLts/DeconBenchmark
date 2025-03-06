@@ -28,3 +28,4 @@ devtools::install_github('immunogenomics/presto')
 After installation of presto, Seurat will automatically use the more 
 efficient implementation (no further action necessary).
 This message will be shown once per session
+Calculating cluster Dendritic
