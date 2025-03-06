@@ -91,6 +91,7 @@ if (file.exists(subjects_file)) {
 # THE PIPELINE ONLY RUNS A METHOD AT ONCE
 method_list <- unlist(strsplit(deconv_methods, ","))
 method_list <- trimws(method_list)
+method <- method_list[1]
 print(paste("Methods to run:", paste(method_list, collapse=", ")))
 
 # Generate references
@@ -260,7 +261,7 @@ if (!is.null(signature)) {
 # Now proceed with the deconvolution run
 print("Pre-processing complete, starting deconvolution...")
 deconvolutionResult <- runDeconvolution(
-  methods = method_list,
+  methods = method,
   bulk = bulk,
   singleCellExpr = singleCellExpr,
   singleCellLabels = singleCellLabels,
@@ -276,7 +277,6 @@ deconvolutionResult <- runDeconvolution(
 print("CHECK: Deconvolution completed for all methods")
 
 
-method <- method_list[1]
 # Save as RDA format
 results_filename <- file.path(output_dir, paste0("results_", method, ".rda"))
 save(deconvolutionResult, file=results_filename, compress=TRUE)
