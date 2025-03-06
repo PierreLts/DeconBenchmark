@@ -96,44 +96,44 @@ print(paste("Methods to run:", paste(method_list, collapse=", ")))
 reference <- generateReference(singleCellExpr, singleCellLabels, type="signature")
 signature <- reference$signature
 
-# Generate missing inputs if needed
-if (is.null(cellTypeExpr) && any(grep("cellTypeExpr", unlist(getMethodsInputs(method_list))))) {
-  print("Auto-generating cell type expression matrix...")
-  # Code to generate cellTypeExpr
-  cell_types <- unique(singleCellLabels)
-  cellTypeExpr <- t(sapply(rownames(singleCellExpr), function(gene) {
-    sapply(cell_types, function(ct) {
-      mean(singleCellExpr[gene, singleCellLabels == ct])
-    })
-  }))
-  colnames(cellTypeExpr) <- cell_types
-}
+# # Generate missing inputs if needed
+# if (is.null(cellTypeExpr) && any(grep("cellTypeExpr", unlist(getMethodsInputs(method_list))))) {
+#   print("Auto-generating cell type expression matrix...")
+#   # Code to generate cellTypeExpr
+#   cell_types <- unique(singleCellLabels)
+#   cellTypeExpr <- t(sapply(rownames(singleCellExpr), function(gene) {
+#     sapply(cell_types, function(ct) {
+#       mean(singleCellExpr[gene, singleCellLabels == ct])
+#     })
+#   }))
+#   colnames(cellTypeExpr) <- cell_types
+# }
 
-if (is.null(markers) && any(grep("markers", unlist(getMethodsInputs(method_list))))) {
-  print("Auto-generating marker genes...")
-  # Create a simple version of markers based on differential expression
-  markers <- list()
-  cell_types <- unique(singleCellLabels)
+# if (is.null(markers) && any(grep("markers", unlist(getMethodsInputs(method_list))))) {
+#   print("Auto-generating marker genes...")
+#   # Create a simple version of markers based on differential expression
+#   markers <- list()
+#   cell_types <- unique(singleCellLabels)
   
-  for (ct in cell_types) {
-    # Basic approach to find markers
-    cells_this_type <- singleCellLabels == ct
-    mean_expr_this <- rowMeans(singleCellExpr[, cells_this_type, drop=FALSE])
-    mean_expr_other <- rowMeans(singleCellExpr[, !cells_this_type, drop=FALSE])
+#   for (ct in cell_types) {
+#     # Basic approach to find markers
+#     cells_this_type <- singleCellLabels == ct
+#     mean_expr_this <- rowMeans(singleCellExpr[, cells_this_type, drop=FALSE])
+#     mean_expr_other <- rowMeans(singleCellExpr[, !cells_this_type, drop=FALSE])
     
-    # Calculate fold change
-    fold_change <- mean_expr_this / (mean_expr_other + 0.1)
+#     # Calculate fold change
+#     fold_change <- mean_expr_this / (mean_expr_other + 0.1)
     
-    # Get top genes by fold change
-    top_genes <- names(sort(fold_change, decreasing=TRUE)[1:min(20, length(fold_change))])
-    markers[[ct]] <- top_genes
-  }
-}
+#     # Get top genes by fold change
+#     top_genes <- names(sort(fold_change, decreasing=TRUE)[1:min(20, length(fold_change))])
+#     markers[[ct]] <- top_genes
+#   }
+# }
 
-if (is.null(significantGenes) && any(grep("significantGenes", unlist(getMethodsInputs(method_list))))) {
-  print("Using all genes as significant genes...")
-  significantGenes <- rownames(singleCellExpr)
-}
+# if (is.null(significantGenes) && any(grep("significantGenes", unlist(getMethodsInputs(method_list))))) {
+#   print("Using all genes as significant genes...")
+#   significantGenes <- rownames(singleCellExpr)
+# }
 
 ### Run deconvolution
 print(paste("Starting deconvolution with", length(method_list), "methods..."))
