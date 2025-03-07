@@ -48,6 +48,12 @@ declare -a DECONV_JOB_IDS
 
 # Submit deconvolution jobs for all methods in parallel
 for MODEL in "${MODELS[@]}"; do
+    # Skip CDSeq in the main loop since it will be handled separately
+    if [[ "$MODEL" == "CDSeq" ]]; then
+        echo "Skipping CDSeq in main loop - will be run with special script" | tee -a "$MAIN_LOG"
+        continue
+    fi
+    
     echo "Submitting deconvolution job for model: $MODEL" | tee -a "$MAIN_LOG"
     
     # Create a temporary job script for this model
