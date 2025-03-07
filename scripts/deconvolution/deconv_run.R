@@ -99,7 +99,7 @@ bulk <- handle_duplicate_genes(bulk)
 message("Checking for duplicate genes in single-cell data...")
 singleCellExpr <- handle_duplicate_genes(singleCellExpr)
 # Checking for duplicate columns
-print('Checking fo column duplicate...')
+print('Checking for column duplicate...')
 if(any(duplicated(colnames(bulk)))) {
   message("Warning: Found duplicate sample names in bulk matrix")
   print(table(colnames(bulk))[table(colnames(bulk)) > 1])
