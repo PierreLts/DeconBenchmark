@@ -85,22 +85,30 @@ print(paste("Methods to run:", paste(method)))
 
 # TPM
 if (method %in% c("LinDeconSeq","BayICE","DESeq2")) {
+  print('SHOULD APPLY TPM NORM')
   # TPM normalization
 }
 
-# Log transformed
+# Log transformed (If it means log2() ?)
 if (method %in% c("dtangle","PREDE")) {
+  print("Applying log transformation...")
+
+  # log2(x+1) transformation
+  pseudo_count <- 1
+  bulk_log <- log2(bulk + pseudo_count)
+  bulk <- bulk_log
+  print("Bulk data log-transformed (log2(counts+1))")
 }
 
-# Normalized transcriptional measurements
-if (method %in% c("DeconRNASeq")) {
-}
+# # Normalized transcriptional measurements
+# if (method %in% c("DeconRNASeq")) {
+# }
 
 
-# other data
-# Methylation data
-if (method %in% c("BayesCCE","ReFACTor","EMeth")) {
-}
+# # other data
+# # Methylation data
+# if (method %in% c("BayesCCE","ReFACTor","EMeth")) {
+# }
 
 # # DeconPeaker needs ATAC-Seq & Box-Cox transformation
 # if (method %in% c("DeconPeaker")) {
