@@ -76,13 +76,39 @@ print(paste("Methods to run:", paste(method)))
 
 
 
-# Generate references
- 
-reference <- generateReference(singleCellExpr, singleCellLabels, c("markers", "sigGenes", "signature", "cellTypeExpr"), 1)
-markers <- reference$markers
-sigGenes <- reference$sigGenes
-signature <- reference$signature
-cellTypeExpr <- reference$cellTypeExpr
+
+
+# # Bulk normalization
+# if (method %in% c("MuSiC","DWLS","AdRoit","spatialDWLS","scaden","DigitalDLSorter","RNA-Sieve","DecOT","MOMF","DeMixt","FARDEEP","ARIC","ImmuCellAI","EPIC","DeCompress","TICPE","Linseed","TOAST","BayCount","SMC","Deblender","MCPcounter","Bseq-SC","BayesPrism")) {
+#   # Raw count
+# }
+
+# TPM
+if (method %in% c("LinDeconSeq","BayICE","DESeq2")) {
+  # TPM normalization
+}
+
+# Log transformed
+if (method %in% c("dtangle","PREDE")) {
+}
+
+# Normalized transcriptional measurements
+if (method %in% c("DeconRNASeq")) {
+}
+
+
+# other data
+# Methylation data
+if (method %in% c("BayesCCE","ReFACTor","EMeth")) {
+}
+
+# DeconPeaker needs ATAC-Seq & Box-Cox transformation
+if (method %in% c("DeconPeaker")) {
+}
+
+
+
+
 
 
 # # For DeconPeaker: Thread count fix
@@ -92,6 +118,14 @@ cellTypeExpr <- reference$cellTypeExpr
 #   Sys.setenv(NUMEXPR_MAX_THREADS="64")
 # }
 
+
+
+# Generate references
+reference <- generateReference(singleCellExpr, singleCellLabels, c("markers", "sigGenes", "signature", "cellTypeExpr"), 1)
+markers <- reference$markers
+sigGenes <- reference$sigGenes
+signature <- reference$signature
+cellTypeExpr <- reference$cellTypeExpr
 
 ####### DECONVOLUTION ##################################
 print("Using standard parameter set")
