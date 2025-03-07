@@ -41,7 +41,7 @@
 </head>
 <body>
     <h1>Deconvolution, Paired Plot, and Stats Error Summary</h1>
-    <p>Generated on ven 07 mar 2025 10:59:30 CET for dataset: TB1</p>
+    <p>Generated on ven 07 mar 2025 11:02:16 CET for dataset: TB1</p>
     
     <div class="tabs">
         <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
@@ -185,11 +185,11 @@ FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to
             <td>32692236</td>
             <td class="warning">Completed with warnings</td>
             <td>Unknown</td>
-            <td>INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
-<br>
-[1] "Model size was switched to: 10"<br>
-[1] "Selecting cells for each iteration"<br>
-<br></td>
+            <td>  |                                                                              |=                                                                     |   2%<br>
+  |                                                                              |==                                                                    |   2%<br>
+  |                                                                              |==                                                                    |   3%<br>
+  |                                                                              |==                                                                    |   4%<br>
+  |                                                                              |===                                                                   |   4%<br></td>
         </tr>
         <tr>
             <td>DAISM</td>
@@ -322,13 +322,10 @@ panic: page 24 already freed<br></td>
         <tr>
             <td>DWLS</td>
             <td>32692252</td>
-            <td class="warning">Completed with warnings</td>
-            <td>Unknown</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
             <td><br>
-INFO:    Using cached SIF image<br>
-<br>
-INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
-<br></td>
+Combining coefficients and standard errors<br></td>
         </tr>
         <tr>
             <td>EMeth</td>
@@ -488,13 +485,10 @@ INFO     Loading singleCell dataset ...                    bulk_simulator.py:141
         <tr>
             <td>spatialDWLS</td>
             <td>32692272</td>
-            <td class="warning">Completed with warnings</td>
-            <td>Unknown</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
             <td><br>
-INFO:    Using cached SIF image<br>
-<br>
-INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
-<br></td>
+Combining coefficients and standard errors<br></td>
         </tr>
         <tr>
             <td>TOAST</td>
@@ -929,13 +923,13 @@ Execution halted<br></td>
             </div>
             <div class="metric">
                 <div class="metric-title">Warning</div>
-                <div class="metric-value" style="color: #f39c12">8</div>
-                <div>14.0%</div>
+                <div class="metric-value" style="color: #f39c12">6</div>
+                <div>11.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Failed</div>
-                <div class="metric-value" style="color: #e74c3c">33</div>
-                <div>61.0%</div>
+                <div class="metric-value" style="color: #e74c3c">35</div>
+                <div>64.0%</div>
             </div>
         </div>
         
@@ -1016,13 +1010,13 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>Error</td>
-            <td>50</td>
-            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DSA (deconv), EMeth (deconv), EPIC (deconv), MCPcounter (deconv), PREDE (deconv), RNA-Sieve (deconv), TOAST (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
+            <td>52</td>
+            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DSA (deconv), DWLS (deconv), EMeth (deconv), EPIC (deconv), MCPcounter (deconv), PREDE (deconv), RNA-Sieve (deconv), spatialDWLS (deconv), TOAST (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
         </tr>
         <tr>
             <td>ERROR</td>
-            <td>50</td>
-            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DSA (deconv), EMeth (deconv), EPIC (deconv), MCPcounter (deconv), PREDE (deconv), RNA-Sieve (deconv), TOAST (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
+            <td>52</td>
+            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DSA (deconv), DWLS (deconv), EMeth (deconv), EPIC (deconv), MCPcounter (deconv), PREDE (deconv), RNA-Sieve (deconv), spatialDWLS (deconv), TOAST (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
         </tr>
         <tr>
             <td>Exception</td>
