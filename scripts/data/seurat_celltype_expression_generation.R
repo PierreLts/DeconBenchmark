@@ -48,7 +48,7 @@ colnames(cellTypeExpr) <- cell_types
 for (i in 1:length(cell_types)) {
   ct <- cell_types[i]
   cells_of_type <- which(ensembl_obj@meta.data$Cell_Type_Experimental == ct)
-  cellTypeExpr[, i] <- rowMeans(ensembl_obj@assays$RNA@data[, cells_of_type])
+  cellTypeExpr[, i] <- rowMeans(ensembl_obj@assays$RNA@data[, cells_of_type]) # means vs sums plus normalize
 }
 
 # Save as RDA

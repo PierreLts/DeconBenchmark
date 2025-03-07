@@ -3,7 +3,7 @@
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 64
 #SBATCH --mem 256G
-#SBATCH --time 3:00:00
+#SBATCH --time 12:00:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
 #SBATCH --job-name=deconv_run
