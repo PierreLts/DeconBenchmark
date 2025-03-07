@@ -77,13 +77,25 @@ for (ct in unique(filtered_obj@meta.data$Cell_Type_Experimental)) {
 # Combine all marker data frames
 if (length(markers_df_list) > 0) {
   markers_df <- do.call(rbind, markers_df_list)
-  # Save as CSV 
-  csv_filename <- file.path(output_dir, paste0(prefix, "_markers.csv"))
-  write.csv(markers_df, file=csv_filename, row.names=FALSE)
 }
+
+# Convert to list format that deconvolution methods expect
+markers_list <- list()
+for (ct in unique(markers_df$CellType)) {
+  # Extract Ensembl IDs for this cell type
+  ct_markers <- markers_df$EnsemblID[markers_df$CellType == ct]
+  if (length(ct_markers) > 0) {
+    markers_list[[ct]] <- ct_markers
+  }
+}
+
+# Replace markers with the properly structured list
+markers <- markers_list
 
 # Save markers as RDA
 rda_filename <- file.path(output_dir, paste0(prefix, "_markers.rda"))
 save(markers, file=rda_filename)
 
-print(paste("Markers saved to:", rda_filename, "and", csv_filename))
+# Save as CSV (keep the dataframe version for reference)
+csv_filename <- file.path(output_dir, paste0(prefix, "_markers.csv"))
+write.csv(markers_df, file=csv_filename, row.names=FALSE)

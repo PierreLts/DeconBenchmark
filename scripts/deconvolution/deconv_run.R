@@ -228,6 +228,56 @@ if (method %in% c("MIXTURE", "EPIC")) {
   }
 }
 
+# AdRoit
+if (method == "AdRoit") {
+  # AdRoit specifically needs a mapper object
+  mapper <- data.frame(
+    gene_id = rownames(singleCellExpr),
+    gene_name = rownames(singleCellExpr)
+  )
+  assign("mapper", mapper, envir = .GlobalEnv)
+}
+
+
+# BayICE
+if (method == "BayICE") {
+  # BayICE tries to use scRNA rownames to directly index bulk
+  # Need to ensure exact ordering matches
+  ordered_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
+  bulk <- bulk[ordered_genes, , drop=FALSE]
+  singleCellExpr <- singleCellExpr[ordered_genes, , drop=FALSE]
+}
+
+# PREDE
+if (method == "PREDE") {
+  # PREDE likely uses cellTypeExpr for feature selection
+  if (!is.null(cellTypeExpr)) {
+    common_genes <- intersect(rownames(bulk), rownames(cellTypeExpr))
+    bulk <- bulk[common_genes, , drop=FALSE]
+    cellTypeExpr <- cellTypeExpr[common_genes, , drop=FALSE]
+  }
+}
+
+
+# RNA-Sieve
+if (method == "RNA-Sieve") {
+  # RNA-Sieve needs exact gene order matching
+  common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
+  bulk <- bulk[common_genes, , drop=FALSE]
+  singleCellExpr <- singleCellExpr[common_genes, , drop=FALSE]
+  
+  # Additional step: ensure identical ordering
+  genes_order <- sort(common_genes)
+  bulk <- bulk[genes_order, , drop=FALSE]
+  singleCellExpr <- singleCellExpr[genes_order, , drop=FALSE]
+}
+
+
+
+
+
+
+
 # Additional check for common genes between bulk and single-cell data
 # Common gene matching for all methods - fundamental preprocessing step
 common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))

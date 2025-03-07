@@ -6,45 +6,24 @@ if (length(args) != 4) {
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
-input_dir <- args[2]  # Directory containing the generated data
+seurat_file <- args[2]  # Path to Seurat RDS file (not Batch1.rda)
 output_dir <- args[3]  # Output directory
 prefix <- args[4]  # Prefix for output files
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
+library(Seurat)
 
-# Load Batch1.rda
-batch_file <- file.path(input_dir, "Batch1.rda")
-if (!file.exists(batch_file)) {
-  # Try to find alternative data files
-  data_files <- list.files(input_dir, pattern = "\\.rda$", full.names = TRUE)
-  sc_labels_file <- grep("singleCellLabels", data_files, value = TRUE)
-  
-  if (length(sc_labels_file) > 0) {
-    # Load single cell labels directly
-    load(sc_labels_file[1])
-  } else {
-    stop("Cannot find Batch1.rda or singleCellLabels.rda in the input directory")
-  }
-} else {
-  load(batch_file)
-  
-  # Extract single cell labels from the Batch1 object
-  if (exists("Batch1") && is.list(Batch1) && !is.null(Batch1$singleCellLabels)) {
-    singleCellLabels <- Batch1$singleCellLabels
-  } else {
-    stop("Batch1 object does not contain singleCellLabels")
-  }
-}
+# Load the Seurat object
+sc_data <- readRDS(seurat_file)
 
-# Check if singleCellLabels exists
-if (!exists("singleCellLabels")) {
-  stop("singleCellLabels not found in the input data")
-}
+# Filter out "Undetermined" and "Multiplet" cells
+valid_cells <- !sc_data@meta.data$Sample_Tag %in% c("Undetermined", "Multiplet")
+filtered_sc <- subset(sc_data, cells = rownames(sc_data@meta.data)[valid_cells])
 
-# Calculate the ground truth proportions by counting cell types
-cell_types <- unique(singleCellLabels)
-cell_counts <- table(singleCellLabels)
+# Get all cell types and calculate overall proportions
+cell_types <- filtered_sc@meta.data$Cell_Type_Experimental
+cell_counts <- table(cell_types)
 proportions <- as.numeric(cell_counts) / sum(cell_counts)
 
 # Create a matrix with cell types as columns
@@ -56,7 +35,7 @@ groundTruth <- list(P = P)
 # Print information for verification
 print("Ground truth proportions:")
 print(groundTruth$P)
-print(paste("Total cell types:", length(cell_types)))
+print(paste("Total cell types:", length(unique(cell_types))))
 print(paste("Sum of proportions:", sum(proportions)))
 
 # Save as RDA

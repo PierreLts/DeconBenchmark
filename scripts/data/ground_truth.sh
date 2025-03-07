@@ -14,7 +14,7 @@ set -x
 # Default parameters (can be overridden by command line arguments)
 RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
 SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/ground_truth.R"
-INPUT_DIR="${2:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
+SEURAT_FILE="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds}"
 OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
 PREFIX="${4:-TB}"
 
@@ -28,7 +28,7 @@ module load r
 start=`date +%s`
 echo "START AT $(date)"
 
-Rscript ${SCRIPT} ${RLIBRARY} ${INPUT_DIR} ${OUTPUT_DIR} ${PREFIX}
+Rscript ${SCRIPT} ${RLIBRARY} ${SEURAT_FILE} ${OUTPUT_DIR} ${PREFIX}
 
 end=`date +%s`
 runtime=$((end-start))
