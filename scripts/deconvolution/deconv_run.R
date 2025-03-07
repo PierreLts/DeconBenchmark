@@ -55,6 +55,63 @@ print(paste("singleCellExpr dimensions:", paste(dim(singleCellExpr), collapse=" 
 print(paste("singleCellLabels length:", length(singleCellLabels)))
 
 
+
+# Handle duplicate genes by summing their expression values
+handle_duplicate_genes <- function(expr_matrix) {
+  # Get gene names
+  gene_names <- rownames(expr_matrix)
+  
+  # Check for duplicates
+  if (!any(duplicated(gene_names))) {
+    message("No duplicate genes found.")
+    return(expr_matrix)
+  }
+  
+  # Count duplicates
+  dup_genes <- unique(gene_names[duplicated(gene_names)])
+  dup_count <- length(dup_genes)
+  message(paste("Found", dup_count, "unique genes with duplicates. Handling by summing expression values."))
+  
+  # Get unique gene names
+  unique_genes <- unique(gene_names)
+  
+  # Create a new matrix for the results
+  result <- matrix(0, nrow = length(unique_genes), ncol = ncol(expr_matrix))
+  rownames(result) <- unique_genes
+  colnames(result) <- colnames(expr_matrix)
+  
+  # Sum expression values for each unique gene
+  for (i in seq_along(unique_genes)) {
+    gene <- unique_genes[i]
+    indices <- which(gene_names == gene)
+    if (length(indices) > 0) {
+      # Sum expression values across all instances of this gene
+      result[i, ] <- colSums(expr_matrix[indices, , drop = FALSE])
+    }
+  }
+  
+  return(result)
+}
+
+# Apply duplicate handling to both datasets before finding common genes
+message("Checking for duplicate genes in bulk data...")
+bulk <- handle_duplicate_genes(bulk)
+message("Checking for duplicate genes in single-cell data...")
+singleCellExpr <- handle_duplicate_genes(singleCellExpr)
+# Checking for duplicate columns
+print('Checking fo column duplicate...')
+if(any(duplicated(colnames(bulk)))) {
+  message("Warning: Found duplicate sample names in bulk matrix")
+  print(table(colnames(bulk))[table(colnames(bulk)) > 1])
+}
+
+if(any(duplicated(colnames(singleCellExpr)))) {
+  message("Warning: Found duplicate sample names in single-cell matrix")
+  print(table(colnames(singleCellExpr))[table(colnames(singleCellExpr)) > 1])
+}
+
+
+
 # Get common genes between bulk and single-cell data
 common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
 message(paste("Common genes between datasets:", length(common_genes)))
@@ -65,7 +122,7 @@ singleCellExpr <- singleCellExpr[common_genes, , drop=FALSE]
 # Verify dimensions match
 message(paste("Filtered bulk matrix dimensions:", paste(dim(bulk), collapse=" x ")))
 message(paste("Filtered scRNA matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
-
+### Input data loaded and filtered ####
 
 
 # Split method names ()
@@ -76,13 +133,7 @@ print(paste("Methods to run:", paste(method)))
 
 
 
-
-
-# # Bulk normalization
-# if (method %in% c("MuSiC","DWLS","AdRoit","spatialDWLS","scaden","DigitalDLSorter","RNA-Sieve","DecOT","MOMF","DeMixt","FARDEEP","ARIC","ImmuCellAI","EPIC","DeCompress","TICPE","Linseed","TOAST","BayCount","SMC","Deblender","MCPcounter","Bseq-SC","BayesPrism")) {
-#   # Raw count
-# }
-
+### Normalization ###
 # TPM
 if (method %in% c("LinDeconSeq","BayICE","DESeq2")) {
   print('SHOULD APPLY TPM NORM')
@@ -140,16 +191,20 @@ print("Using standard parameter set")
 deconvolutionResult <- runDeconvolution(
   methods = method,
   bulk = bulk,
+  nCellTypes = length(unique(singleCellLabels)),
+  markers = markers,
+  isMethylation = FALSE,
   singleCellExpr = singleCellExpr,
   singleCellLabels = singleCellLabels,
-  signature = signature,
-  markers = markers,
-  cellTypeExpr = cellTypeExpr,
-  nCellTypes = length(unique(singleCellLabels)),
   # singleCellSubjects = singleCellSubjects,
-  isMethylation = FALSE,
+  cellTypeExpr = cellTypeExpr,
+  sigGenes = sigGenes,
+  signature = signature,
+  seed = 1,
   matlabLicenseFile = "303238", # MATLAB license
-  containerEngine = "singularity"
+  containerEngine = "singularity",
+  # dockerArgs = c("--cpus=8.0", "-m=32G", "--memory-reservation=4G"),
+  verbose = T # Debugging details default = T
 )
 print("CHECK: Deconvolution completed for all methods")
 
