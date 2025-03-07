@@ -6,27 +6,33 @@ if (length(args) != 4) {
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
-seurat_file <- args[2]  # Path to Seurat RDS file (not Batch1.rda)
-output_dir <- args[3]  # Output directory
-prefix <- args[4]  # Prefix for output files
+input_dir <- args[2]     # Directory containing the input data
+output_dir <- args[3]    # Output directory
+prefix <- args[4]        # Prefix for output files
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
-library(Seurat)
 
-# Load the Seurat object
-sc_data <- readRDS(seurat_file)
+# Load single cell labels file
+sc_labels_path <- file.path(input_dir, paste0(prefix, "_singleCellLabels.rda"))
+if (!file.exists(sc_labels_path)) {
+  stop(paste("Single cell labels file not found:", sc_labels_path))
+}
 
-# Filter out "Undetermined" and "Multiplet" cells
-valid_cells <- !sc_data@meta.data$Sample_Tag %in% c("Undetermined", "Multiplet")
-filtered_sc <- subset(sc_data, cells = rownames(sc_data@meta.data)[valid_cells])
+# Load the single cell labels
+load(sc_labels_path)
 
-# Get all cell types and calculate overall proportions
-cell_types <- filtered_sc@meta.data$Cell_Type_Experimental
-cell_counts <- table(cell_types)
+# Calculate the ground truth proportions from the labels
+if (!exists("singleCellLabels")) {
+  stop("singleCellLabels object not found in the loaded file")
+}
+
+# Calculate overall proportions
+cell_types <- unique(singleCellLabels)
+cell_counts <- table(singleCellLabels)
 proportions <- as.numeric(cell_counts) / sum(cell_counts)
 
-# Create a matrix with cell types as columns
+# Create a matrix with cell types as columns (single row for overall average)
 P <- matrix(proportions, nrow = 1, dimnames = list("true_proportions", names(cell_counts)))
 
 # Create a list to store the ground truth
@@ -35,7 +41,7 @@ groundTruth <- list(P = P)
 # Print information for verification
 print("Ground truth proportions:")
 print(groundTruth$P)
-print(paste("Total cell types:", length(unique(cell_types))))
+print(paste("Total cell types:", length(cell_types)))
 print(paste("Sum of proportions:", sum(proportions)))
 
 # Save as RDA
