@@ -134,21 +134,21 @@ bulk <- replace_na_with_zero(bulk)
 singleCellExpr <- replace_na_with_zero(singleCellExpr)
 if (!is.null(cellTypeExpr)) cellTypeExpr <- replace_na_with_zero(cellTypeExpr)
 
-# 3. Verify no zero-variance genes
-remove_zero_var_genes <- function(mat) {
-  if (is.null(mat)) return(NULL)
-  var_by_gene <- apply(mat, 1, var)
-  zero_var_idx <- which(var_by_gene == 0)
-  if (length(zero_var_idx) > 0) {
-    print(paste("Removing", length(zero_var_idx), "zero-variance genes"))
-    mat <- mat[-zero_var_idx, , drop=FALSE]
-  }
-  return(mat)
-}
+# # 3. Verify no zero-variance genes
+# remove_zero_var_genes <- function(mat) {
+#   if (is.null(mat)) return(NULL)
+#   var_by_gene <- apply(mat, 1, var)
+#   zero_var_idx <- which(var_by_gene == 0)
+#   if (length(zero_var_idx) > 0) {
+#     print(paste("Removing", length(zero_var_idx), "zero-variance genes"))
+#     mat <- mat[-zero_var_idx, , drop=FALSE]
+#   }
+#   return(mat)
+# }
 
-bulk <- remove_zero_var_genes(bulk)
-singleCellExpr <- remove_zero_var_genes(singleCellExpr)
-if (!is.null(cellTypeExpr)) cellTypeExpr <- remove_zero_var_genes(cellTypeExpr)
+# bulk <- remove_zero_var_genes(bulk)
+# singleCellExpr <- remove_zero_var_genes(singleCellExpr)
+# if (!is.null(cellTypeExpr)) cellTypeExpr <- remove_zero_var_genes(cellTypeExpr)
 
 # 4. Generate reference materials
 all_cell_types <- unique(singleCellLabels)
