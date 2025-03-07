@@ -41,7 +41,7 @@
 </head>
 <body>
     <h1>Deconvolution, Paired Plot, and Stats Error Summary</h1>
-    <p>Generated on ven 07 mar 2025 09:12:02 CET for dataset: TB1</p>
+    <p>Generated on ven 07 mar 2025 10:59:30 CET for dataset: TB1</p>
     
     <div class="tabs">
         <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
@@ -61,8 +61,22 @@
                 <th>Error Details</th>
             </tr>
         <tr>
+            <td>CDSeq</td>
+            <td>32692060</td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
+        </tr>
+        <tr>
+            <td>CDSeq</td>
+            <td>32692061</td>
+            <td class="warning">Unknown</td>
+            <td>N/A</td>
+            <td>Error log file not found</td>
+        </tr>
+        <tr>
             <td>AdRoit</td>
-            <td>32675311</td>
+            <td>32692223</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -71,7 +85,7 @@ Error in ref.build(args$singleCellExpr, args$singleCellLabels, rownames(args$sin
         </tr>
         <tr>
             <td>ARIC</td>
-            <td>32675312</td>
+            <td>32692224</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>    mix1.append(mix[i, :])<br>
@@ -79,7 +93,7 @@ IndexError: index 183 is out of bounds for axis 0 with size 183<br></td>
         </tr>
         <tr>
             <td>AutoGeneS</td>
-            <td>32675313</td>
+            <td>32692225</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -88,30 +102,30 @@ KeyError: "['ENSG00000114771', 'ENSG00000154263', 'ENSG00000144452', 'ENSG000001
         </tr>
             <tr>
                 <td>BayCount</td>
-                <td>32675314</td>
+                <td>32692226</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>BayesCCE</td>
-            <td>32675315</td>
+            <td>32692227</td>
             <td class="error">Failed</td>
-            <td>Error</td>
-            <td>#<br>
-# A fatal error has been detected by the Java Runtime Environment:<br>
-#<br></td>
+            <td>Error:</td>
+            <td>Error occurred during initialization of VM<br>
+java.lang.NoClassDefFoundError: java/nio/charset/IllegalCharsetNameException<br>
+	at java.lang.StringCoding.decode(StringCoding.java:187)<br></td>
         </tr>
             <tr>
                 <td>BayesPrism</td>
-                <td>32675316</td>
+                <td>32692228</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>BayICE</td>
-            <td>32675317</td>
+            <td>32692229</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -120,7 +134,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BisqueMarker</td>
-            <td>32675318</td>
+            <td>32692230</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -129,14 +143,14 @@ Error in MarkerBasedDecomposition(bulk.eset, markers = markers, weighted = F) : 
         </tr>
             <tr>
                 <td>BisqueRef</td>
-                <td>32675319</td>
+                <td>32692231</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>BseqSC</td>
-            <td>32675320</td>
+            <td>32692232</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -144,7 +158,7 @@ FATAL:   Unable to handle docker://deconvolution/bseqsc:latest uri: failed to ge
         </tr>
         <tr>
             <td>CDSeq</td>
-            <td>32675321</td>
+            <td>32692233</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -152,7 +166,7 @@ FATAL:   Unable to handle docker://deconvolution/cdseq:latest uri: failed to get
         </tr>
         <tr>
             <td>CellDistinguisher</td>
-            <td>32675322</td>
+            <td>32692234</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -160,22 +174,26 @@ FATAL:   Unable to handle docker://deconvolution/celldistinguisher:latest uri: f
         </tr>
         <tr>
             <td>CIBERSORT</td>
-            <td>32675323</td>
+            <td>32692235</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
 FATAL:   Unable to handle docker://deconvolution/cibersort:latest uri: failed to get checksum for docker://deconvolution/cibersort:latest: reading manifest latest in docker.io/deconvolution/cibersort: requested access to the resource is denied<br></td>
         </tr>
-            <tr>
-                <td>CPM</td>
-                <td>32675324</td>
-                <td class="success">Success</td>
-                <td>None</td>
-                <td>Standard execution log (no errors)</td>
-            </tr>
+        <tr>
+            <td>CPM</td>
+            <td>32692236</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
+<br>
+[1] "Model size was switched to: 10"<br>
+[1] "Selecting cells for each iteration"<br>
+<br></td>
+        </tr>
         <tr>
             <td>DAISM</td>
-            <td>32675325</td>
+            <td>32692237</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
@@ -183,7 +201,7 @@ panic: page 24 already freed<br></td>
         </tr>
         <tr>
             <td>debCAM</td>
-            <td>32675326</td>
+            <td>32692238</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>Error in geometry::convhulln(rbind(t(medcenters), 0), options = "QbB") : <br>
@@ -192,16 +210,16 @@ QH6214 qhull input error: not enough points(1) to construct initial simplex (nee
         </tr>
         <tr>
             <td>Deblender</td>
-            <td>32675327</td>
+            <td>32692239</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>Error occurred during initialization of VM<br>
-java.lang.NoClassDefFoundError: java/io/UnsupportedEncodingException<br>
-	at java.io.OutputStreamWriter.&lt;init&gt;(OutputStreamWriter.java:111)<br></td>
+java.lang.NoClassDefFoundError: java/lang/StringCoding<br>
+	at java.lang.String.&lt;init&gt;(String.java:546)<br></td>
         </tr>
         <tr>
             <td>DeCompress</td>
-            <td>32675328</td>
+            <td>32692240</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -210,7 +228,7 @@ Error in `.rowNamesDF&lt;-`(x, value = value) : <br>
         </tr>
         <tr>
             <td>deconf</td>
-            <td>32675329</td>
+            <td>32692241</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td>[1] ""<br>
@@ -218,37 +236,41 @@ Error in `.rowNamesDF&lt;-`(x, value = value) : <br>
         </tr>
             <tr>
                 <td>DeconICA</td>
-                <td>32675330</td>
+                <td>32692242</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>DeconPeaker</td>
-            <td>32675331</td>
+            <td>32692243</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
 Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)<br>
-INFO  @ Thu, 06 Mar 2025 22:52:53: Deconvolving...... <br></td>
+INFO  @ Fri, 07 Mar 2025 10:48:06: Deconvolving...... <br></td>
         </tr>
             <tr>
                 <td>DeconRNASeq</td>
-                <td>32675332</td>
-                <td class="success">Success</td>
-                <td>None</td>
-                <td>Standard execution log (no errors)</td>
-            </tr>
-            <tr>
-                <td>deconvSeq</td>
-                <td>32675333</td>
+                <td>32692244</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
+            <td>deconvSeq</td>
+            <td>32692245</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td><br>
+INFO:    Using cached SIF image<br>
+<br>
+INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
+<br></td>
+        </tr>
+        <tr>
             <td>DecOT</td>
-            <td>32675334</td>
+            <td>32692246</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>    raise ValueError(msg)<br>
@@ -256,7 +278,7 @@ ValueError: array length 24443 does not match index length 48886<br></td>
         </tr>
         <tr>
             <td>DeMixT</td>
-            <td>32675335</td>
+            <td>32692247</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -264,7 +286,7 @@ FATAL:   Unable to handle docker://deconvolution/demixt:latest uri: failed to ge
         </tr>
         <tr>
             <td>DESeq2</td>
-            <td>32675336</td>
+            <td>32692248</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -273,7 +295,7 @@ Error in unmix(args$bulk, args$cellTypeExpr, alpha = 0.01, quiet = T) : <br>
         </tr>
         <tr>
             <td>digitalDLSorter</td>
-            <td>32675337</td>
+            <td>32692249</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -282,15 +304,16 @@ Error in library(digitalDLSorteR) : <br>
         </tr>
         <tr>
             <td>DSA</td>
-            <td>32675338</td>
+            <td>32692250</td>
             <td class="error">Failed</td>
-            <td>Panic:</td>
+            <td>Error</td>
             <td><br>
-panic: page 24 already freed<br></td>
+Error in mix_ob[gene_list[[i]], ] : subscript out of bounds<br>
+Calls: EstimateWeight -&gt; as.matrix -&gt; colMeans -&gt; is.data.frame<br></td>
         </tr>
         <tr>
             <td>dtangle</td>
-            <td>32675339</td>
+            <td>32692251</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
@@ -298,15 +321,18 @@ panic: page 24 already freed<br></td>
         </tr>
         <tr>
             <td>DWLS</td>
-            <td>32675340</td>
-            <td class="error">Failed</td>
-            <td>Error</td>
+            <td>32692252</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
             <td><br>
-Combining coefficients and standard errors<br></td>
+INFO:    Using cached SIF image<br>
+<br>
+INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
+<br></td>
         </tr>
         <tr>
             <td>EMeth</td>
-            <td>32675341</td>
+            <td>32692253</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -315,7 +341,7 @@ Error in model.frame.default(formula = y ~ . - 1, data = X, drop.unused.levels =
         </tr>
         <tr>
             <td>EPIC</td>
-            <td>32675342</td>
+            <td>32692254</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -324,42 +350,44 @@ Error in EPIC::EPIC(args$bulk, reference) : <br>
         </tr>
             <tr>
                 <td>FARDEEP</td>
-                <td>32675343</td>
+                <td>32692255</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
             <tr>
                 <td>ImmuCellAI</td>
-                <td>32675344</td>
+                <td>32692256</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
             <tr>
                 <td>LinDeconSeq</td>
-                <td>32675345</td>
+                <td>32692257</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
             <tr>
                 <td>Linseed</td>
-                <td>32675346</td>
-                <td class="success">Success</td>
-                <td>None</td>
-                <td>Standard execution log (no errors)</td>
-            </tr>
-            <tr>
-                <td>MCPcounter</td>
-                <td>32675347</td>
+                <td>32692258</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
+            <td>MCPcounter</td>
+            <td>32692259</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in if (row_sum &gt; 0) { : missing value where TRUE/FALSE needed<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
             <td>MethylResolver</td>
-            <td>32675348</td>
+            <td>32692260</td>
             <td class="error">Failed</td>
             <td>fatal:</td>
             <td><br>
@@ -367,36 +395,40 @@ FATAL:   Unable to handle docker://deconvolution/methylresolver:latest uri: fail
         </tr>
             <tr>
                 <td>MIXTURE</td>
-                <td>32675349</td>
+                <td>32692261</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>MOMF</td>
-            <td>32675350</td>
+            <td>32692262</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
 panic: page 24 already freed<br></td>
         </tr>
-            <tr>
-                <td>MuSic</td>
-                <td>32675351</td>
-                <td class="success">Success</td>
-                <td>None</td>
-                <td>Standard execution log (no errors)</td>
-            </tr>
+        <tr>
+            <td>MuSic</td>
+            <td>32692263</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td><br>
+INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
+<br>
+Creating Relative Abundance Matrix...<br>
+<br></td>
+        </tr>
             <tr>
                 <td>MySort</td>
-                <td>32675352</td>
+                <td>32692264</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>NITUMID</td>
-            <td>32675353</td>
+            <td>32692265</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
@@ -404,7 +436,7 @@ panic: page 24 already freed<br></td>
         </tr>
         <tr>
             <td>PREDE</td>
-            <td>32675354</td>
+            <td>32692266</td>
             <td class="error">Failed</td>
             <td>Error</td>
             <td><br>
@@ -413,7 +445,7 @@ Calls: PREDE<br></td>
         </tr>
         <tr>
             <td>quanTIseq</td>
-            <td>32675355</td>
+            <td>32692267</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
@@ -421,7 +453,7 @@ panic: page 24 already freed<br></td>
         </tr>
         <tr>
             <td>ReFACTor</td>
-            <td>32675356</td>
+            <td>32692268</td>
             <td class="error">Failed</td>
             <td>Panic:</td>
             <td><br>
@@ -429,77 +461,53 @@ panic: page 24 already freed<br></td>
         </tr>
         <tr>
             <td>RNA-Sieve</td>
-            <td>32675357</td>
+            <td>32692269</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td>  File "&lt;__array_function__ internals&gt;", line 180, in concatenate<br>
 ValueError: all the input array dimensions for the concatenation axis must match exactly, but along dimension 0, the array at index 0 has size 183 and the array at index 1 has size 33544<br></td>
         </tr>
-            <tr>
-                <td>scaden</td>
-                <td>32675358</td>
-                <td class="success">Success</td>
-                <td>None</td>
-                <td>Standard execution log (no errors)</td>
-            </tr>
+        <tr>
+            <td>scaden</td>
+            <td>32692270</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td><br>
+INFO     Simulating data from singleCell                    bulk_simulator.py:89<br>
+<br>
+INFO     Loading singleCell dataset ...                    bulk_simulator.py:141<br>
+<br></td>
+        </tr>
             <tr>
                 <td>SCDC</td>
-                <td>32675359</td>
+                <td>32692271</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
             </tr>
         <tr>
             <td>spatialDWLS</td>
-            <td>32675360</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
+            <td>32692272</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
             <td><br>
-Error: '/usr/bin/python3' was not built with a shared library.<br>
-reticulate can only bind to copies of Python built with '--enable-shared'.<br></td>
+INFO:    Using cached SIF image<br>
+<br>
+INFO:    Environment variable SINGULARITYENV_APPEND_PATH is set, but APPTAINERENV_APPEND_PATH is preferred<br>
+<br></td>
         </tr>
         <tr>
             <td>TOAST</td>
-            <td>32675361</td>
+            <td>32692273</td>
             <td class="error">Failed</td>
             <td>Error</td>
-            <td><br>
+            <td>Deconvolution without prior information.<br>
 Error in rowMeans(Ymat[numMarker[[k]], ]) : <br>
   'x' must be an array of at least two dimensions<br></td>
         </tr>
             <tr>
                 <td>CDSeq</td>
-                <td>32675362</td>
-                <td class="success">Success</td>
-                <td>None</td>
-                <td>Standard execution log (no errors)</td>
-            </tr>
-        <tr>
-            <td>CDSeq</td>
-            <td>32675567</td>
-            <td class="error">Failed</td>
-            <td>fatal:</td>
-            <td><br>
-FATAL:   Unable to handle docker://deconvolution/cdseq:latest uri: failed to get checksum for docker://deconvolution/cdseq:latest: reading manifest latest in docker.io/deconvolution/cdseq: requested access to the resource is denied<br></td>
-        </tr>
-            <tr>
-                <td>CDSeq</td>
-                <td>32675568</td>
-                <td class="success">Success</td>
-                <td>None</td>
-                <td>Standard execution log (no errors)</td>
-            </tr>
-        <tr>
-            <td>CDSeq</td>
-            <td>32675638</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td>Repeated column names found in count matrix<br>
-slurmstepd: error: *** JOB 32675638 ON jst169 CANCELLED AT 2025-03-06T23:33:29 ***<br></td>
-        </tr>
-            <tr>
-                <td>CDSeq</td>
-                <td>32675639</td>
+                <td>32692274</td>
                 <td class="success">Success</td>
                 <td>None</td>
                 <td>Standard execution log (no errors)</td>
@@ -519,21 +527,21 @@ slurmstepd: error: *** JOB 32675638 ON jst169 CANCELLED AT 2025-03-06T23:33:29 *
             </tr>
     <tr>
         <td>deconf</td>
-        <td>32677662</td>
+        <td>32695912</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
     <tr>
         <td>FARDEEP</td>
-        <td>32677663</td>
+        <td>32695913</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>Deblender</td>
-            <td>32677664</td>
+            <td>32695914</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -541,38 +549,31 @@ Error: No proportion matrix found for method: Deblender<br>
 Execution halted<br></td>
         </tr>
         <tr>
-            <td>DSA</td>
-            <td>32677665</td>
+            <td>CDSeq</td>
+            <td>32695915</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
-Error: No proportion matrix found for method: DSA<br>
+Error: No proportion matrix found for method: CDSeq<br>
 Execution halted<br></td>
         </tr>
     <tr>
-        <td>CDSeq</td>
-        <td>32677666</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-    <tr>
         <td>BisqueRef</td>
-        <td>32677667</td>
+        <td>32695916</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
     <tr>
         <td>LinDeconSeq</td>
-        <td>32677668</td>
+        <td>32695917</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>DeMixT</td>
-            <td>32677669</td>
+            <td>32695918</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -581,14 +582,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>DeconRNASeq</td>
-        <td>32677670</td>
+        <td>32695919</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>MethylResolver</td>
-            <td>32677671</td>
+            <td>32695920</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -597,7 +598,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>AutoGeneS</td>
-            <td>32677672</td>
+            <td>32695921</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -606,7 +607,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>quanTIseq</td>
-            <td>32677673</td>
+            <td>32695922</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -615,7 +616,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>dtangle</td>
-            <td>32677674</td>
+            <td>32695923</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -624,7 +625,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BseqSC</td>
-            <td>32677675</td>
+            <td>32695924</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -633,7 +634,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DESeq2</td>
-            <td>32677676</td>
+            <td>32695925</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -642,21 +643,21 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>SCDC</td>
-        <td>32677677</td>
+        <td>32695926</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
     <tr>
         <td>ImmuCellAI</td>
-        <td>32677678</td>
+        <td>32695927</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>TOAST</td>
-            <td>32677679</td>
+            <td>32695928</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -665,7 +666,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>NITUMID</td>
-            <td>32677680</td>
+            <td>32695929</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -674,21 +675,21 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>BayesPrism</td>
-        <td>32677681</td>
+        <td>32695930</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
     <tr>
         <td>MySort</td>
-        <td>32677682</td>
+        <td>32695931</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>EPIC</td>
-            <td>32677683</td>
+            <td>32695932</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -697,7 +698,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>EMeth</td>
-            <td>32677684</td>
+            <td>32695933</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -706,7 +707,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>DecOT</td>
-            <td>32677685</td>
+            <td>32695934</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -715,23 +716,16 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BisqueMarker</td>
-            <td>32677686</td>
+            <td>32695935</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
 Error: No proportion matrix found for method: BisqueMarker<br>
 Execution halted<br></td>
         </tr>
-    <tr>
-        <td>scaden</td>
-        <td>32677687</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
         <tr>
             <td>ReFACTor</td>
-            <td>32677688</td>
+            <td>32695936</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -740,7 +734,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BayICE</td>
-            <td>32677689</td>
+            <td>32695937</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -748,49 +742,26 @@ Error: No proportion matrix found for method: BayICE<br>
 Execution halted<br></td>
         </tr>
         <tr>
-            <td>spatialDWLS</td>
-            <td>32677690</td>
-            <td class="error">Failed</td>
-            <td>Error:</td>
-            <td><br>
-Error: No proportion matrix found for method: spatialDWLS<br>
-Execution halted<br></td>
-        </tr>
-        <tr>
             <td>MOMF</td>
-            <td>32677691</td>
+            <td>32695938</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
 Error: No proportion matrix found for method: MOMF<br>
 Execution halted<br></td>
         </tr>
-    <tr>
-        <td>MuSic</td>
-        <td>32677692</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
         <tr>
             <td>digitalDLSorter</td>
-            <td>32677693</td>
+            <td>32695939</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
 Error: No proportion matrix found for method: digitalDLSorter<br>
 Execution halted<br></td>
         </tr>
-    <tr>
-        <td>deconvSeq</td>
-        <td>32677694</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
         <tr>
             <td>DAISM</td>
-            <td>32677695</td>
+            <td>32695940</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -799,7 +770,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>PREDE</td>
-            <td>32677696</td>
+            <td>32695941</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -808,7 +779,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>BayesCCE</td>
-            <td>32677697</td>
+            <td>32695942</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -817,7 +788,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>RNA-Sieve</td>
-            <td>32677698</td>
+            <td>32695943</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -826,30 +797,23 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>BayCount</td>
-        <td>32677699</td>
+        <td>32695944</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>CellDistinguisher</td>
-            <td>32677700</td>
+            <td>32695945</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
 Error: No proportion matrix found for method: CellDistinguisher<br>
 Execution halted<br></td>
         </tr>
-    <tr>
-        <td>DWLS</td>
-        <td>32677701</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
         <tr>
             <td>DeCompress</td>
-            <td>32677702</td>
+            <td>32695946</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -858,7 +822,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>CIBERSORT</td>
-            <td>32677703</td>
+            <td>32695947</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -867,7 +831,7 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>debCAM</td>
-            <td>32677704</td>
+            <td>32695948</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -876,28 +840,21 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>DeconPeaker</td>
-        <td>32677705</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-    <tr>
-        <td>CPM</td>
-        <td>32677706</td>
+        <td>32695949</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
     <tr>
         <td>MIXTURE</td>
-        <td>32677707</td>
+        <td>32695950</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>ARIC</td>
-            <td>32677708</td>
+            <td>32695951</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -906,21 +863,14 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>Linseed</td>
-        <td>32677709</td>
-        <td class="success">Success</td>
-        <td>None</td>
-        <td>Standard execution log (no errors)</td>
-    </tr>
-    <tr>
-        <td>MCPcounter</td>
-        <td>32677710</td>
+        <td>32695952</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
     </tr>
         <tr>
             <td>AdRoit</td>
-            <td>32677711</td>
+            <td>32695953</td>
             <td class="error">Failed</td>
             <td>Error:</td>
             <td><br>
@@ -929,7 +879,7 @@ Execution halted<br></td>
         </tr>
     <tr>
         <td>DeconICA</td>
-        <td>32677712</td>
+        <td>32695954</td>
         <td class="success">Success</td>
         <td>None</td>
         <td>Standard execution log (no errors)</td>
@@ -970,44 +920,44 @@ Execution halted<br></td>
         <div class="dashboard">
             <div class="metric">
                 <div class="metric-title">Deconv Methods</div>
-                <div class="metric-value">56</div>
+                <div class="metric-value">54</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Success</div>
-                <div class="metric-value" style="color: #2ecc71">20</div>
-                <div>35.0%</div>
+                <div class="metric-value" style="color: #2ecc71">13</div>
+                <div>24.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Warning</div>
-                <div class="metric-value" style="color: #f39c12">0</div>
-                <div>0.0%</div>
+                <div class="metric-value" style="color: #f39c12">8</div>
+                <div>14.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Failed</div>
-                <div class="metric-value" style="color: #e74c3c">36</div>
-                <div>64.0%</div>
+                <div class="metric-value" style="color: #e74c3c">33</div>
+                <div>61.0%</div>
             </div>
         </div>
         
         <div class="dashboard">
             <div class="metric">
                 <div class="metric-title">Plots Total</div>
-                <div class="metric-value">52</div>
+                <div class="metric-value">44</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Plots Success</div>
-                <div class="metric-value" style="color: #2ecc71">21</div>
-                <div>40.0%</div>
+                <div class="metric-value" style="color: #2ecc71">14</div>
+                <div>31.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Plots Warning</div>
                 <div class="metric-value" style="color: #f39c12">1</div>
-                <div>1.0%</div>
+                <div>2.0%</div>
             </div>
             <div class="metric">
                 <div class="metric-title">Plots Failed</div>
-                <div class="metric-value" style="color: #e74c3c">30</div>
-                <div>57.0%</div>
+                <div class="metric-value" style="color: #e74c3c">29</div>
+                <div>65.0%</div>
             </div>
         </div>
         
@@ -1041,63 +991,63 @@ Execution halted<br></td>
             </tr>
         <tr>
             <td>Error:</td>
-            <td>38</td>
-            <td>ARIC (deconv), AutoGeneS (deconv), debCAM (deconv), Deblender (deconv), DecOT (deconv), RNA-Sieve (deconv), spatialDWLS (deconv), CDSeq (deconv), Deblender (plot), DSA (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), spatialDWLS (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
+            <td>36</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), debCAM (deconv), Deblender (deconv), DecOT (deconv), RNA-Sieve (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
         </tr>
         <tr>
             <td>ERROR:</td>
-            <td>38</td>
-            <td>ARIC (deconv), AutoGeneS (deconv), debCAM (deconv), Deblender (deconv), DecOT (deconv), RNA-Sieve (deconv), spatialDWLS (deconv), CDSeq (deconv), Deblender (plot), DSA (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), spatialDWLS (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
+            <td>36</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), debCAM (deconv), Deblender (deconv), DecOT (deconv), RNA-Sieve (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
         </tr>
         <tr>
             <td>fatal:</td>
-            <td>7</td>
-            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv), CDSeq (deconv)</td>
+            <td>6</td>
+            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>Fatal:</td>
-            <td>7</td>
-            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv), CDSeq (deconv)</td>
+            <td>6</td>
+            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>FATAL:</td>
-            <td>7</td>
-            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv), CDSeq (deconv)</td>
+            <td>6</td>
+            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>Error</td>
-            <td>52</td>
-            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DWLS (deconv), EMeth (deconv), EPIC (deconv), PREDE (deconv), RNA-Sieve (deconv), spatialDWLS (deconv), TOAST (deconv), CDSeq (deconv), Deblender (plot), DSA (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), spatialDWLS (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
+            <td>50</td>
+            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DSA (deconv), EMeth (deconv), EPIC (deconv), MCPcounter (deconv), PREDE (deconv), RNA-Sieve (deconv), TOAST (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
         </tr>
         <tr>
             <td>ERROR</td>
-            <td>52</td>
-            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DWLS (deconv), EMeth (deconv), EPIC (deconv), PREDE (deconv), RNA-Sieve (deconv), spatialDWLS (deconv), TOAST (deconv), CDSeq (deconv), Deblender (plot), DSA (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), spatialDWLS (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
+            <td>50</td>
+            <td>AdRoit (deconv), ARIC (deconv), AutoGeneS (deconv), BayesCCE (deconv), BayICE (deconv), BisqueMarker (deconv), debCAM (deconv), Deblender (deconv), DeCompress (deconv), deconf (deconv), DeconPeaker (deconv), DecOT (deconv), DESeq2 (deconv), digitalDLSorter (deconv), DSA (deconv), EMeth (deconv), EPIC (deconv), MCPcounter (deconv), PREDE (deconv), RNA-Sieve (deconv), TOAST (deconv), Deblender (plot), CDSeq (plot), DeMixT (plot), MethylResolver (plot), AutoGeneS (plot), quanTIseq (plot), dtangle (plot), BseqSC (plot), DESeq2 (plot), TOAST (plot), NITUMID (plot), EPIC (plot), EMeth (plot), DecOT (plot), BisqueMarker (plot), ReFACTor (plot), BayICE (plot), MOMF (plot), digitalDLSorter (plot), DAISM (plot), PREDE (plot), BayesCCE (plot), RNA-Sieve (plot), CellDistinguisher (plot), DeCompress (plot), CIBERSORT (plot), debCAM (plot), ARIC (plot), AdRoit (plot)</td>
         </tr>
         <tr>
             <td>Exception</td>
             <td>1</td>
-            <td>Deblender (deconv)</td>
+            <td>BayesCCE (deconv)</td>
         </tr>
         <tr>
             <td>Failed</td>
-            <td>9</td>
-            <td>BayesCCE (deconv), BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeCompress (deconv), DeMixT (deconv), MethylResolver (deconv), CDSeq (deconv)</td>
+            <td>7</td>
+            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeCompress (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>fatal</td>
-            <td>8</td>
-            <td>BayesCCE (deconv), BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv), CDSeq (deconv)</td>
+            <td>6</td>
+            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>Fatal</td>
-            <td>8</td>
-            <td>BayesCCE (deconv), BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv), CDSeq (deconv)</td>
+            <td>6</td>
+            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>FATAL</td>
-            <td>8</td>
-            <td>BayesCCE (deconv), BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv), CDSeq (deconv)</td>
+            <td>6</td>
+            <td>BseqSC (deconv), CDSeq (deconv), CellDistinguisher (deconv), CIBERSORT (deconv), DeMixT (deconv), MethylResolver (deconv)</td>
         </tr>
         <tr>
             <td>not found</td>
@@ -1106,18 +1056,13 @@ Execution halted<br></td>
         </tr>
         <tr>
             <td>Panic:</td>
-            <td>7</td>
-            <td>DAISM (deconv), DSA (deconv), dtangle (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv)</td>
+            <td>6</td>
+            <td>DAISM (deconv), dtangle (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv)</td>
         </tr>
         <tr>
             <td>Panic</td>
-            <td>7</td>
-            <td>DAISM (deconv), DSA (deconv), dtangle (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv)</td>
-        </tr>
-        <tr>
-            <td>CANCELLED</td>
-            <td>1</td>
-            <td>CDSeq (deconv)</td>
+            <td>6</td>
+            <td>DAISM (deconv), dtangle (deconv), MOMF (deconv), NITUMID (deconv), quanTIseq (deconv), ReFACTor (deconv)</td>
         </tr>
         </table>
     </div>
