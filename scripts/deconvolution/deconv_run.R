@@ -133,6 +133,32 @@ print(paste("Methods to run:", paste(method)))
 
 
 
+
+
+
+# # Determine base path for loading files
+# base_data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
+# print(paste("Loading data from:", base_data_dir))
+
+# # Load individual files
+# bulk_path <- file.path(base_data_dir, paste0(dataset_prefix, "_bulk.rda"))
+# singleCellExpr_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellExpr.rda"))
+# singleCellLabels_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellLabels.rda"))
+
+singleCellSubjects <- NULL
+subjects_file <- file.path(base_data_dir, paste0(dataset_prefix, "_single_cell_subjects.rda"))
+if (file.exists(subjects_file)) {
+  load(subjects_file)
+  print("Single cell subject IDs loaded successfully")
+} else {
+  # Create default subjects if not available
+  singleCellSubjects <- rep("subject1", length(singleCellLabels))
+  print("Created default subject IDs")
+}
+
+
+
+
 ### Normalization ###
 # TPM
 if (method %in% c("LinDeconSeq","BayICE","DESeq2")) {
@@ -196,15 +222,15 @@ deconvolutionResult <- runDeconvolution(
   isMethylation = FALSE,
   singleCellExpr = singleCellExpr,
   singleCellLabels = singleCellLabels,
-  # singleCellSubjects = singleCellSubjects,
+  singleCellSubjects = singleCellSubjects,
   cellTypeExpr = cellTypeExpr,
   sigGenes = sigGenes,
   signature = signature,
   seed = 1,
   matlabLicenseFile = "303238", # MATLAB license
-  containerEngine = "singularity",
+  containerEngine = "singularity"
   # dockerArgs = c("--cpus=8.0", "-m=32G", "--memory-reservation=4G"),
-  verbose = T # Debugging details default = T
+  # verbose = T # Debugging details default = T
 )
 print("CHECK: Deconvolution completed for all methods")
 
