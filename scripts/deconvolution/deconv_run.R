@@ -102,9 +102,9 @@ if (method %in% c("DeconRNASeq")) {
 if (method %in% c("BayesCCE","ReFACTor","EMeth")) {
 }
 
-# DeconPeaker needs ATAC-Seq & Box-Cox transformation
-if (method %in% c("DeconPeaker")) {
-}
+# # DeconPeaker needs ATAC-Seq & Box-Cox transformation
+# if (method %in% c("DeconPeaker")) {
+# }
 
 
 
