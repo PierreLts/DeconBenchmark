@@ -277,6 +277,36 @@ deconvolutionResult <- runDeconvolution(
 print("CHECK: Deconvolution completed for all methods")
 
 
+
+
+# Normalize deconvolution results (absolute values and sum to 1 per sample)
+if (!is.null(deconvolutionResult[[method]]$P)) {
+  prop_matrix <- deconvolutionResult[[method]]$P
+  
+  # Process each sample (row) individually
+  for (i in 1:nrow(prop_matrix)) {
+    # Take absolute values to avoid negative proportions
+    prop_matrix[i, ] <- abs(prop_matrix[i, ])
+    
+    # Normalize to sum to 1
+    row_sum <- sum(prop_matrix[i, ])
+    if (row_sum > 0) {  # Avoid division by zero
+      prop_matrix[i, ] <- prop_matrix[i, ] / row_sum
+    } else {
+      # If all values are zero, keep as zeros
+      prop_matrix[i, ] <- rep(0, ncol(prop_matrix))
+      print(paste("Warning: Sample", rownames(prop_matrix)[i], "had all zero values - keeping as zeros"))
+    }
+  }
+  
+  # Update the proportions matrix in the result object
+  deconvolutionResult[[method]]$P <- prop_matrix
+  print("Normalized cell type proportions (absolute values, sum to 1 per sample)")
+}
+
+
+
+
 # Save as RDA format
 results_filename <- file.path(output_dir, paste0("results_", method, ".rda"))
 save(deconvolutionResult, file=results_filename, compress=TRUE)
