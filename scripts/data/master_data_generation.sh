@@ -106,36 +106,22 @@ submit_job() {
 
 # Submit all jobs using the function
 echo "Submitting bulk RNA generation job..." | tee -a "$MAIN_LOG"
-BULK_JOB_ID=$(submit_job "bulk_gen" "Rscript $SCRIPT_DIR/bulkRNA_generation.R $RLIBRARY $BULK_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
+BULK_JOB_ID=$(submit_job "bulk_gen" "Rscript $SCRIPT_DIR/bulk_generation.R $RLIBRARY $BULK_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
-echo "Submitting labels RNA generation job..." | tee -a "$MAIN_LOG"
-LABELS_JOB_ID=$(submit_job "labels_gen" "Rscript $SCRIPT_DIR/labelsRNA_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
+echo "Submitting single cell labels generation job..." | tee -a "$MAIN_LOG"
+LABELS_JOB_ID=$(submit_job "singleCellLabels_gen" "Rscript $SCRIPT_DIR/singleCellLabels_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
-echo "Submitting scRNA generation job..." | tee -a "$MAIN_LOG"
-SCRNA_JOB_ID=$(submit_job "scRNA_gen" "Rscript $SCRIPT_DIR/scRNA_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $MAPPING_FILE $PREFIX" 16 "48G" "2:00:00")
+echo "Submitting single cell expression generation job..." | tee -a "$MAIN_LOG"
+SCRNA_JOB_ID=$(submit_job "singleCellExpr_gen" "Rscript $SCRIPT_DIR/singleCellExpr_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $MAPPING_FILE $PREFIX" 16 "48G" "2:00:00")
 
-echo "Submitting subject information generation job..." | tee -a "$MAIN_LOG"
-SUBJECTS_JOB_ID=$(submit_job "subjects_gen" "Rscript $SCRIPT_DIR/seurat_subjects_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
-
-echo "Submitting marker genes generation job..." | tee -a "$MAIN_LOG"
-MARKER_JOB_ID=$(submit_job "markers_gen" "Rscript $SCRIPT_DIR/seurat_markers_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $MAPPING_FILE $PREFIX" 16 "32G" "2:00:00")
-
-# Only submit dependent job if we have a valid MARKER_JOB_ID
-if [[ -n "$MARKER_JOB_ID" && "$MARKER_JOB_ID" =~ ^[0-9]+$ ]]; then
-    echo "Submitting significant genes generation job (dependent on markers)..." | tee -a "$MAIN_LOG"
-    SIG_GENES_JOB_ID=$(submit_job "sig_genes_gen" "Rscript $SCRIPT_DIR/seurat_significant_genes_generation.R $RLIBRARY $SUBDIR_PATH/${PREFIX}_markers.rda $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00" "$MARKER_JOB_ID")
-else
-    echo "WARNING: Invalid marker job ID. Skipping significant genes generation." | tee -a "$MAIN_LOG"
-fi
-
-echo "Submitting cell type expression generation job..." | tee -a "$MAIN_LOG"
-CELLTYPE_JOB_ID=$(submit_job "celltype_expr_gen" "Rscript $SCRIPT_DIR/seurat_celltype_expression_generation.R $RLIBRARY $SEURAT_FILE $MAPPING_FILE $SUBDIR_PATH $PREFIX" 16 "32G" "2:00:00")
+echo "Submitting single cell subjects generation job..." | tee -a "$MAIN_LOG"
+SUBJECTS_JOB_ID=$(submit_job "singleCellSubjects_gen" "Rscript $SCRIPT_DIR/singleCellSubjects_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
 echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
-GT_JOB_ID=$(submit_job "ground_truth" "Rscript $SCRIPT_DIR/ground_truth.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
+GT_JOB_ID=$(submit_job "GT_gen" "Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
 echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
-SAMPLE_GT_JOB_ID=$(submit_job "sample_gt_gen" "Rscript $SCRIPT_DIR/per_sample_ground_truth.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "32G" "1:00:00")
+SAMPLE_GT_JOB_ID=$(submit_job "GT_per_sample_gen" "Rscript $SCRIPT_DIR/GT_per_sample_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "32G" "1:00:00")
 
 # Create consistent logs directory structure
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${PREFIX}"
@@ -145,15 +131,11 @@ mkdir -p $GLOBAL_LOG_DIR
 JOB_MAPPING_FILE="$GLOBAL_LOG_DIR/data_job_mapping.txt"
 echo "# Job mapping file for ${PREFIX} data generation - Created $(date)" > "$JOB_MAPPING_FILE"
 [ -n "$BULK_JOB_ID" ] && echo "bulk_gen:${BULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$LABELS_JOB_ID" ] && echo "labels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$SCRNA_JOB_ID" ] && echo "scRNA_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$SUBJECTS_JOB_ID" ] && echo "subjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$MARKER_JOB_ID" ] && echo "markers_gen:${MARKER_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$SIG_GENES_JOB_ID" ] && echo "sig_genes_gen:${SIG_GENES_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$CELLTYPE_JOB_ID" ] && echo "celltype_expr_gen:${CELLTYPE_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$GT_JOB_ID" ] && echo "ground_truth:${GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$SAMPLE_GT_JOB_ID" ] && echo "sample_gt_gen:${SAMPLE_GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
-
+[ -n "$LABELS_JOB_ID" ] && echo "singleCellLabels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SCRNA_JOB_ID" ] && echo "singleCellExpr_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SUBJECTS_JOB_ID" ] && echo "singleCellSubjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$GT_JOB_ID" ] && echo "GT_gen:${GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SAMPLE_GT_JOB_ID" ] && echo "GT_per_sample_gen:${SAMPLE_GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
 
 echo "All data generation jobs submitted successfully." | tee -a "$MAIN_LOG"
 echo "All generated files will be stored in: $SUBDIR_PATH" | tee -a "$MAIN_LOG"

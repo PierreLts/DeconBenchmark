@@ -147,7 +147,7 @@ print(paste("Methods to run:", paste(method)))
 # singleCellLabels_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellLabels.rda"))
 
 singleCellSubjects <- NULL
-subjects_file <- file.path(base_data_dir, paste0(dataset_prefix, "_single_cell_subjects.rda"))
+subjects_file <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellSubjects.rda"))
 if (file.exists(subjects_file)) {
   load(subjects_file)
   print("Single cell subject IDs loaded successfully")

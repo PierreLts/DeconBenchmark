@@ -6,14 +6,14 @@
 #SBATCH --time 1:00:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
-#SBATCH --job-name=sample_gt
+#SBATCH --job-name=GT_per_sample_gen
 
 set -e
 set -x
 
 # Default parameters (can be overridden by command line arguments)
 RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
-SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/per_sample_ground_truth.R"
+SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/GT_per_sample_generation.R"
 INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds}"
 OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
 PREFIX="${4:-TB}"

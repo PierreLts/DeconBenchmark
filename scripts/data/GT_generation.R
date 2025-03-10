@@ -45,11 +45,11 @@ print(paste("Total cell types:", length(cell_types)))
 print(paste("Sum of proportions:", sum(proportions)))
 
 # Save as RDA
-rda_filename <- file.path(output_dir, paste0(prefix, "_ground_truth_proportions.rda"))
+rda_filename <- file.path(output_dir, paste0(prefix, "_GT_proportions.rda"))
 save(groundTruth, file = rda_filename)
 
 # Save as CSV
-csv_filename <- file.path(output_dir, paste0(prefix, "_ground_truth_proportions.csv"))
+csv_filename <- file.path(output_dir, paste0(prefix, "_GT_proportions.csv"))
 gt_df <- as.data.frame(t(groundTruth$P))
 gt_df$CellType <- rownames(gt_df)
 colnames(gt_df) <- c("Proportion", "CellType")

@@ -64,11 +64,11 @@ for (sample_name in names(sample_proportions)) {
 groundTruth <- list(P = P)
 
 # Save as RDA
-rda_filename <- file.path(output_dir, paste0(prefix, "_per_sample_ground_truth_proportions.rda"))
+rda_filename <- file.path(output_dir, paste0(prefix, "_GT_per_sample_proportions.rda"))
 save(groundTruth, file = rda_filename)
 
 # Save as CSV
-csv_filename <- file.path(output_dir, paste0(prefix, "_per_sample_ground_truth_proportions.csv"))
+csv_filename <- file.path(output_dir, paste0(prefix, "_GT_per_sample_proportions.csv"))
 # Convert matrix to long format for CSV
 gt_df <- as.data.frame(groundTruth$P)
 gt_df$Sample <- rownames(gt_df)

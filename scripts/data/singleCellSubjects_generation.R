@@ -25,13 +25,13 @@ filtered_obj <- subset(seurat_obj, cells = rownames(seurat_obj@meta.data)[valid_
 singleCellSubjects <- as.character(filtered_obj@meta.data$Sample_Name)
 
 # Save as RDA
-rda_filename <- file.path(output_dir, paste0(prefix, "_single_cell_subjects.rda"))
+rda_filename <- file.path(output_dir, paste0(prefix, "_singleCellSubjects.rda"))
 save(singleCellSubjects, file=rda_filename)
 
 # Save cell-subject mapping as CSV
 cell_barcodes <- colnames(filtered_obj)
 subjects_df <- data.frame(Cell=cell_barcodes, Subject=singleCellSubjects)
-csv_filename <- file.path(output_dir, paste0(prefix, "_single_cell_subjects.csv"))
+csv_filename <- file.path(output_dir, paste0(prefix, "_singleCellSubjects.csv"))
 write.csv(subjects_df, file=csv_filename, row.names=FALSE)
 
 print(paste("Single cell subjects saved to:", rda_filename, "and", csv_filename))

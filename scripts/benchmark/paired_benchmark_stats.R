@@ -29,7 +29,7 @@ output_dir <- file.path(output_base_dir, dataset_prefix, "benchmarks")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Load per-sample ground truth
-per_sample_gt_path <- file.path(data_dir, paste0(dataset_prefix, "_per_sample_ground_truth_proportions.rda"))
+per_sample_gt_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_per_sample_proportions.rda"))
 if (!file.exists(per_sample_gt_path)) {
   stop(paste("Per-sample ground truth file not found:", per_sample_gt_path))
 }

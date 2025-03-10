@@ -1,0 +1,13 @@
+# Job mapping file for TB1 data generation - Created lun 10 mar 2025 11:32:37 CET
+bulk_gen:Submitted bulk_gen job: 32755017
+32755017
+singleCellLabels_gen:Submitted singleCellLabels_gen job: 32755018
+32755018
+singleCellExpr_gen:Submitted singleCellExpr_gen job: 32755019
+32755019
+singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 32755020
+32755020
+GT_gen:Submitted GT_gen job: 32755021
+32755021
+GT_per_sample_gen:Submitted GT_per_sample_gen job: 32755022
+32755022

@@ -26,8 +26,8 @@ output_dir <- file.path(output_base_dir, dataset_prefix)
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Load ground truth files
-overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_ground_truth_proportions.rda"))
-per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_per_sample_ground_truth_proportions.rda"))
+overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions.rda"))
+per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_per_sample_proportions.rda"))
 
 # Check if ground truth files exist
 if (!file.exists(overall_ground_truth_path)) {
