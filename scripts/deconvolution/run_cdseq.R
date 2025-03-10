@@ -45,6 +45,15 @@ load(singleCellExpr_path)
 
 print("CHECK: Data loaded successfully")
 
+
+# Get common genes between bulk and single-cell data
+common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
+message(paste("Common genes between datasets:", length(common_genes)))
+# Subset both matrices to common genes
+bulk <- bulk[common_genes, , drop=FALSE]
+singleCellExpr <- singleCellExpr[common_genes, , drop=FALSE]
+
+
 # Get number of cell types from the single-cell data
 n_cell_types <- length(unique(singleCellLabels))
 print(paste("Number of cell types detected:", n_cell_types))

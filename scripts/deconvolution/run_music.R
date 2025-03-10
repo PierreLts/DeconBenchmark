@@ -91,6 +91,15 @@ load(singleCellLabels_path)
 
 print("CHECK: Data loaded successfully")
 
+
+# Get common genes between bulk and single-cell data
+common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
+message(paste("Common genes between datasets:", length(common_genes)))
+# Subset both matrices to common genes
+bulk <- bulk[common_genes, , drop=FALSE]
+singleCellExpr <- singleCellExpr[common_genes, , drop=FALSE]
+
+
 # Data validation
 print("Validating data...")
 print(paste("Bulk dimensions:", paste(dim(bulk), collapse=" x ")))

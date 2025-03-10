@@ -21,6 +21,59 @@ rownames(feature_counts) <- sub("\\..*", "", rownames(feature_counts))
 # Create dense matrix
 bulk <- as.matrix(feature_counts)
 
+
+# Handle duplicate genes by summing their expression values
+handle_duplicate_genes <- function(expr_matrix) {
+  # Get gene names
+  gene_names <- rownames(expr_matrix)
+  
+  # Check for duplicates
+  if (!any(duplicated(gene_names))) {
+    message("No duplicate genes found.")
+    return(expr_matrix)
+  }
+  
+  # Count duplicates
+  dup_genes <- unique(gene_names[duplicated(gene_names)])
+  dup_count <- length(dup_genes)
+  message(paste("Found", dup_count, "unique genes with duplicates. Handling by summing expression values."))
+  
+  # Get unique gene names
+  unique_genes <- unique(gene_names)
+  
+  # Create a new matrix for the results
+  result <- matrix(0, nrow = length(unique_genes), ncol = ncol(expr_matrix))
+  rownames(result) <- unique_genes
+  colnames(result) <- colnames(expr_matrix)
+  
+  # Sum expression values for each unique gene
+  for (i in seq_along(unique_genes)) {
+    gene <- unique_genes[i]
+    indices <- which(gene_names == gene)
+    if (length(indices) > 0) {
+      # Sum expression values across all instances of this gene
+      result[i, ] <- colSums(expr_matrix[indices, , drop = FALSE])
+    }
+  }
+  
+  return(result)
+}
+
+# Apply duplicate handling to both datasets before finding common genes
+message("Checking for duplicate genes in single-cell data...")
+singleCellExpr <- handle_duplicate_genes(singleCellExpr)
+
+print('Checking for column duplicate...')
+if(any(duplicated(colnames(bulk)))) {
+  message("Warning: Found duplicate sample names in bulk matrix")
+  print(table(colnames(bulk))[table(colnames(bulk)) > 1])
+}
+
+
+
+
+
+
 # Checks
 print(bulk[1:5, 1:5])
 print(class(bulk))
