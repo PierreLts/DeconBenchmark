@@ -12,6 +12,8 @@ output_base_dir <- args[3]   # Base output directory for results
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
 library(CDSeq)
+library(DeconBenchmark)
+library(Matrix)
 print("CHECK: Libraries loaded")
 
 # Extract dataset prefix from the input directory name
@@ -75,66 +77,49 @@ cdseq.result <- CDSeq(
 print("CHECK: CDSeq deconvolution completed, now formatting...")
 
 
-# Structure the results to match plotting format
+
+reference <- generateReference(singleCellExpr, singleCellLabels, c("markers", "sigGenes", "signature", "cellTypeExpr"), 1)
+markers <- reference$markers
+# sigGenes <- reference$sigGenes
+# signature <- reference$signature
+cellTypeExpr <- reference$cellTypeExpr
+
+# For CDSeq cell type assignment, use the cellTypeExpr (avg expression by cell type)
+print("Assigning cell types using DeconBenchmark reference profiles...")
+
+# Option 1: Use cellTypeAssign with the cellTypeExpr
+cell_assignment <- cellTypeAssign(
+  cdseq_gep = cdseq.result$estGEP,
+  ref_gep = cellTypeExpr
+)
+
+# Option 2: Alternatively, use cellTypeAssignMarkerGenes with the markers list
+# cell_assignment <- cellTypeAssignMarkerGenes(
+#   cdseq_gep = cdseq.result$estGEP,
+#   marker_list = markers,
+#   plot_heatmap = FALSE
+# )
+
+# Structure the results
 deconvolutionResult <- list()
 deconvolutionResult$CDSeq <- list(
   P = t(cdseq.result$estProp),  # TRANSPOSED: Now samples in rows, cell types in columns
   S = cdseq.result$estGEP       # Genes in rows and cell types in columns
 )
 
-# Optionally, if you want to add annotation step
-
-
-
-# Find common genes and subset both matrices
-common_genes <- intersect(rownames(cdseq.result$estGEP), rownames(singleCellExpr))
-print(paste("Number of common genes:", length(common_genes)))
-
-# Subset both matrices to common genes
-cdseq_gep_filtered <- cdseq.result$estGEP[common_genes, , drop=FALSE]
-sc_gep_filtered <- singleCellExpr[common_genes, , drop=FALSE]
-
-# Make sure the order is the same
-sc_gep_filtered <- sc_gep_filtered[order(rownames(sc_gep_filtered)),]
-cdseq_gep_filtered <- cdseq_gep_filtered[order(rownames(cdseq_gep_filtered)),]
-
-# Check if the gene names are now matching
-print("First 5 gene names from cdseq_gep_filtered:")
-print(head(rownames(cdseq_gep_filtered), 5))
-print("First 5 gene names from sc_gep_filtered:")
-print(head(rownames(sc_gep_filtered), 5))
-
-
-cdseq.result.celltypeassign <- cellTypeAssignSCRNA(
-  cdseq_gep = cdseq_gep_filtered,
-  cdseq_prop = cdseq.result$estProp,
-  sc_gep = sc_gep_filtered,
-  sc_annotation = singleCellLabels,
-  sc_pt_size = 3,
-  cdseq_pt_size = 6,
-  seurat_nfeatures = 100,
-  seurat_npcs = 50,
-  seurat_dims=1:5,
-  plot_umap = 0,
-  plot_tsne = 0
-)
-
-# If successful, add annotated results to the output structure
-if (!is.null(cdseq.result.celltypeassign) && !is.null(cdseq.result.celltypeassign$mapping)) {
-  # Store the mapping
-  deconvolutionResult$CDSeq$annotated_mapping <- cdseq.result.celltypeassign$mapping
-  print("cell type assign succesful 1/2")
-  # Apply the mapping to the column names of the transposed proportion matrix
-  # This ensures the mapping aligns with the transposed format
-  if (length(colnames(deconvolutionResult$CDSeq$P)) == length(cdseq.result.celltypeassign$mapping)) {
-    # Replace numeric column names with actual cell type names
-    new_colnames <- as.character(cdseq.result.celltypeassign$mapping)
-    names(new_colnames) <- colnames(deconvolutionResult$CDSeq$P)
-    colnames(deconvolutionResult$CDSeq$P) <- new_colnames
-    print("cell type assign succesful 2/2")
-  }
+# Apply the cell type mapping
+if (!is.null(cell_assignment) && !is.null(cell_assignment$mapping)) {
+  # Use the mapping to rename columns
+  new_colnames <- cell_assignment$mapping
+  colnames(deconvolutionResult$CDSeq$P) <- new_colnames
+  
+  # Store the assignment info
+  deconvolutionResult$CDSeq$cell_type_assignment <- cell_assignment
+  print("Cell type assignment successful!")
+} else {
+  print("Cell type assignment failed or returned no mapping - using generic cell type names")
+  colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType", 1:ncol(deconvolutionResult$CDSeq$P))
 }
-
 
 # Save results as RDA
 results_filename <- file.path(output_dir, "results_CDSeq.rda")
