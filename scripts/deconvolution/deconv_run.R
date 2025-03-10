@@ -98,6 +98,7 @@ message("Checking for duplicate genes in bulk data...")
 bulk <- handle_duplicate_genes(bulk)
 message("Checking for duplicate genes in single-cell data...")
 singleCellExpr <- handle_duplicate_genes(singleCellExpr)
+
 # Checking for duplicate columns
 print('Checking for column duplicate...')
 if(any(duplicated(colnames(bulk)))) {
