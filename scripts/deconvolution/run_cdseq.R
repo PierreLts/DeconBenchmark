@@ -84,17 +84,40 @@ deconvolutionResult$CDSeq <- list(
 
 # Optionally, if you want to add annotation step
 
-cdseq.result.celltypeassign <- cellTypeAssignSCRNA(cdseq_gep = cdseq.result$estGEP, # CDSeq-estimated cell-type-specific GEPs
-                                              cdseq_prop = cdseq.result$estProp, # CDSeq-estimated cell type proportions
-                                              sc_gep = singleCellExpr,         # PBMC single cell data
-                                              sc_annotation = singleCellLabels,# PBMC single data annotations
-                                              sc_pt_size = 3,
-                                              cdseq_pt_size = 6,
-                                              seurat_nfeatures = 100,
-                                              seurat_npcs = 50,
-                                              seurat_dims=1:5,
-                                              plot_umap = 0,
-                                              plot_tsne = 0)
+
+
+# Find common genes and subset both matrices
+common_genes <- intersect(rownames(cdseq.result$estGEP), rownames(singleCellExpr))
+print(paste("Number of common genes:", length(common_genes)))
+
+# Subset both matrices to common genes
+cdseq_gep_filtered <- cdseq.result$estGEP[common_genes, , drop=FALSE]
+sc_gep_filtered <- singleCellExpr[common_genes, , drop=FALSE]
+
+# Make sure the order is the same
+sc_gep_filtered <- sc_gep_filtered[order(rownames(sc_gep_filtered)),]
+cdseq_gep_filtered <- cdseq_gep_filtered[order(rownames(cdseq_gep_filtered)),]
+
+# Check if the gene names are now matching
+print("First 5 gene names from cdseq_gep_filtered:")
+print(head(rownames(cdseq_gep_filtered), 5))
+print("First 5 gene names from sc_gep_filtered:")
+print(head(rownames(sc_gep_filtered), 5))
+
+
+cdseq.result.celltypeassign <- cellTypeAssignSCRNA(
+  cdseq_gep = cdseq_gep_filtered,
+  cdseq_prop = cdseq.result$estProp,
+  sc_gep = sc_gep_filtered,
+  sc_annotation = singleCellLabels,
+  sc_pt_size = 3,
+  cdseq_pt_size = 6,
+  seurat_nfeatures = 100,
+  seurat_npcs = 50,
+  seurat_dims=1:5,
+  plot_umap = 0,
+  plot_tsne = 0
+)
 
 # If successful, add annotated results to the output structure
 if (!is.null(cdseq.result.celltypeassign) && !is.null(cdseq.result.celltypeassign$mapping)) {

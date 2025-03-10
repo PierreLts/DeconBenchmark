@@ -86,8 +86,8 @@ handle_duplicate_genes <- function(expr_matrix) {
 }
 
 # Apply duplicate handling to both datasets before finding common genes
-message("Checking for duplicate genes in bulk data...")
-bulk <- handle_duplicate_genes(bulk)
+message("Checking for duplicate genes in singleCellExpr data...")
+singleCellExpr <- handle_duplicate_genes(singleCellExpr)
 
 # Checking for duplicate columns
 print('Checking for column duplicate...')
