@@ -116,7 +116,6 @@ if (!is.data.frame(markers) || !all(c("CellType", "GeneName") %in% colnames(mark
 }
 
 
-# Try with fully qualified namespace
 cell_assignment <- tryCatch({
   CDSeq::cellTypeAssignMarkerGenes(
     cell_gep = cdseq.result$estGEP,

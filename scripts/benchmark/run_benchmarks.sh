@@ -4,7 +4,7 @@
 # Usage: ./run_benchmarks.sh [DATASET_PREFIX] [INCLUDE_OVERALL_GT]
 
 # Default parameters
-DEFAULT_DATASET_PREFIX="BE"
+DEFAULT_DATASET_PREFIX="TB1"
 DEFAULT_INCLUDE_OVERALL_GT="TRUE"
 
 # Parse command line arguments
