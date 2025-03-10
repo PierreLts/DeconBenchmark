@@ -117,7 +117,7 @@ SCRNA_JOB_ID=$(submit_job "singleCellExpr_gen" "Rscript $SCRIPT_DIR/singleCellEx
 echo "Submitting single cell subjects generation job..." | tee -a "$MAIN_LOG"
 SUBJECTS_JOB_ID=$(submit_job "singleCellSubjects_gen" "Rscript $SCRIPT_DIR/singleCellSubjects_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
-echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
+echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"b
 GT_JOB_ID=$(submit_job "GT_gen" "Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
 echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
