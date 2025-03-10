@@ -222,7 +222,7 @@ deconvolutionResult <- runDeconvolution(
   isMethylation = FALSE,
   singleCellExpr = singleCellExpr,
   singleCellLabels = singleCellLabels,
-  singleCellSubjects = singleCellSubjects,
+  singleCellSubjects = singleCellSubjects, # High impact
   cellTypeExpr = cellTypeExpr,
   sigGenes = sigGenes,
   signature = signature,
