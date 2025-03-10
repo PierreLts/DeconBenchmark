@@ -93,12 +93,58 @@ print("Assigning cell types using DeconBenchmark reference profiles...")
 #   ref_gep = cellTypeExpr
 # )
 
-# Option 2: Alternatively, use cellTypeAssignMarkerGenes with the markers list
-cell_assignment <- cellTypeAssignMarkerGenes(
-  cdseq_gep = cdseq.result$estGEP,
-  marker_list = markers,
-  plot_heatmap = FALSE
-)
+# 1. First, check and print your CDSeq version
+packageVersion("CDSeq")
+
+# 2. Make sure you're using the fully-qualified function name
+corr_matrix <- cor(cdseq.result$estGEP, cellTypeExpr) # Create correlation matrix between estimated GEPs and reference
+
+
+# Check marker format before calling function
+str(markers)
+# Should be a dataframe with columns "CellType" and "GeneName"
+
+# If your markers are in a different format, convert them:
+if (!is.data.frame(markers) || !all(c("CellType", "GeneName") %in% colnames(markers))) {
+  # Convert markers to the required format if needed
+  # This is just an example - adjust based on your actual marker structure
+  markers_df <- data.frame(
+    GeneName = names(unlist(markers)),
+    CellType = rep(names(markers), sapply(markers, length))
+  )
+  markers <- markers_df
+}
+
+
+# Try with fully qualified namespace
+cell_assignment <- tryCatch({
+  CDSeq::cellTypeAssignMarkerGenes(
+    cell_gep = cdseq.result$estGEP,
+    marker_gene_list = markers,
+    verbose = FALSE
+  )
+}, error = function(e) {
+  message("Error with cellTypeAssignMarkerGenes: ", e$message)
+  
+  # Fall back to cellTypeAssign if available
+  tryCatch({
+    assign_result <- CDSeq::cellTypeAssign(corr_matrix, threshold = 0.7)
+    return(list(mapping = assign_result))
+  }, error = function(e2) {
+    message("Error with cellTypeAssign: ", e2$message)
+    
+    # Create a simple manual mapping as last resort
+    cell_types_idx <- apply(corr_matrix, 1, which.max)
+    manual_mapping <- colnames(cellTypeExpr)[cell_types_idx]
+    names(manual_mapping) <- colnames(cdseq.result$estGEP)
+    return(list(mapping = manual_mapping))
+  })
+})
+
+# Continue with your code using cell_assignment$mapping for column names
+
+
+
 
 # Structure the results
 deconvolutionResult <- list()
