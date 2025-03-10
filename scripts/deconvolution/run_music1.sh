@@ -14,7 +14,7 @@ set -x # Print each line of code being computed
 
 # Define default parameters
 RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
-SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/run_music.R"
+SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/run_music1.R"
 DEFAULT_DATASET_PREFIX="TB1"
 dataset_prefix="${1:-$DEFAULT_DATASET_PREFIX}"  # Use default if not provided
 input_data="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/$dataset_prefix"  # Dataset directory

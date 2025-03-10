@@ -90,35 +90,24 @@ sc_meta <- data.frame(
   row.names = colnames(sc_expr_filtered)
 )
 
-# Create bulk metadata - FIX: Add at least one column with sample identifiers
-bulk_meta <- data.frame(
-  SubjectName = colnames(bulk_filtered),  # Add a column to avoid empty phenoData
-  row.names = colnames(bulk_filtered)
-)
-
-# Create ExpressionSet objects
+# Create a SingleCellExperiment object for MuSiC
+# First, create an ExpressionSet
 sc_eset <- Biobase::ExpressionSet(
   assayData = sc_expr_filtered,
   phenoData = Biobase::AnnotatedDataFrame(sc_meta)
 )
 
-bulk_eset <- Biobase::ExpressionSet(
-  assayData = bulk_filtered,
-  phenoData = Biobase::AnnotatedDataFrame(bulk_meta)
-)
-
 print("CHECK: ExpressionSet objects created")
 print(paste("sc_eset dimensions:", paste(dim(Biobase::exprs(sc_eset)), collapse=" x ")))
-print(paste("bulk_eset dimensions:", paste(dim(Biobase::exprs(bulk_eset)), collapse=" x ")))
 
 # Run MuSiC deconvolution
 print("Starting MuSiC deconvolution...")
 music_result <- tryCatch({
   MuSiC::music_prop(
-    bulk.eset = bulk_eset,
-    sc.eset = sc_eset,
-    clusters = "cellType",
-    samples = "SubjectName",
+    bulk.mtx = bulk_filtered,    # Use the matrix directly
+    sc.eset = sc_eset,           # Use the ExpressionSet for single cell
+    clusters = "cellType",       # Column name for cell types
+    samples = "SubjectName",     # Column name for subjects
     verbose = TRUE
   )
 }, error = function(e) {
@@ -131,17 +120,17 @@ if (!is.null(music_result)) {
   # Structure in the expected format
   deconvolutionResult <- list()
   deconvolutionResult$MuSiC <- list(
-    P = t(music_result$Est.prop.weighted),  # Transpose to have samples in rows, cell types in columns
+    P = music_result$Est.prop.weighted,  # Make sure this matches the format expected
     S = NULL             # Signature matrix not explicitly provided by MuSiC
   )
   
   # Save results
-  music_results_filename <- file.path(output_dir, "results_MuSiC.rda")
+  music_results_filename <- file.path(output_dir, "results_MuSiC1.rda")
   save(deconvolutionResult, file=music_results_filename, compress=TRUE)
   
   # Save as CSV
-  music_csv_filename <- file.path(output_dir, "results_MuSiC_proportions.csv")
-  music_props_df <- as.data.frame(t(music_result$Est.prop.weighted))
+  music_csv_filename <- file.path(output_dir, "results_MuSiC1_proportions.csv")
+  music_props_df <- as.data.frame(music_result$Est.prop.weighted)
   music_props_df$Sample <- rownames(music_props_df)
   write.csv(music_props_df, file=music_csv_filename, row.names=FALSE)
   
