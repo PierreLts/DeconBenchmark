@@ -88,17 +88,17 @@ cellTypeExpr <- reference$cellTypeExpr
 print("Assigning cell types using DeconBenchmark reference profiles...")
 
 # Option 1: Use cellTypeAssign with the cellTypeExpr
-cell_assignment <- cellTypeAssign(
-  cdseq_gep = cdseq.result$estGEP,
-  ref_gep = cellTypeExpr
-)
+# cell_assignment <- cellTypeAssign(
+#   cdseq_gep = cdseq.result$estGEP,
+#   ref_gep = cellTypeExpr
+# )
 
 # Option 2: Alternatively, use cellTypeAssignMarkerGenes with the markers list
-# cell_assignment <- cellTypeAssignMarkerGenes(
-#   cdseq_gep = cdseq.result$estGEP,
-#   marker_list = markers,
-#   plot_heatmap = FALSE
-# )
+cell_assignment <- cellTypeAssignMarkerGenes(
+  cdseq_gep = cdseq.result$estGEP,
+  marker_list = markers,
+  plot_heatmap = FALSE
+)
 
 # Structure the results
 deconvolutionResult <- list()
