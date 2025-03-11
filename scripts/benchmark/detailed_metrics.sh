@@ -9,7 +9,7 @@
 #SBATCH --job-name=paired_benchmark
 
 RLIBRARY="/work/gr-fe/R_4.3.1" 
-SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/paired_benchmark_stats.R
+SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/detailed_metrics.R
 DATASET_PREFIX="${1:-TB}"
 OUTPUT_BASE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 INCLUDE_OVERALL_GT="${2:-TRUE}"

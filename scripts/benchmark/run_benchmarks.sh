@@ -32,7 +32,7 @@ echo "Submitting paired plot generation jobs..." | tee -a "${LOG_FILE}"
 sbatch "${SCRIPT_DIR}/per_sample_multi_plot.sh" "${DATASET_PREFIX}" "${INCLUDE_OVERALL_GT}" "${GLOBAL_LOG_DIR}" | tee -a "${LOG_FILE}"
 # 2. Run benchmarking metrics calculation
 echo "Submitting benchmarking metrics calculation job..." | tee -a "${LOG_FILE}"
-sbatch "${SCRIPT_DIR}/paired_benchmark_stats.sh" "${DATASET_PREFIX}" "${INCLUDE_OVERALL_GT}" "${GLOBAL_LOG_DIR}" | tee -a "${LOG_FILE}"
+sbatch "${SCRIPT_DIR}/detailed_metrics.sh" "${DATASET_PREFIX}" "${INCLUDE_OVERALL_GT}" "${GLOBAL_LOG_DIR}" | tee -a "${LOG_FILE}"
 
 echo "All benchmarking jobs submitted." | tee -a "${LOG_FILE}"
 echo "Check individual job logs for progress."
