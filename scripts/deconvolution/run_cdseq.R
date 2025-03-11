@@ -80,8 +80,8 @@ print("CHECK: CDSeq deconvolution completed, now formatting...")
 
 reference <- generateReference(singleCellExpr, singleCellLabels, c("markers", "sigGenes", "signature", "cellTypeExpr"), 1)
 markers <- reference$markers
-# sigGenes <- reference$sigGenes
-# signature <- reference$signature
+sigGenes <- reference$sigGenes
+signature <- reference$signature
 cellTypeExpr <- reference$cellTypeExpr
 
 # For CDSeq cell type assignment, use the cellTypeExpr (avg expression by cell type)
@@ -95,54 +95,46 @@ print("Assigning cell types using DeconBenchmark reference profiles...")
 
 # 1. First, check and print your CDSeq version
 packageVersion("CDSeq")
-
+#################### CELL TYPE ASSIGN ##########################################
 # 2. Make sure you're using the fully-qualified function name
-corr_matrix <- cor(cdseq.result$estGEP, cellTypeExpr) # Create correlation matrix between estimated GEPs and reference
+# Calculate correlation matrix between estimated GEPs and reference profiles
+corr_matrix <- cor(cdseq.result$estGEP, cellTypeExpr)
 
-
-# Check marker format before calling function
-str(markers)
-# Should be a dataframe with columns "CellType" and "GeneName"
-
-# If your markers are in a different format, convert them:
-if (!is.data.frame(markers) || !all(c("CellType", "GeneName") %in% colnames(markers))) {
-  # Convert markers to the required format if needed
-  # This is just an example - adjust based on your actual marker structure
-  markers_df <- data.frame(
-    GeneName = names(unlist(markers)),
-    CellType = rep(names(markers), sapply(markers, length))
-  )
-  markers <- markers_df
-}
-
-
+# Use cellTypeAssign with the correlation matrix
 cell_assignment <- tryCatch({
-  CDSeq::cellTypeAssignMarkerGenes(
-    cell_gep = cdseq.result$estGEP,
-    marker_gene_list = markers,
-    verbose = FALSE
-  )
+  CDSeq::cellTypeAssign(corr_matrix, threshold = 0.7)  # You can adjust the threshold as needed
 }, error = function(e) {
-  message("Error with cellTypeAssignMarkerGenes: ", e$message)
+  message("Error with cellTypeAssign: ", e$message)
   
-  # Fall back to cellTypeAssign if available
-  tryCatch({
-    assign_result <- CDSeq::cellTypeAssign(corr_matrix, threshold = 0.7)
-    return(list(mapping = assign_result))
-  }, error = function(e2) {
-    message("Error with cellTypeAssign: ", e2$message)
-    
-    # Create a simple manual mapping as last resort
-    cell_types_idx <- apply(corr_matrix, 1, which.max)
-    manual_mapping <- colnames(cellTypeExpr)[cell_types_idx]
-    names(manual_mapping) <- colnames(cdseq.result$estGEP)
-    return(list(mapping = manual_mapping))
-  })
+  # Create a simple manual mapping as fallback
+  cell_types_idx <- apply(corr_matrix, 1, which.max)
+  manual_mapping <- colnames(cellTypeExpr)[cell_types_idx]
+  names(manual_mapping) <- colnames(cdseq.result$estGEP)
+  return(list(mapping = manual_mapping))
 })
 
-# Continue with your code using cell_assignment$mapping for column names
+# Structure the results
+deconvolutionResult <- list()
+deconvolutionResult$CDSeq <- list(
+  P = t(cdseq.result$estProp),  # TRANSPOSED: Now samples in rows, cell types in columns
+  S = cdseq.result$estGEP       # Genes in rows and cell types in columns
+)
 
+# Apply the cell type mapping
+if (!is.null(cell_assignment) && !is.null(cell_assignment$mapping)) {
+  # Use the mapping to rename columns
+  new_colnames <- cell_assignment$mapping
+  colnames(deconvolutionResult$CDSeq$P) <- new_colnames
+  
+  # Store the assignment info
+  deconvolutionResult$CDSeq$cell_type_assignment <- cell_assignment
+  print("Cell type assignment successful!")
+} else {
+  print("Cell type assignment failed or returned no mapping - using generic cell type names")
+  colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType", 1:ncol(deconvolutionResult$CDSeq$P))
+}
 
+##############################################
 
 
 # Structure the results
@@ -165,6 +157,37 @@ if (!is.null(cell_assignment) && !is.null(cell_assignment$mapping)) {
   print("Cell type assignment failed or returned no mapping - using generic cell type names")
   colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType", 1:ncol(deconvolutionResult$CDSeq$P))
 }
+
+
+
+
+# Normalize each sample
+if (!is.null(deconvolutionResult[[method]]$P)) {
+  prop_matrix <- deconvolutionResult[[method]]$P
+  
+  # Process each sample (row) individually
+  for (i in 1:nrow(prop_matrix)) {
+    # Take absolute values to avoid negative proportions
+    prop_matrix[i, ] <- abs(prop_matrix[i, ])
+    
+    # Normalize to sum to 1
+    row_sum <- sum(prop_matrix[i, ])
+    if (row_sum > 0) {  # Avoid division by zero
+      prop_matrix[i, ] <- prop_matrix[i, ] / row_sum
+    } else {
+      # If all values are zero, keep as zeros
+      prop_matrix[i, ] <- rep(0, ncol(prop_matrix))
+      print(paste("Warning: Sample", rownames(prop_matrix)[i], "had all zero values - keeping as zeros"))
+    }
+  }
+  
+  # Update the proportions matrix in the result object
+  deconvolutionResult[[method]]$P <- prop_matrix
+  print("Normalized cell type proportions (absolute values, sum to 1 per sample)")
+}
+
+
+
 
 # Save results as RDA
 results_filename <- file.path(output_dir, "results_CDSeq.rda")
