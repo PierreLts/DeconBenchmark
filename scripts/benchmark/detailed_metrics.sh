@@ -13,6 +13,7 @@ SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/detailed_metrics.R
 DATASET_PREFIX="${1:-TB}"
 OUTPUT_BASE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 INCLUDE_OVERALL_GT="${2:-TRUE}"
+SAMPLE_FILTER="${3:-AB}"  # New parameter for sample filter
 
 # Create output directory
 OUTPUT_DIR="${OUTPUT_BASE_DIR}/${DATASET_PREFIX}/benchmarks"
@@ -24,7 +25,7 @@ module load r
 start=`date +%s`
 echo "START AT $(date)"
 
-Rscript ${SCRIPT} ${RLIBRARY} ${DATASET_PREFIX} ${OUTPUT_BASE_DIR} ${INCLUDE_OVERALL_GT}
+Rscript ${SCRIPT} ${RLIBRARY} ${DATASET_PREFIX} ${OUTPUT_BASE_DIR} ${INCLUDE_OVERALL_GT} ${SAMPLE_FILTER}
 
 end=`date +%s`
 runtime=$((end-start))

@@ -143,8 +143,8 @@ clean_colnames <- gsub("^A_", "", clean_colnames)
 clean_colnames <- gsub("^B_", "", clean_colnames)
 colnames(final_result) <- clean_colnames
 
-# Write to CSV
-output_file <- file.path(output_dir, paste0(dataset_prefix, "_benchmark.csv"))
+# Write to CSV with sample filter in filename
+output_file <- file.path(output_dir, paste0(dataset_prefix, "_benchmark_", sample_filter, ".csv"))
 write.csv(final_result, output_file, row.names = FALSE)
 
 print(paste("Benchmark results saved to:", output_file))

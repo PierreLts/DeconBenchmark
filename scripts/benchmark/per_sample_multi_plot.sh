@@ -11,6 +11,7 @@
 # Default parameters
 DATASET_PREFIX="${1:-TB}"
 INCLUDE_OVERALL_GT="${2:-TRUE}"
+SAMPLE_FILTER="${3:-AB}"  # New parameter for sample filter
 
 # Set paths
 SCRIPT_DIR="/scratch/lorthiois/scripts"
@@ -28,21 +29,21 @@ mkdir -p "$LOG_DIR"
 MAPPING_FILE="$LOG_DIR/paired_plot_job_mapping.txt"
 > "$MAPPING_FILE"
 
-# Find all result files for this dataset
-RESULT_FILES=$(find $DECONV_RESULTS_DIR -name "results_*.rda" -not -name "*_${DATASET_PREFIX}.rda")
+# Find all result files for this dataset with the correct filter
+RESULT_FILES=$(find $DECONV_RESULTS_DIR -name "results_*_${SAMPLE_FILTER}.rda")
 
 # Check if we found any files
 if [ -z "$RESULT_FILES" ]; then
-    echo "No result files found in $DECONV_RESULTS_DIR"
+    echo "No result files found in $DECONV_RESULTS_DIR matching filter: $SAMPLE_FILTER"
     exit 1
 fi
 
-echo "Found $(echo "$RESULT_FILES" | wc -l) result files to process"
+echo "Found $(echo "$RESULT_FILES" | wc -l) result files to process with filter: $SAMPLE_FILTER"
 
 # Process each result file
 for RESULTS_FILE in $RESULT_FILES; do
-    # Extract method name from filename
-    METHOD=$(basename $RESULTS_FILE | sed -E 's/results_([^_]+)\.rda/\1/')
+    # Extract method name from filename, accounting for filter suffix
+    METHOD=$(basename $RESULTS_FILE | sed -E "s/results_([^_]+)_${SAMPLE_FILTER}\.rda/\1/")
     
     echo "Processing $METHOD..."
     
@@ -53,6 +54,7 @@ for RESULTS_FILE in $RESULT_FILES; do
     cat "$TEMPLATE_DIR/per_sample_cell_proportion_plot.sh" | \
         sed "s|DATASET_PREFIX=.*|DATASET_PREFIX=\"$DATASET_PREFIX\"|" | \
         sed "s|METHOD=.*|METHOD=\"$METHOD\"|" | \
+        sed "s|SAMPLE_FILTER=.*|SAMPLE_FILTER=\"$SAMPLE_FILTER\"|" | \
         sed "s|INCLUDE_OVERALL_GT=.*|INCLUDE_OVERALL_GT=\"$INCLUDE_OVERALL_GT\"|" | \
         sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=${METHOD}_${DATASET_PREFIX}_plot|" > "$TEMP_SCRIPT"
         
@@ -70,6 +72,7 @@ for RESULTS_FILE in $RESULT_FILES; do
     # Record mapping
     echo "${METHOD}:${JOB_ID}" >> "$MAPPING_FILE"
 done
+
 
 echo "All paired plot jobs submitted. Mapping saved to $MAPPING_FILE"
 

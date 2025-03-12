@@ -1,7 +1,7 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 4) {
-  stop(paste("4 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 5) {
+  stop(paste("5 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
 ####### Parameter of script
@@ -9,6 +9,7 @@ path_Rlibrary <- args[1] #IMPORTANT
 dataset_prefix <- args[2] # Dataset prefix (e.g., TB1)
 output_base_dir <- args[3] # Base output directory for benchmark results
 include_overall_gt <- as.logical(args[4]) # Whether to include overall ground truth
+sample_filter <- args[5] # Sample filter: A, B, or AB
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
@@ -26,31 +27,33 @@ output_dir <- file.path(output_base_dir, dataset_prefix, "benchmarks")
 # Create output directory
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
-# Load per-sample ground truth
-per_sample_gt_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample.rda"))
+# Load per-sample ground truth with the correct filter
+per_sample_gt_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample_", sample_filter, ".rda"))
 if (!file.exists(per_sample_gt_path)) {
   stop(paste("Per-sample ground truth file not found:", per_sample_gt_path))
 }
 load(per_sample_gt_path)
 per_sample_gt_proportions <- groundTruth$P
 
-# Find all result files
-result_files <- list.files(results_dir, pattern="results_[^_]+\\.rda", full.names=TRUE)
-cat("Found", length(result_files), "result files to analyze\n")
+# Find all result files with the specified filter
+result_files <- list.files(results_dir, pattern=paste0("results_[^_]+_", sample_filter, "\\.rda"), full.names=TRUE)
+cat("Found", length(result_files), "result files to analyze with filter:", sample_filter, "\n")
 
 # Initialize data frame for detailed results
 all_detailed_results <- data.frame()
 
 # Process each deconvolution method
 for (result_file in result_files) {
+  # Extract method name, accounting for the filter suffix
   method_name <- basename(result_file)
   method_name <- gsub("results_", "", method_name)
-  method_name <- gsub("\\.rda$", "", method_name)
+  method_name <- gsub(paste0("_", sample_filter, "\\.rda$"), "", method_name)
   
   cat("Processing method:", method_name, "\n")
   
   # Load deconvolution results
   load(result_file)
+  
   
   # Extract proportion matrix
   if (!exists("deconvolutionResult") || is.null(deconvolutionResult[[method_name]]) || 
@@ -156,8 +159,8 @@ for (result_file in result_files) {
 }
 
 if (nrow(all_detailed_results) > 0) {
-  # Save detailed results
-  detailed_output_file <- file.path(output_dir, paste0(dataset_prefix, "_detailed_metrics.csv"))
+  # Save detailed results with sample filter in filename
+  detailed_output_file <- file.path(output_dir, paste0(dataset_prefix, "_detailed_metrics_", sample_filter, ".csv"))
   write.csv(all_detailed_results, detailed_output_file, row.names = FALSE)
   
   cat("Detailed metrics saved to:", detailed_output_file, "\n")

@@ -1,7 +1,7 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 5) {
-  stop(paste("5 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 6) {
+  stop(paste("6 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
 ####### Parameter of script (ORDER IS IMPORTANT)
@@ -10,6 +10,7 @@ dataset_prefix <- args[2] # Dataset prefix (e.g., TB1)
 method_name <- args[3]    # Method name (e.g., MuSiC)
 output_base_dir <- args[4] # Base benchmark output directory
 include_overall_gt <- as.logical(args[5]) # Whether to include overall ground truth
+sample_filter <- args[6] # Sample filter: A, B, or AB
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
@@ -25,9 +26,9 @@ output_dir <- file.path(output_base_dir, dataset_prefix)
 # Create output directory
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
-# Load ground truth files
-overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions.rda"))
-per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample.rda"))
+# Load ground truth files - Use filtered GT for overall and per sample
+overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_", sample_filter, ".rda"))
+per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample_", sample_filter, ".rda"))
 
 # Check if ground truth files exist
 if (!file.exists(overall_ground_truth_path)) {
@@ -44,13 +45,14 @@ overall_gt_proportions <- groundTruth$P
 load(per_sample_ground_truth_path)
 per_sample_gt_proportions <- groundTruth$P
 
-# Load deconvolution results
-results_path <- file.path(results_dir, paste0("results_", method_name, ".rda"))
+# Load deconvolution results with filter suffix
+results_path <- file.path(results_dir, paste0("results_", method_name, "_", sample_filter, ".rda"))
 if (!file.exists(results_path)) {
   stop(paste("Results file not found:", results_path))
 }
 
 load(results_path)
+
 
 # Extract the proportions matrix
 if (!exists("deconvolutionResult")) {
@@ -326,8 +328,8 @@ num_cell_types <- length(unique(combined_data$CellTypeDisplay))
 plot_width <- max(12, n_samples * 0.4)  # Adjust width based on number of samples
 plot_height <- 7 + (num_cell_types > 20) * (num_cell_types - 20) * 0.1  # Increase height for many cell types
 
-# Save as PDF
-pdf_filename <- file.path(output_dir, paste0(dataset_prefix, "_", method_name, "_paired_ground_truth.pdf"))
+# Save as PDF with sample filter in filename
+pdf_filename <- file.path(output_dir, paste0(dataset_prefix, "_", method_name, "_", sample_filter, ".pdf"))
 ggsave(pdf_filename, p, width=plot_width, height=plot_height)
 
-print(paste("Plots saved to:", output_dir))
+print(paste("Plot saved to:", pdf_filename))

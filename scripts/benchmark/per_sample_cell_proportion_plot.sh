@@ -19,6 +19,7 @@ DATASET_PREFIX="${1:-TB}"
 METHOD="${2:-CIBERSORT}"
 OUTPUT_BASE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
 INCLUDE_OVERALL_GT="${3:-TRUE}"
+SAMPLE_FILTER="${4:-AB}"  # New parameter for sample filter
 
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/
 module load r
@@ -31,7 +32,7 @@ OUTPUT_DIR="${OUTPUT_BASE_DIR}/${DATASET_PREFIX}"
 mkdir -p ${OUTPUT_DIR}
 
 # Run the R script (ORDER IS IMPORTANT)
-Rscript ${SCRIPT} ${RLIBRARY} ${DATASET_PREFIX} ${METHOD} ${OUTPUT_BASE_DIR} ${INCLUDE_OVERALL_GT}
+Rscript ${SCRIPT} ${RLIBRARY} ${DATASET_PREFIX} ${METHOD} ${OUTPUT_BASE_DIR} ${INCLUDE_OVERALL_GT} ${SAMPLE_FILTER}
 
 # Print end date and echo total runtime
 end=`date +%s`
