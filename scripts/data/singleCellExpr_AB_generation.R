@@ -141,9 +141,9 @@ write.csv(small_dense_matrix, file = small_dense_csv)
 rda_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr_", filter_label, ".rda"))
 save(singleCellExpr, file = rda_filename)
 
-# Save full CSV
-csv_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr_", filter_label, ".csv"))
-write.csv(singleCellExpr, file = csv_filename)
+# # Save full CSV
+# csv_filename <- file.path(output_dir, paste0(prefix, "_singleCellExpr_", filter_label, ".csv"))
+# write.csv(singleCellExpr, file = csv_filename)
 
 print(paste("Filtered expression matrix saved to:", rda_filename))
 print(paste("Filtered CSV saved to:", csv_filename))
