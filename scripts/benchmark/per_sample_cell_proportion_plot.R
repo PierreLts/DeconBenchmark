@@ -26,9 +26,9 @@ output_dir <- file.path(output_base_dir, dataset_prefix)
 # Create output directory
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
-# Load ground truth files - Use filtered GT for overall and per sample
-overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_", sample_filter, ".rda"))
-per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample_", sample_filter, ".rda"))
+# Load ground truth files - Use consistent GT file naming without filter suffix
+overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions.rda"))
+per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample.rda"))
 
 # Check if ground truth files exist
 if (!file.exists(overall_ground_truth_path)) {

@@ -74,26 +74,4 @@ for RESULTS_FILE in $RESULT_FILES; do
 done
 
 echo "All paired plot jobs submitted. Mapping saved to $MAPPING_FILE"
-
-# Submit a comparison job to run after all plots are created
-COMPARE_SCRIPT="$SCRIPT_DIR/temp_compare_${DATASET_PREFIX}_${SAMPLE_FILTER}_paired_plots.sh"
-cat "$TEMPLATE_DIR/compare_models.sh" | \
-    sed "s|DATASET_PREFIX=.*|DATASET_PREFIX=\"$DATASET_PREFIX\"|" | \
-    sed "s|BENCHMARK_DIR=.*|BENCHMARK_DIR=\"$BENCHMARK_DIR\"|" | \
-    sed "s|OUTPUT_DIR=.*|OUTPUT_DIR=\"$BENCHMARK_DIR/comparison_${SAMPLE_FILTER}\"|" | \
-    sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=compare_${DATASET_PREFIX}_${SAMPLE_FILTER}|" > "$COMPARE_SCRIPT"
-
-chmod +x "$COMPARE_SCRIPT"
-
-# Get all job IDs for dependency
-JOB_IDS=$(cut -d':' -f2 "$MAPPING_FILE" | paste -sd "," -)
-
-if [ -n "$JOB_IDS" ]; then
-    COMPARE_JOB_ID=$(sbatch --dependency=afterany:$JOB_IDS "$COMPARE_SCRIPT" | grep -o '[0-9]*')
-    echo "Submitted comparison job $COMPARE_JOB_ID, dependent on all plot jobs"
-    
-    # Add comparison job to mapping file
-    echo "compare_${DATASET_PREFIX}_${SAMPLE_FILTER}:${COMPARE_JOB_ID}" >> "$MAPPING_FILE"
-else
-    echo "No plot jobs were submitted successfully, skipping comparison job"
-fi
+echo "Benchmark processing completed for $DATASET_PREFIX with filter $SAMPLE_FILTER"

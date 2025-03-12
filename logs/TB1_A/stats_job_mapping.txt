@@ -1,3 +1,3 @@
-# Stats job mapping for TB1_A - mer 12 mar 2025 17:11:02 CET
-paired_plots:32884856
-metrics:32884857
+# Stats job mapping for TB1_A - mer 12 mar 2025 17:19:57 CET
+paired_plots:32884977
+metrics:32884978
