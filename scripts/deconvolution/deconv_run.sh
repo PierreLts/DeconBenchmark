@@ -15,8 +15,9 @@ set -x # Print each line of code being computed
 RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
 SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/deconv_run.R
 dataset_prefix="${1:-TB}"  # Dataset prefix/subfolder
+sample_filter="${2:-AB}"   # Sample filter: A, B, or AB (default: AB)
 output_base_dir="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
-deconv_method="${2:-MuSic}"  # Default method, can be overridden
+deconv_method="${3:-MuSiC}"  # Default method, can be overridden
 sparse_conversion=FALSE # Enable sparse matrix conversion
 
 # Create dataset-specific output directory
@@ -28,13 +29,16 @@ module load r #IMPORTANT
 
 start=`date +%s`
 echo "START AT $(date)"
+echo "Processing dataset: $dataset_prefix"
+echo "Sample filter: $sample_filter"
+echo "Deconvolution method: $deconv_method"
 
 export SINGULARITY_TMPDIR=/scratch/lorthiois/temp
 mkdir -p $SINGULARITY_TMPDIR
 export SINGULARITYENV_APPEND_PATH=/scratch/lorthiois/temp
 
 #(ORDER IS IMPORTANT)
-Rscript ${SCRIPT} ${RLIBRARY} ${dataset_prefix} ${output_base_dir} ${deconv_method} ${sparse_conversion}
+Rscript ${SCRIPT} ${RLIBRARY} ${dataset_prefix} ${sample_filter} ${output_base_dir} ${deconv_method} ${sparse_conversion}
 
 # print end date and echo total runtime
 end=`date +%s`

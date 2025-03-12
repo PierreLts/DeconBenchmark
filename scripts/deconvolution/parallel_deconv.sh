@@ -3,14 +3,13 @@
 
 # Default parameters
 DEFAULT_DATASET_PREFIX="TB1"
+DEFAULT_SAMPLE_FILTER="B"
 DEFAULT_METHODS="AdRoit,ARIC,AutoGeneS,BayCount,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CDSeq,CellDistinguisher,CIBERSORT,CIBERSORTx,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
-
-
-# "AdRoit,ARIC,AutoGeneS,BayCount,BayesCCE,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CDSeq,CellDistinguisher,CIBERSORT,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MethylResolver,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,ReFACTor,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
 
 # Parse command line arguments
 DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"
-METHODS="${2:-$DEFAULT_METHODS}"
+SAMPLE_FILTER="${2:-$DEFAULT_SAMPLE_FILTER}"
+METHODS="${3:-$DEFAULT_METHODS}"
 
 # Set paths
 SCRIPT_DIR="/scratch/lorthiois/scripts"
@@ -19,8 +18,8 @@ TEMPLATE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution"
 OUTPUT_BASE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 OUTPUT_DIR="$OUTPUT_BASE_DIR/$DATASET_PREFIX"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/$DATASET_PREFIX"
-GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/${DATASET_PREFIX}/${DATASET_PREFIX}_ground_truth_proportions.rda"
-GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}"
+GROUND_TRUTH="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/${DATASET_PREFIX}/${DATASET_PREFIX}_GT_proportions_${SAMPLE_FILTER}.rda"
+GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}_${SAMPLE_FILTER}"
 mkdir -p ${GLOBAL_LOG_DIR}
 
 # Create output directories
@@ -30,15 +29,15 @@ mkdir -p "$BENCHMARK_DIR"
 # Log file setup
 LOG_DIR="$OUTPUT_DIR/logs"
 mkdir -p "$LOG_DIR"
-MAIN_LOG="$LOG_DIR/parallel_deconv_$(date +%Y%m%d_%H%M%S).log"
+MAIN_LOG="$LOG_DIR/parallel_deconv_${SAMPLE_FILTER}_$(date +%Y%m%d_%H%M%S).log"
 
 echo "==== Starting parallel deconvolution pipeline $(date) ====" | tee -a "$MAIN_LOG"
 echo "Dataset prefix: $DATASET_PREFIX" | tee -a "$MAIN_LOG"
+echo "Sample filter: $SAMPLE_FILTER" | tee -a "$MAIN_LOG"
 echo "Methods to run: ${METHODS}" | tee -a "$MAIN_LOG"
 echo "Results will be saved to: $OUTPUT_DIR" | tee -a "$MAIN_LOG"
 echo "" | tee -a "$MAIN_LOG"
 echo "Storing model job mapping in: $GLOBAL_LOG_DIR/model_job_mapping.txt" | tee -a "$MAIN_LOG"
-
 
 # Convert methods string to array
 IFS=',' read -r -a MODELS <<< "$METHODS"
@@ -58,13 +57,14 @@ for MODEL in "${MODELS[@]}"; do
     echo "Submitting deconvolution job for model: $MODEL" | tee -a "$MAIN_LOG"
     
     # Create a temporary job script for this model
-    TEMP_SCRIPT="$SCRIPT_DIR/temp_${MODEL}_${DATASET_PREFIX}_deconv.sh"
+    TEMP_SCRIPT="$SCRIPT_DIR/temp_${MODEL}_${DATASET_PREFIX}_${SAMPLE_FILTER}_deconv.sh"
     
     # Copy the template and modify parameters
     cat "$TEMPLATE_DIR/deconv_run.sh" | \
         sed "s|dataset_prefix=.*|dataset_prefix=\"$DATASET_PREFIX\"|" | \
+        sed "s|sample_filter=.*|sample_filter=\"$SAMPLE_FILTER\"|" | \
         sed "s|deconv_method=.*|deconv_method=\"$MODEL\"|" | \
-        sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=${MODEL}_${DATASET_PREFIX}|" | \
+        sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=${MODEL}_${DATASET_PREFIX}_${SAMPLE_FILTER}|" | \
         sed "s|#SBATCH --time=.*|#SBATCH --time=48:00:00|" > "$TEMP_SCRIPT"
         
     # Make executable
@@ -87,12 +87,13 @@ done
 # Special case for CDSeq which requires a separate execution
 if [[ "$METHODS" == *"CDSeq"* ]] || [[ "$METHODS" == *"All"* ]]; then
     echo "Submitting special CDSeq job" | tee -a "$MAIN_LOG"
-    CDSEQ_SCRIPT="$SCRIPT_DIR/temp_cdseq_${DATASET_PREFIX}_deconv.sh"
+    CDSEQ_SCRIPT="$SCRIPT_DIR/temp_cdseq_${DATASET_PREFIX}_${SAMPLE_FILTER}_deconv.sh"
     
     # Create CDSeq script by modifying the template
     cat "$TEMPLATE_DIR/run_cdseq.sh" | \
         sed "s|dataset_prefix=.*|dataset_prefix=\"$DATASET_PREFIX\"|" | \
-        sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=CDSeq_${DATASET_PREFIX}|" > "$CDSEQ_SCRIPT"
+        sed "s|sample_filter=.*|sample_filter=\"$SAMPLE_FILTER\"|" | \
+        sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=CDSeq_${DATASET_PREFIX}_${SAMPLE_FILTER}|" > "$CDSEQ_SCRIPT"
         
     chmod +x "$CDSEQ_SCRIPT"
     
@@ -111,10 +112,10 @@ fi
 JOB_DEPENDENCY=$(IFS=,; echo "${DECONV_JOB_IDS[*]}")
 
 # Submit evaluation job with dependency
-EVAL_SCRIPT="$SCRIPT_DIR/evaluate_${DATASET_PREFIX}_results.sh"
+EVAL_SCRIPT="$SCRIPT_DIR/evaluate_${DATASET_PREFIX}_${SAMPLE_FILTER}_results.sh"
 cat > "$EVAL_SCRIPT" << EOF
 #!/bin/bash
-#SBATCH --job-name=eval_${DATASET_PREFIX}
+#SBATCH --job-name=eval_${DATASET_PREFIX}_${SAMPLE_FILTER}
 #SBATCH --output=$LOG_DIR/%j.out
 #SBATCH --error=$LOG_DIR/%j.err
 #SBATCH --nodes=1
@@ -123,14 +124,15 @@ cat > "$EVAL_SCRIPT" << EOF
 #SBATCH --mem=32G
 #SBATCH --time=1:00:00
 
-# Run evaluation and benchmarking scripts for $DATASET_PREFIX
+# Run evaluation and benchmarking scripts for $DATASET_PREFIX with $SAMPLE_FILTER
 echo "Running evaluation and benchmarking for dataset: $DATASET_PREFIX"
+echo "Sample filter: $SAMPLE_FILTER"
 echo "Results directory: $OUTPUT_DIR"
 echo "Benchmark output directory: $BENCHMARK_DIR"
 
 # Here you would add commands to run your evaluation scripts
 # For example:
-# Rscript /path/to/evaluation_script.R $OUTPUT_DIR $BENCHMARK_DIR $DATASET_PREFIX
+# Rscript /path/to/evaluation_script.R $OUTPUT_DIR $BENCHMARK_DIR $DATASET_PREFIX $SAMPLE_FILTER
 
 echo "Evaluation completed"
 EOF

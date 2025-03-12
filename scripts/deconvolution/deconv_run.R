@@ -1,15 +1,16 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 5) {
-  stop(paste("5 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 6) {
+  stop(paste("6 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
 ####### Parameter of script (ORDER IS IMPORTANT)
 path_Rlibrary <- args[1] #IMPORTANT
 dataset_prefix <- args[2] # Dataset prefix/subfolder name
-output_base_dir <- args[3] # Base output directory (deconv_results)
-deconv_methods <- args[4] # Deconvolution method(s) - can be comma-separated list of methods
-sparse_conversion <- as.logical(args[5])
+sample_filter <- args[3] # Sample filter: A, B, or AB
+output_base_dir <- args[4] # Base output directory (deconv_results)
+deconv_methods <- args[5] # Deconvolution method(s) - can be comma-separated list of methods
+sparse_conversion <- as.logical(args[6])
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
@@ -25,12 +26,14 @@ print(paste("Results will be saved to:", output_dir))
 # Determine base path for loading files
 base_data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
 print(paste("Loading data from:", base_data_dir))
+print(paste("Using sample filter:", sample_filter))
 
-
-# Load individual files
+# Construct file paths with appropriate sample filter suffix
+# Bulk data doesn't have a filter suffix
 bulk_path <- file.path(base_data_dir, paste0(dataset_prefix, "_bulk.rda"))
-singleCellExpr_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellExpr.rda"))
-singleCellLabels_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellLabels.rda"))
+# Filtered data files
+singleCellExpr_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellExpr_", sample_filter, ".rda"))
+singleCellLabels_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellLabels_", sample_filter, ".rda"))
 
 # Check if files exist
 if (!file.exists(bulk_path)) {
@@ -54,8 +57,6 @@ print(paste("Bulk data dimensions:", paste(dim(bulk), collapse=" x ")))
 print(paste("singleCellExpr dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
 print(paste("singleCellLabels length:", length(singleCellLabels)))
 
-
-
 # Get common genes between bulk and single-cell data
 common_genes <- intersect(rownames(bulk), rownames(singleCellExpr))
 message(paste("Common genes between datasets:", length(common_genes)))
@@ -68,29 +69,15 @@ message(paste("Filtered bulk matrix dimensions:", paste(dim(bulk), collapse=" x 
 message(paste("Filtered scRNA matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
 ### Input data loaded and filtered ####
 
-
 # Split method names ()
 method_list <- unlist(strsplit(deconv_methods, ","))
 method_list <- trimws(method_list)
 method <- method_list[1]
 print(paste("Methods to run:", paste(method)))
 
-
-
-
-
-
-# # Determine base path for loading files
-# base_data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
-# print(paste("Loading data from:", base_data_dir))
-
-# # Load individual files
-# bulk_path <- file.path(base_data_dir, paste0(dataset_prefix, "_bulk.rda"))
-# singleCellExpr_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellExpr.rda"))
-# singleCellLabels_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellLabels.rda"))
-
+# Load optional single cell subject IDs if available
 singleCellSubjects <- NULL
-subjects_file <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellSubjects.rda"))
+subjects_file <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellSubjects_", sample_filter, ".rda"))
 if (file.exists(subjects_file)) {
   load(subjects_file)
   print("Single cell subject IDs loaded successfully")
@@ -99,9 +86,6 @@ if (file.exists(subjects_file)) {
   singleCellSubjects <- rep("subject1", length(singleCellLabels))
   print("Created default subject IDs")
 }
-
-
-
 
 ### Normalization ###
 # TPM
@@ -113,41 +97,12 @@ if (method %in% c("LinDeconSeq","BayICE","DESeq2")) {
 # Log transformed (If it means log2() ?)
 if (method %in% c("dtangle","PREDE")) {
   print("Applying log transformation...")
-
   # log2(x+1) transformation
   pseudo_count <- 1
   bulk_log <- log2(bulk + pseudo_count)
   bulk <- bulk_log
   print("Bulk data log-transformed (log2(counts+1))")
 }
-
-# # Normalized transcriptional measurements
-# if (method %in% c("DeconRNASeq")) {
-# }
-
-
-# # other data
-# # Methylation data
-# if (method %in% c("BayesCCE","ReFACTor","EMeth")) {
-# }
-
-# # DeconPeaker needs ATAC-Seq & Box-Cox transformation
-# if (method %in% c("DeconPeaker")) {
-# }
-
-
-
-
-
-
-# # For DeconPeaker: Thread count fix
-# if (method == "DeconPeaker") {
-#   print("Applying DeconPeaker thread count fix")
-#   # Set environment variable to limit threads to prevent "nthreads cannot be larger than NUMEXPR_MAX_THREADS" error
-#   Sys.setenv(NUMEXPR_MAX_THREADS="64")
-# }
-
-
 
 # Generate references
 reference <- generateReference(singleCellExpr, singleCellLabels, c("markers", "sigGenes", "signature", "cellTypeExpr"), 1)
@@ -173,12 +128,8 @@ deconvolutionResult <- runDeconvolution(
   seed = 1,
   matlabLicenseFile = "303238", # MATLAB license
   containerEngine = "singularity"
-  # dockerArgs = c("--cpus=8.0", "-m=32G", "--memory-reservation=4G"),
-  # verbose = T # Debugging details default = T
 )
 print("CHECK: Deconvolution completed for all methods")
-
-
 
 # Normalize deconvolution results (absolute values and sum to 1 per sample)
 if (!is.null(deconvolutionResult[[method]]$P)) {
@@ -205,14 +156,12 @@ if (!is.null(deconvolutionResult[[method]]$P)) {
   print("Normalized cell type proportions (absolute values, sum to 1 per sample)")
 }
 
-
-
-# Save as RDA format
-results_filename <- file.path(output_dir, paste0("results_", method, ".rda"))
+# Save as RDA format with filter suffix
+results_filename <- file.path(output_dir, paste0("results_", method, "_", sample_filter, ".rda"))
 save(deconvolutionResult, file=results_filename, compress=TRUE)
 print(paste("Results saved to:", results_filename))
 
-# Save as CSV format
+# Save as CSV format with filter suffix
 # Extract the proportions matrix (P) and convert to dataframe
 if (!is.null(deconvolutionResult[[method]]$P)) {
   proportions_df <- as.data.frame(deconvolutionResult[[method]]$P)
@@ -221,7 +170,7 @@ if (!is.null(deconvolutionResult[[method]]$P)) {
   proportions_df$Sample <- rownames(proportions_df)
   
   # Save as CSV
-  csv_filename <- file.path(output_dir, paste0("results_", method, "_proportions.csv"))
+  csv_filename <- file.path(output_dir, paste0("results_", method, "_", sample_filter, "_proportions.csv"))
   write.csv(proportions_df, file=csv_filename, row.names=FALSE)
   print(paste("Proportions CSV saved to:", csv_filename))
 }
@@ -234,7 +183,7 @@ if (!is.null(deconvolutionResult[[method]]$S)) {
   signature_df$Gene <- rownames(signature_df)
   
   # Save as CSV
-  sig_csv_filename <- file.path(output_dir, paste0("results_", method, "_signature.csv"))
+  sig_csv_filename <- file.path(output_dir, paste0("results_", method, "_", sample_filter, "_signature.csv"))
   write.csv(signature_df, file=sig_csv_filename, row.names=FALSE)
   print(paste("Signature CSV saved to:", sig_csv_filename))
 }
