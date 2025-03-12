@@ -162,24 +162,6 @@ SAMPLE_FILTER=\"$SAMPLE_FILTER\"
 Rscript $SCRIPT_DIR/singleCellSubjects_AB_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
 " 8 "16G" "1:00:00")
 
-# Wait until labels job is complete before generating ground truth
-echo "Submitting ground truth generation job (dependent on labels job)..." | tee -a "$MAIN_LOG"
-GT_JOB_ID=$(submit_job "GT_gen" "
-# Generate ground truth using the filtered labels file
-Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $FILTERED_PREFIX
-
-# Print confirmation
-echo \"Ground truth generation completed for $FILTERED_PREFIX\"
-" 8 "16G" "1:00:00" "$LABELS_JOB_ID")
-
-echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
-SAMPLE_GT_JOB_ID=$(submit_job "GT_per_sample_gen" "
-# Generate per-sample ground truth based on the filtered sample
-Rscript $SCRIPT_DIR/GT_per_sample_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $FILTERED_PREFIX
-
-# Print confirmation
-echo \"Per-sample ground truth generation completed for $FILTERED_PREFIX\"
-" 8 "32G" "1:00:00" "$LABELS_JOB_ID")
 
 # Create consistent logs directory structure
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${PREFIX}_${SAMPLE_FILTER}"
@@ -192,11 +174,9 @@ echo "# Job mapping file for ${PREFIX}_${SAMPLE_FILTER} data generation - Create
 [ -n "$LABELS_JOB_ID" ] && echo "singleCellLabels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SCRNA_JOB_ID" ] && echo "singleCellExpr_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SUBJECTS_JOB_ID" ] && echo "singleCellSubjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$GT_JOB_ID" ] && echo "GT_gen:${GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$SAMPLE_GT_JOB_ID" ] && echo "GT_per_sample_gen:${SAMPLE_GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
 
 # Add final job to create a consolidated RDA file when all others have completed
-JOBS_DEPENDENCY="${BULK_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${GT_JOB_ID},${SAMPLE_GT_JOB_ID}"
+JOBS_DEPENDENCY="${BULK_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID}"
 
 echo "Submitting finalRDA generation job..." | tee -a "$MAIN_LOG"
 FINAL_RDA_JOB_ID=$(submit_job "finalRDA_gen" "
