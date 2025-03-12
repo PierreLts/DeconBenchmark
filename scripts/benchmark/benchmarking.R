@@ -20,9 +20,111 @@ library(tidyr)
 library(readr)
 library(stringr)
 
+# Function to extract runtime from log files
+extract_runtime <- function(job_id) {
+  log_file <- paste0("/scratch/lorthiois/logs/", job_id, ".e")
+  if (!file.exists(log_file)) {
+    return(NA)  # Return NA if log file doesn't exist
+  }
+  
+  # Read the log file and look for runtime information
+  log_content <- readLines(log_file)
+  runtime_line <- grep("Runtime: .* seconds", log_content, value = TRUE)
+  
+  if (length(runtime_line) > 0) {
+    # Extract the seconds value
+    runtime_seconds <- as.numeric(gsub(".*Runtime: (\\d+) seconds.*", "\\1", runtime_line[1]))
+    return(runtime_seconds)
+  }
+  
+  return(NA)  # Return NA if runtime information not found
+}
+
+# Function to find and read model-job mapping file
+read_job_mapping <- function(dataset_prefix, sample_filter) {
+  # Try different possible mapping file locations
+  mapping_file_paths <- c(
+    paste0("/work/gr-fe/lorthiois/DeconBenchmark/logs/", dataset_prefix, "_", sample_filter, "/model_job_mapping.txt"),
+    paste0("/work/gr-fe/lorthiois/DeconBenchmark/logs/", dataset_prefix, "/model_job_mapping.txt")
+  )
+  
+  mapping_file <- NULL
+  for (path in mapping_file_paths) {
+    if (file.exists(path)) {
+      mapping_file <- path
+      break
+    }
+  }
+  
+  if (is.null(mapping_file)) {
+    warning("No mapping file found")
+    return(data.frame(Method = character(), JobID = character(), stringsAsFactors = FALSE))
+  }
+  
+  # Read and parse the mapping file
+  mapping_lines <- readLines(mapping_file)
+  mapping_data <- data.frame(Method = character(), JobID = character(), stringsAsFactors = FALSE)
+  
+  for (line in mapping_lines) {
+    if (grepl(":", line)) {
+      parts <- strsplit(line, ":")[[1]]
+      if (length(parts) == 2) {
+        method <- parts[1]
+        job_id <- parts[2]
+        mapping_data <- rbind(mapping_data, data.frame(Method = method, JobID = job_id, stringsAsFactors = FALSE))
+      }
+    }
+  }
+  
+  return(mapping_data)
+}
+
+# Format runtime in a readable format (HH:MM:SS)
+format_runtime <- function(seconds) {
+  if (is.na(seconds)) return("N/A")
+  
+  hours <- floor(seconds / 3600)
+  minutes <- floor((seconds %% 3600) / 60)
+  remaining_seconds <- seconds %% 60
+  
+  if (hours > 0) {
+    return(sprintf("%d:%02d:%02d", hours, minutes, remaining_seconds))
+  } else {
+    return(sprintf("%d:%02d", minutes, remaining_seconds))
+  }
+}
+
 # Read detailed metrics CSV
 metrics_data <- read_csv(metrics_csv_path)
 print(paste("Loaded metrics data with", nrow(metrics_data), "rows"))
+
+# Get runtime data
+print("Reading job mapping and extracting runtimes...")
+mapping_data <- read_job_mapping(dataset_prefix, sample_filter)
+print(paste("Found", nrow(mapping_data), "methods in job mapping"))
+
+# Extract runtimes for each method
+runtime_data <- data.frame(
+  Method = character(),
+  Runtime = numeric(),
+  stringsAsFactors = FALSE
+)
+
+if (nrow(mapping_data) > 0) {
+  for (i in 1:nrow(mapping_data)) {
+    method <- mapping_data$Method[i]
+    job_id <- mapping_data$JobID[i]
+    runtime <- extract_runtime(job_id)
+    
+    runtime_data <- rbind(runtime_data, data.frame(
+      Method = method,
+      Runtime = runtime,
+      stringsAsFactors = FALSE
+    ))
+  }
+}
+
+print(paste("Extracted runtime for", sum(!is.na(runtime_data$Runtime)), "methods"))
 
 # Function to determine if a sample is from group A or B
 get_sample_group <- function(sample_name) {
@@ -80,6 +182,11 @@ for (group in c("A", "B")) {
                     paste0(prefix, metric),
                     paste0(prefix, "SD_", metric))
   }
+  
+  # Add runtime columns
+  result_cols <- c(result_cols, 
+                  paste0(group, "_Models_Runtime"),
+                  paste0(group, "_Runtime"))
 }
 
 # Create empty result dataframe with properly named columns
@@ -130,6 +237,34 @@ for (group in c("A", "B")) {
       }
     }
   }
+  
+  # After processing other metrics, add Runtime processing
+  # Get runtime data for this group's methods
+  group_runtime_data <- runtime_data %>%
+    filter(Method %in% group_data$Method)
+  
+  if (nrow(group_runtime_data) > 0) {
+    # Join with group_data to get SampleGroup
+    group_runtime_data <- group_runtime_data %>%
+      left_join(select(group_data, Method), by = "Method")
+    
+    # Sort by runtime (ascending)
+    sorted_runtime <- group_runtime_data %>%
+      arrange(Runtime)
+    
+    # Fill in the appropriate columns
+    model_col <- paste0(group, "_Models_Runtime")
+    runtime_col <- paste0(group, "_Runtime")
+    
+    # Fill in data
+    for (i in 1:nrow(sorted_runtime)) {
+      if (i <= nrow(result_data)) {
+        result_data[i, model_col] <- sorted_runtime$Method[i]
+        # Format runtime in a readable way
+        result_data[i, runtime_col] <- format_runtime(sorted_runtime$Runtime[i])
+      }
+    }
+  }
 }
 
 # Combine header and data
@@ -140,6 +275,11 @@ clean_colnames <- gsub("^A_Models_", "Models ", colnames(final_result))
 clean_colnames <- gsub("^A_SD_", "SD ", clean_colnames)
 clean_colnames <- gsub("^B_Models_", "Models ", clean_colnames)
 clean_colnames <- gsub("^B_SD_", "SD ", clean_colnames)
+# Add runtime column cleanup
+clean_colnames <- gsub("^A_Models_Runtime", "Models Runtime", clean_colnames)
+clean_colnames <- gsub("^B_Models_Runtime", "Models Runtime", clean_colnames)
+clean_colnames <- gsub("^A_Runtime", "Runtime (H:M:S)", clean_colnames)
+clean_colnames <- gsub("^B_Runtime", "Runtime (H:M:S)", clean_colnames)
 clean_colnames <- gsub("^A_", "", clean_colnames)
 clean_colnames <- gsub("^B_", "", clean_colnames)
 colnames(final_result) <- clean_colnames

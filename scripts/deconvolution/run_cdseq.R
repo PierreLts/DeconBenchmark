@@ -75,30 +75,30 @@ cdseq.result <- CDSeq(
 
 print("CHECK: CDSeq deconvolution completed, now formatting...")
 
-reference <- generateReference(singleCellExpr, singleCellLabels, c("markers", "sigGenes", "signature", "cellTypeExpr"), 1)
-markers <- reference$markers
-sigGenes <- reference$sigGenes
-signature <- reference$signature
-cellTypeExpr <- reference$cellTypeExpr
+# reference <- generateReference(singleCellExpr, singleCellLabels, c("markers", "sigGenes", "signature", "cellTypeExpr"), 1)
+# markers <- reference$markers
+# sigGenes <- reference$sigGenes
+# signature <- reference$signature
+# cellTypeExpr <- reference$cellTypeExpr
 
-# For CDSeq cell type assignment, use the cellTypeExpr (avg expression by cell type)
-print("Assigning cell types using DeconBenchmark reference profiles...")
+# # For CDSeq cell type assignment, use the cellTypeExpr (avg expression by cell type)
+# print("Assigning cell types using DeconBenchmark reference profiles...")
 
-# Calculate correlation matrix between estimated GEPs and reference profiles
-corr_matrix <- cor(cdseq.result$estGEP, cellTypeExpr)
+# # Calculate correlation matrix between estimated GEPs and reference profiles
+# corr_matrix <- cor(cdseq.result$estGEP, cellTypeExpr)
 
-# Use cellTypeAssign with the correlation matrix
-cell_assignment <- tryCatch({
-  CDSeq::cellTypeAssign(corr_matrix, threshold = 0.7)
-}, error = function(e) {
-  message("Error with cellTypeAssign: ", e$message)
+# # Use cellTypeAssign with the correlation matrix
+# cell_assignment <- tryCatch({
+#   CDSeq::cellTypeAssign(corr_matrix, threshold = 0.7)
+# }, error = function(e) {
+#   message("Error with cellTypeAssign: ", e$message)
   
-  # Create a simple manual mapping as fallback
-  cell_types_idx <- apply(corr_matrix, 1, which.max)
-  manual_mapping <- colnames(cellTypeExpr)[cell_types_idx]
-  names(manual_mapping) <- colnames(cdseq.result$estGEP)
-  return(list(mapping = manual_mapping))
-})
+#   # Create a simple manual mapping as fallback
+#   cell_types_idx <- apply(corr_matrix, 1, which.max)
+#   manual_mapping <- colnames(cellTypeExpr)[cell_types_idx]
+#   names(manual_mapping) <- colnames(cdseq.result$estGEP)
+#   return(list(mapping = manual_mapping))
+# })
 
 # Structure the results
 deconvolutionResult <- list()
@@ -107,38 +107,38 @@ deconvolutionResult$CDSeq <- list(
   S = cdseq.result$estGEP       # Genes in rows and cell types in columns
 )
 
-# Apply the cell type mapping
-if (!is.null(cell_assignment) && !is.null(cell_assignment$mapping)) {
-  # Use the mapping to rename columns
-  new_colnames <- cell_assignment$mapping
-  colnames(deconvolutionResult$CDSeq$P) <- new_colnames
+# # Apply the cell type mapping
+# if (!is.null(cell_assignment) && !is.null(cell_assignment$mapping)) {
+#   # Use the mapping to rename columns
+#   new_colnames <- cell_assignment$mapping
+#   colnames(deconvolutionResult$CDSeq$P) <- new_colnames
   
-  # Store the assignment info
-  deconvolutionResult$CDSeq$cell_type_assignment <- cell_assignment
-  print("Cell type assignment successful!")
-} else {
-  print("Cell type assignment failed or returned no mapping - using generic cell type names")
-  colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType", 1:ncol(deconvolutionResult$CDSeq$P))
-}
+#   # Store the assignment info
+#   deconvolutionResult$CDSeq$cell_type_assignment <- cell_assignment
+#   print("Cell type assignment successful!")
+# } else {
+#   print("Cell type assignment failed or returned no mapping - using generic cell type names")
+#   colnames(deconvolutionResult$CDSeq$P) <- paste0("CellType", 1:ncol(deconvolutionResult$CDSeq$P))
+# }
 
-# Normalize proportions if needed
-prop_matrix <- deconvolutionResult$CDSeq$P
+# # Normalize proportions if needed
+# prop_matrix <- deconvolutionResult$CDSeq$P
 
-# Process each sample (row) individually
-for (i in 1:nrow(prop_matrix)) {
-  # Take absolute values to avoid negative proportions
-  prop_matrix[i, ] <- abs(prop_matrix[i, ])
+# # Process each sample (row) individually
+# for (i in 1:nrow(prop_matrix)) {
+#   # Take absolute values to avoid negative proportions
+#   prop_matrix[i, ] <- abs(prop_matrix[i, ])
   
-  # Normalize to sum to 1
-  row_sum <- sum(prop_matrix[i, ])
-  if (row_sum > 0) {  # Avoid division by zero
-    prop_matrix[i, ] <- prop_matrix[i, ] / row_sum
-  } else {
-    # If all values are zero, keep as zeros
-    prop_matrix[i, ] <- rep(0, ncol(prop_matrix))
-    print(paste("Warning: Sample", rownames(prop_matrix)[i], "had all zero values - keeping as zeros"))
-  }
-}
+#   # Normalize to sum to 1
+#   row_sum <- sum(prop_matrix[i, ])
+#   if (row_sum > 0) {  # Avoid division by zero
+#     prop_matrix[i, ] <- prop_matrix[i, ] / row_sum
+#   } else {
+#     # If all values are zero, keep as zeros
+#     prop_matrix[i, ] <- rep(0, ncol(prop_matrix))
+#     print(paste("Warning: Sample", rownames(prop_matrix)[i], "had all zero values - keeping as zeros"))
+#   }
+# }
 
 # Update the proportions matrix in the result object
 deconvolutionResult$CDSeq$P <- prop_matrix
