@@ -5,7 +5,7 @@
 # Output prefix for generated files
 PREFIX="TB1"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
-SAMPLE_FILTER="B"
+SAMPLE_FILTER="AB"
 # =====
 
 # Default parameters

@@ -33,6 +33,12 @@ echo "Submitting benchmarking metrics calculation job..." | tee -a "${LOG_FILE}"
 METRICS_JOB_ID=$(sbatch "${SCRIPT_DIR}/detailed_metrics.sh" "${DATASET_PREFIX}" "${INCLUDE_OVERALL_GT}" "${SAMPLE_FILTER}" "${GLOBAL_LOG_DIR}" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
 echo "Metrics job ID: ${METRICS_JOB_ID}" | tee -a "${LOG_FILE}"
 
+# benchmarking
+echo "Submitting benchmark summary generation job..." | tee -a "${LOG_FILE}"
+SUMMARY_JOB_ID=$(sbatch --dependency=afterok:${METRICS_JOB_ID} "${SCRIPT_DIR}/benchmarking.sh" "${DATASET_PREFIX}" "${SAMPLE_FILTER}" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
+echo "Summary job ID: ${SUMMARY_JOB_ID}" | tee -a "${LOG_FILE}"
+echo "summary:${SUMMARY_JOB_ID}" >> "${GLOBAL_LOG_DIR}/stats_job_mapping.txt"
+
 # Save job IDs to global stats mapping file
 echo "# Stats job mapping for ${DATASET_PREFIX}_${SAMPLE_FILTER} - $(date)" > "${GLOBAL_LOG_DIR}/stats_job_mapping.txt"
 echo "paired_plots:${PLOT_JOB_ID}" >> "${GLOBAL_LOG_DIR}/stats_job_mapping.txt"

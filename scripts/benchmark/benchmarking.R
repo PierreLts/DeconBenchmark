@@ -1,7 +1,7 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 4) {
-  stop("4 arguments must be supplied: R_LIBRARY_PATH DATASET_PREFIX METRICS_CSV_PATH OUTPUT_DIR", call.=FALSE)
+if (length(args) != 5) {
+  stop("5 arguments must be supplied: R_LIBRARY_PATH DATASET_PREFIX METRICS_CSV_PATH OUTPUT_DIR SAMPLE_FILTER", call.=FALSE)
 }
 
 # Parameters
@@ -9,6 +9,7 @@ path_Rlibrary <- args[1]  # R library path
 dataset_prefix <- args[2]  # Dataset prefix (e.g., TB1)
 metrics_csv_path <- args[3]  # Path to the detailed metrics CSV
 output_dir <- args[4]  # Output directory
+sample_filter <- args[5]  # Sample filter: A, B, or AB
 
 # Set library path
 .libPaths(path_Rlibrary, FALSE)

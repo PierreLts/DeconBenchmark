@@ -304,7 +304,7 @@ p <- ggplot(combined_data, aes(x=DisplayPosition, y=Proportion, fill=CellTypeDis
   geom_bar(stat="identity", position="stack", width=0.8) +
   theme_minimal() +
   labs(title=paste(method_name, "vs Ground Truth Cell Type Proportions"),
-       subtitle=paste("Dataset:", dataset_prefix, "- Sample predictions paired with corresponding ground truth"),
+       subtitle=paste("Dataset:", dataset_prefix, "_", sample_filter, "- Sample predictions paired with corresponding ground truth"),
        x="Samples", y="Proportions") +
   scale_x_continuous(
     breaks = combined_data$DisplayPosition,
