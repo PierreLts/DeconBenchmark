@@ -14,7 +14,7 @@ prefix <- args[4]        # Prefix for output files
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
 
 # Load single cell labels file
-sc_labels_path <- file.path(input_dir, paste0(prefix, "_singleCellLabels.rda"))
+sc_labels_path <- file.path(input_dir, paste0(prefix, "_singleCellLabels_AB.rda"))
 if (!file.exists(sc_labels_path)) {
   stop(paste("Single cell labels file not found:", sc_labels_path))
 }

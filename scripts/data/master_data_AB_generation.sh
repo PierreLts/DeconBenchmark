@@ -3,7 +3,7 @@
 
 # ===== EXPLICIT SETTINGS - MODIFY THESE DIRECTLY =====
 # Output prefix for generated files
-PREFIX="TB1-random"
+PREFIX="TB1"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
 SAMPLE_FILTER="B"
 # =====
@@ -179,13 +179,13 @@ echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
 # Should be dependent on singlCellLables!
 GT_JOB_ID=$(submit_job "GT_gen" "
 # Execute the GT generation script with proper parameters for filtered data
-Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
+Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX
 " 8 "16G" "0:30:00") 
 
 echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
 SAMPLE_GT_JOB_ID=$(submit_job "GT_per_sample_gen" "
 # Execute the per-sample GT generation with filtered data
-Rscript $SCRIPT_DIR/GT_per_sample_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
+Rscript $SCRIPT_DIR/GT_per_sample_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX
 " 8 "32G" "1:00:00")  # No dependency here
 
 # Create consistent logs directory structure
