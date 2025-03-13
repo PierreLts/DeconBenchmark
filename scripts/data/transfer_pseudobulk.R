@@ -1,7 +1,7 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 5) {
-  stop("5 arguments must be supplied: R_LIBRARY_PATH SOURCE_FILE MAPPING_FILE OUTPUT_DIR PREFIX SAMPLE_FILTER", call.=FALSE)
+if (length(args) != 6) {
+  stop("6 arguments must be supplied: R_LIBRARY_PATH SOURCE_FILE MAPPING_FILE OUTPUT_DIR PREFIX SAMPLE_FILTER", call.=FALSE)
 }
 
 # Parameters

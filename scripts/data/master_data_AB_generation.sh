@@ -192,17 +192,6 @@ echo "# Job mapping file for ${PREFIX}_${SAMPLE_FILTER} data generation - Create
 # Add final job to create a consolidated RDA file when all others have completed
 JOBS_DEPENDENCY="${BULK_JOB_ID},${BULK_RANDOM_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${PSEUDOBULK_JOB_ID}"
 
-echo "Submitting finalRDA generation job..." | tee -a "$MAIN_LOG"
-FINAL_RDA_JOB_ID=$(submit_job "finalRDA_gen" "
-# Create a single consolidated RDA file for the filtered dataset
-Rscript $SCRIPT_DIR/finalRDA_generation.R $RLIBRARY $SUBDIR_PATH $FILTERED_PREFIX
-
-# Print confirmation
-echo \"Final RDA generation completed for $FILTERED_PREFIX\"
-" 8 "32G" "0:30:00" "$JOBS_DEPENDENCY")
-
-[ -n "$FINAL_RDA_JOB_ID" ] && echo "finalRDA_gen:${FINAL_RDA_JOB_ID}" >> "$JOB_MAPPING_FILE"
-
 echo "All data generation jobs submitted successfully." | tee -a "$MAIN_LOG"
 echo "All generated files will be stored in: $SUBDIR_PATH" | tee -a "$MAIN_LOG"
 echo "All log files will be stored in: $SCRATCH_LOG_DIR" | tee -a "$MAIN_LOG"
