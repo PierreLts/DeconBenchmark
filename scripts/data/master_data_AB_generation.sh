@@ -132,6 +132,10 @@ submit_job() {
 echo "Submitting bulk RNA generation job (unfiltered)..." | tee -a "$MAIN_LOG"
 BULK_JOB_ID=$(submit_job "bulk_gen" "Rscript $SCRIPT_DIR/bulk_generation.R $RLIBRARY $BULK_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
 
+# Add randomized bulk generation job (depends on bulk job)
+echo "Submitting randomized bulk RNA generation job..." | tee -a "$MAIN_LOG"
+BULK_RANDOM_JOB_ID=$(submit_job "bulk_random_gen" "Rscript $SCRIPT_DIR/bulk_randomizer.R $RLIBRARY $BULK_FILE $SUBDIR_PATH $PREFIX" 8 "16G" "1:00:00")
+
 echo "Submitting single cell labels generation job with $SAMPLE_FILTER filter..." | tee -a "$MAIN_LOG"
 LABELS_JOB_ID=$(submit_job "singleCellLabels_gen" "
 # Explicit settings for AB generation
@@ -166,7 +170,7 @@ Rscript $SCRIPT_DIR/singleCellSubjects_AB_generation.R $RLIBRARY $SEURAT_FILE $S
 echo "Submitting pseudobulk transfer job..." | tee -a "$MAIN_LOG"
 PSEUDOBULK_JOB_ID=$(submit_job "transfer_pseudobulk" "
 # Process pseudobulk data with gene name mapping
-Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_BASE_DIR $PREFIX $SAMPLE_FILTER
+Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_DIR $PREFIX $SAMPLE_FILTER
 " 4 "8G" "0:30:00")
 
 
@@ -178,6 +182,7 @@ mkdir -p $GLOBAL_LOG_DIR
 JOB_MAPPING_FILE="$GLOBAL_LOG_DIR/data_job_mapping.txt"
 echo "# Job mapping file for ${PREFIX}_${SAMPLE_FILTER} data generation - Created $(date)" > "$JOB_MAPPING_FILE"
 [ -n "$BULK_JOB_ID" ] && echo "bulk_gen:${BULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$BULK_RANDOM_JOB_ID" ] && echo "bulk_random_gen:${BULK_RANDOM_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$LABELS_JOB_ID" ] && echo "singleCellLabels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SCRNA_JOB_ID" ] && echo "singleCellExpr_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SUBJECTS_JOB_ID" ] && echo "singleCellSubjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
@@ -185,7 +190,7 @@ echo "# Job mapping file for ${PREFIX}_${SAMPLE_FILTER} data generation - Create
 
 
 # Add final job to create a consolidated RDA file when all others have completed
-JOBS_DEPENDENCY="${BULK_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${PSEUDOBULK_JOB_ID}"
+JOBS_DEPENDENCY="${BULK_JOB_ID},${BULK_RANDOM_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${PSEUDOBULK_JOB_ID}"
 
 echo "Submitting finalRDA generation job..." | tee -a "$MAIN_LOG"
 FINAL_RDA_JOB_ID=$(submit_job "finalRDA_gen" "
