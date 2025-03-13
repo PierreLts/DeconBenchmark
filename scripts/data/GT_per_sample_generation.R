@@ -1,14 +1,15 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 4) {
-  stop(paste("4 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 5) {
+  stop(paste("5 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
 ####### Parameter of script (ORDER IS IMPORTANT)
-path_Rlibrary <- args[1] #IMPORTANT
-seurat_file <- args[2]  # Path to Seurat RDS file
-output_dir <- args[3]  # Output directory
-prefix <- args[4]  # Prefix for output files
+path_Rlibrary <- args[1] 
+seurat_file <- args[2]  
+output_dir <- args[3]  
+prefix <- args[4]  
+sample_filter <- args[5]  # New parameter
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
