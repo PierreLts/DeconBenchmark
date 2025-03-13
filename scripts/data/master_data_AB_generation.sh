@@ -162,6 +162,13 @@ SAMPLE_FILTER=\"$SAMPLE_FILTER\"
 Rscript $SCRIPT_DIR/singleCellSubjects_AB_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
 " 8 "16G" "1:00:00")
 
+echo "Submitting pseudobulk transfer job..." | tee -a "$MAIN_LOG"
+PSEUDOBULK_JOB_ID=$(submit_job "transfer_pseudobulk" "
+# Copy and rename pseudobulk data file
+bash $SCRIPT_DIR/transfer_pseudobulk.sh /work/gr-fe/lorthiois/DeconBenchmark/data $OUTPUT_BASE_DIR $PREFIX $SAMPLE_FILTER
+" 1 "1G" "0:05:00")
+
+
 
 # Create consistent logs directory structure
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${PREFIX}_${SAMPLE_FILTER}"
@@ -174,9 +181,10 @@ echo "# Job mapping file for ${PREFIX}_${SAMPLE_FILTER} data generation - Create
 [ -n "$LABELS_JOB_ID" ] && echo "singleCellLabels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SCRNA_JOB_ID" ] && echo "singleCellExpr_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SUBJECTS_JOB_ID" ] && echo "singleCellSubjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$PSEUDOBULK_JOB_ID" ] && echo "transfer_pseudobulk:${PSEUDOBULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
 
 # Add final job to create a consolidated RDA file when all others have completed
-JOBS_DEPENDENCY="${BULK_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID}"
+JOBS_DEPENDENCY="${BULK_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${PSEUDOBULK_JOB_ID}"
 
 echo "Submitting finalRDA generation job..." | tee -a "$MAIN_LOG"
 FINAL_RDA_JOB_ID=$(submit_job "finalRDA_gen" "
