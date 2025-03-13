@@ -173,6 +173,18 @@ PSEUDOBULK_JOB_ID=$(submit_job "transfer_pseudobulk" "
 Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_DIR $PREFIX
 " 4 "8G" "0:30:00")
 
+echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
+GT_JOB_ID=$(submit_job "GT_gen" "
+# Execute the GT generation script with proper parameters for filtered data
+Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
+" 8 "16G" "0:30:00" "afterok:$LABELS_JOB_ID")  # Depend on labels job
+
+echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
+SAMPLE_GT_JOB_ID=$(submit_job "GT_per_sample_gen" "
+# Execute the per-sample GT generation with filtered data
+Rscript $SCRIPT_DIR/GT_per_sample_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
+" 8 "32G" "1:00:00" "afterok:$LABELS_JOB_ID")  # Depend on labels job
+
 
 # Create consistent logs directory structure
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${PREFIX}_${SAMPLE_FILTER}"
@@ -187,10 +199,13 @@ echo "# Job mapping file for ${PREFIX}_${SAMPLE_FILTER} data generation - Create
 [ -n "$SCRNA_JOB_ID" ] && echo "singleCellExpr_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SUBJECTS_JOB_ID" ] && echo "singleCellSubjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$PSEUDOBULK_JOB_ID" ] && echo "transfer_pseudobulk:${PSEUDOBULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$GT_JOB_ID" ] && echo "GT_gen:${GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$SAMPLE_GT_JOB_ID" ] && echo "GT_per_sample_gen:${SAMPLE_GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
+
 
 
 # Add final job to create a consolidated RDA file when all others have completed
-JOBS_DEPENDENCY="${BULK_JOB_ID},${BULK_RANDOM_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${PSEUDOBULK_JOB_ID}"
+JOBS_DEPENDENCY="${BULK_JOB_ID},${BULK_RANDOM_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${PSEUDOBULK_JOB_ID},${GT_JOB_ID},${SAMPLE_GT_JOB_ID}"
 
 echo "All data generation jobs submitted successfully." | tee -a "$MAIN_LOG"
 echo "All generated files will be stored in: $SUBDIR_PATH" | tee -a "$MAIN_LOG"

@@ -1,13 +1,15 @@
-# Job mapping file for TB1-random_B data generation - Created jeu 13 mar 2025 15:33:20 CET
-bulk_gen:Submitted bulk_gen job: 32934754
-32934754
-bulk_random_gen:Submitted bulk_random_gen job: 32934755
-32934755
-singleCellLabels_gen:Submitted singleCellLabels_gen job: 32934756
-32934756
-singleCellExpr_gen:Submitted singleCellExpr_gen job: 32934757
-32934757
-singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 32934758
-32934758
-transfer_pseudobulk:Submitted transfer_pseudobulk job: 32934759
-32934759
+# Job mapping file for TB1-random_B data generation - Created jeu 13 mar 2025 15:44:12 CET
+bulk_gen:Submitted bulk_gen job: 32934800
+32934800
+bulk_random_gen:Submitted bulk_random_gen job: 32934801
+32934801
+singleCellLabels_gen:Submitted singleCellLabels_gen job: 32934802
+32934802
+singleCellExpr_gen:Submitted singleCellExpr_gen job: 32934803
+32934803
+singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 32934804
+32934804
+transfer_pseudobulk:Submitted transfer_pseudobulk job: 32934805
+32934805
+GT_gen:WARNING: Could not extract job ID from sbatch output: sbatch: error: Invalid directive found in batch script: singleCellLabels_gen
+GT_per_sample_gen:WARNING: Could not extract job ID from sbatch output: sbatch: error: Invalid directive found in batch script: singleCellLabels_gen
