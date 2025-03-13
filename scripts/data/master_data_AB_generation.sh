@@ -174,17 +174,13 @@ PSEUDOBULK_JOB_ID=$(submit_job "transfer_pseudobulk" "
 Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_DIR $PREFIX
 " 4 "8G" "0:30:00")
 
-# dependency 
 echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
-DEPENDENCY=""
-if [ ! -z "$LABELS_JOB_ID" ]; then
-    DEPENDENCY="afterok:$LABELS_JOB_ID"
-fi
 
+# Should be dependent on singlCellLables!
 GT_JOB_ID=$(submit_job "GT_gen" "
 # Execute the GT generation script with proper parameters for filtered data
 Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
-" 8 "16G" "0:30:00" "$DEPENDENCY")  # This passes the dependency if LABELS_JOB_ID exists
+" 8 "16G" "0:30:00") 
 
 echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
 SAMPLE_GT_JOB_ID=$(submit_job "GT_per_sample_gen" "
