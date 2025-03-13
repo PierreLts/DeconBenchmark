@@ -100,8 +100,8 @@ dir.create(dest_dir, recursive=TRUE, showWarnings=FALSE)
 
 # Save as RDA
 rda_filename <- file.path(dest_dir, paste0(prefix, "_pseudobulk.rda"))
-pseudobulk <- pseudobulk_matrix  # Variable name for RDA
-save(pseudobulk, file=rda_filename)
+bulk <- pseudobulk_matrix  # Variable name for RDA
+save(bulk, file=rda_filename)
 
 # Save as CSV
 csv_filename <- file.path(dest_dir, paste0(prefix, "_pseudobulk.csv"))

@@ -3,8 +3,8 @@
 
 # Default parameters
 DEFAULT_DATASET_PREFIX="TB1-random"
-DEFAULT_SAMPLE_FILTER="AB"
-DEFAULT_BULK_TYPE="bulk"  # New parameter for bulk file type
+DEFAULT_SAMPLE_FILTER="B"
+DEFAULT_BULK_TYPE="bulk_random"  # New parameter for bulk file type
 DEFAULT_METHODS="AdRoit,ARIC,AutoGeneS,BayCount,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CDSeq,CellDistinguisher,CIBERSORT,CIBERSORTx,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
 
 # Parse command line arguments

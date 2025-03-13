@@ -3,7 +3,7 @@
 
 # ===== EXPLICIT SETTINGS - MODIFY THESE DIRECTLY =====
 # Output prefix for generated files
-PREFIX="TB1"
+PREFIX="TB1-pseudo"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
 SAMPLE_FILTER="B"
 # =====

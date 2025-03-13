@@ -83,20 +83,23 @@ for (i in 1:ncol(bulk_random)) {
   bulk_random[, i] <- sample(bulk[, i])
 }
 
+
 message("Randomization complete")
 
 # Print preview of original and randomized data
 cat("Original data preview:\n")
 print(bulk[1:5, 1:5])
+
+bulk <- bulk_random
 cat("\nRandomized data preview:\n")
-print(bulk_random[1:5, 1:5])
+print(bulk[1:5, 1:5])
 
 # Save as RDA
 rda_filename <- file.path(output_dir, paste0(prefix, "_bulk_random.rda"))
-save(bulk_random, file = rda_filename)
+save(bulk, file = rda_filename)
 
 # Save as CSV
 csv_filename <- file.path(output_dir, paste0(prefix, "_bulk_random.csv"))
-write.csv(bulk_random, file = csv_filename)
+write.csv(bulk, file = csv_filename)
 
 print(paste("Randomized bulk matrix saved to:", rda_filename, "and", csv_filename))
