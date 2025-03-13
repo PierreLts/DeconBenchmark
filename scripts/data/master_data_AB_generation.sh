@@ -94,8 +94,9 @@ submit_job() {
     echo "#SBATCH --time=${time}" >> "$temp_script"
     
     # Add dependency if provided
+    # Add dependency if provided (and not empty)
     if [ ! -z "$dependency" ]; then
-        echo "#SBATCH --dependency=afterok:${dependency}" >> "$temp_script"
+        echo "#SBATCH --dependency=${dependency}" >> "$temp_script"
     fi
     
     # Add module loading and script execution
@@ -173,18 +174,23 @@ PSEUDOBULK_JOB_ID=$(submit_job "transfer_pseudobulk" "
 Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_DIR $PREFIX
 " 4 "8G" "0:30:00")
 
+# dependency 
 echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
+DEPENDENCY=""
+if [ ! -z "$LABELS_JOB_ID" ]; then
+    DEPENDENCY="afterok:$LABELS_JOB_ID"
+fi
+
 GT_JOB_ID=$(submit_job "GT_gen" "
 # Execute the GT generation script with proper parameters for filtered data
 Rscript $SCRIPT_DIR/GT_generation.R $RLIBRARY $SUBDIR_PATH $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
-" 8 "16G" "0:30:00" "afterok:$LABELS_JOB_ID")  # Depend on labels job
+" 8 "16G" "0:30:00" "$DEPENDENCY")  # This passes the dependency if LABELS_JOB_ID exists
 
 echo "Submitting per-sample ground truth generation job..." | tee -a "$MAIN_LOG"
 SAMPLE_GT_JOB_ID=$(submit_job "GT_per_sample_gen" "
 # Execute the per-sample GT generation with filtered data
 Rscript $SCRIPT_DIR/GT_per_sample_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
-" 8 "32G" "1:00:00" "afterok:$LABELS_JOB_ID")  # Depend on labels job
-
+" 8 "32G" "1:00:00")  # No dependency here
 
 # Create consistent logs directory structure
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${PREFIX}_${SAMPLE_FILTER}"
