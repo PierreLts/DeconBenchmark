@@ -16,6 +16,7 @@ RLIBRARY="/work/gr-fe/R_4.3.1" #IMPORTANT
 SCRIPT=/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution/run_cdseq.R
 dataset_prefix="${1:-TB}"  # Dataset prefix/subfolder
 sample_filter="${2:-AB}"   # Sample filter: A, B, or AB (default: AB)
+bulk_type="${3:-bulk}"     # New parameter: bulk file type (default: bulk)
 input_data="/work/gr-fe/lorthiois/DeconBenchmark/generated_data/$dataset_prefix"  # Dataset directory
 output_base_dir="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 
@@ -35,6 +36,7 @@ module load r #IMPORTANT
 start=`date +%s`
 echo "START AT $(date)"
 echo "Processing dataset: $dataset_prefix with filter: $sample_filter"
+echo "Using bulk file type: $bulk_type"
 
 # Make sure CDSeq is installed
 R --quiet --no-save << EOF
@@ -43,8 +45,8 @@ if (!requireNamespace("CDSeq", quietly = TRUE)) {
 }
 EOF
 
-# Run the R script
-Rscript ${SCRIPT} ${RLIBRARY} ${input_data} ${output_base_dir} ${sample_filter}
+# Run the R script with the bulk_type parameter
+Rscript ${SCRIPT} ${RLIBRARY} ${input_data} ${output_base_dir} ${sample_filter} ${bulk_type}
 
 # Clean up temporary files
 rm -f signature.csv bulk.csv

@@ -1,7 +1,7 @@
 #!/usr/bin/Rscript
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 6) {
-  stop(paste("6 arguments must be supplied instead of", length(args)), call. = FALSE)
+if (length(args) != 7) {
+  stop(paste("7 arguments must be supplied instead of", length(args)), call. = FALSE)
 }
 
 ####### Parameter of script (ORDER IS IMPORTANT)
@@ -11,6 +11,8 @@ sample_filter <- args[3] # Sample filter: A, B, or AB
 output_base_dir <- args[4] # Base output directory (deconv_results)
 deconv_methods <- args[5] # Deconvolution method(s) - can be comma-separated list of methods
 sparse_conversion <- as.logical(args[6])
+bulk_type <- args[7] # Bulk file type (e.g., bulk, bulk_random, pseudobulk)
+
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
@@ -30,7 +32,7 @@ print(paste("Using sample filter:", sample_filter))
 
 # Construct file paths with appropriate sample filter suffix
 # Bulk data doesn't have a filter suffix
-bulk_path <- file.path(base_data_dir, paste0(dataset_prefix, "_bulk.rda"))
+bulk_path <- file.path(base_data_dir, paste0(dataset_prefix, "_", bulk_type, ".rda"))
 # Filtered data files
 singleCellExpr_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellExpr_", sample_filter, ".rda"))
 singleCellLabels_path <- file.path(base_data_dir, paste0(dataset_prefix, "_singleCellLabels_", sample_filter, ".rda"))

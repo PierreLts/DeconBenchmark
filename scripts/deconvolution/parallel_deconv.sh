@@ -4,12 +4,14 @@
 # Default parameters
 DEFAULT_DATASET_PREFIX="TB1-random"
 DEFAULT_SAMPLE_FILTER="AB"
+DEFAULT_BULK_TYPE="bulk"  # New parameter for bulk file type
 DEFAULT_METHODS="AdRoit,ARIC,AutoGeneS,BayCount,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CDSeq,CellDistinguisher,CIBERSORT,CIBERSORTx,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
 
 # Parse command line arguments
 DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"
 SAMPLE_FILTER="${2:-$DEFAULT_SAMPLE_FILTER}"
 METHODS="${3:-$DEFAULT_METHODS}"
+BULK_TYPE="${4:-$DEFAULT_BULK_TYPE}"  # New parameter - bulk file type
 
 # Set paths
 SCRIPT_DIR="/scratch/lorthiois/scripts"
@@ -34,6 +36,7 @@ MAIN_LOG="$LOG_DIR/parallel_deconv_${SAMPLE_FILTER}_$(date +%Y%m%d_%H%M%S).log"
 echo "==== Starting parallel deconvolution pipeline $(date) ====" | tee -a "$MAIN_LOG"
 echo "Dataset prefix: $DATASET_PREFIX" | tee -a "$MAIN_LOG"
 echo "Sample filter: $SAMPLE_FILTER" | tee -a "$MAIN_LOG"
+echo "Bulk file type: $BULK_TYPE" | tee -a "$MAIN_LOG"  # Log the bulk file type
 echo "Methods to run: ${METHODS}" | tee -a "$MAIN_LOG"
 echo "Results will be saved to: $OUTPUT_DIR" | tee -a "$MAIN_LOG"
 echo "" | tee -a "$MAIN_LOG"
@@ -64,6 +67,7 @@ for MODEL in "${MODELS[@]}"; do
         sed "s|dataset_prefix=.*|dataset_prefix=\"$DATASET_PREFIX\"|" | \
         sed "s|sample_filter=.*|sample_filter=\"$SAMPLE_FILTER\"|" | \
         sed "s|deconv_method=.*|deconv_method=\"$MODEL\"|" | \
+        sed "s|bulk_type=.*|bulk_type=\"$BULK_TYPE\"|" | \
         sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=${MODEL}_${DATASET_PREFIX}_${SAMPLE_FILTER}|" | \
         sed "s|#SBATCH --time=.*|#SBATCH --time=48:00:00|" > "$TEMP_SCRIPT"
         
@@ -93,6 +97,7 @@ if [[ "$METHODS" == *"CDSeq"* ]] || [[ "$METHODS" == *"All"* ]]; then
     cat "$TEMPLATE_DIR/run_cdseq.sh" | \
         sed "s|dataset_prefix=.*|dataset_prefix=\"$DATASET_PREFIX\"|" | \
         sed "s|sample_filter=.*|sample_filter=\"$SAMPLE_FILTER\"|" | \
+        sed "s|bulk_type=.*|bulk_type=\"$BULK_TYPE\"|" | \
         sed "s|#SBATCH --job-name=.*|#SBATCH --job-name=CDSeq_${DATASET_PREFIX}_${SAMPLE_FILTER}|" > "$CDSEQ_SCRIPT"
         
     chmod +x "$CDSEQ_SCRIPT"
@@ -127,12 +132,13 @@ cat > "$EVAL_SCRIPT" << EOF
 # Run evaluation and benchmarking scripts for $DATASET_PREFIX with $SAMPLE_FILTER
 echo "Running evaluation and benchmarking for dataset: $DATASET_PREFIX"
 echo "Sample filter: $SAMPLE_FILTER"
+echo "Bulk file type: $BULK_TYPE"
 echo "Results directory: $OUTPUT_DIR"
 echo "Benchmark output directory: $BENCHMARK_DIR"
 
 # Here you would add commands to run your evaluation scripts
 # For example:
-# Rscript /path/to/evaluation_script.R $OUTPUT_DIR $BENCHMARK_DIR $DATASET_PREFIX $SAMPLE_FILTER
+# Rscript /path/to/evaluation_script.R $OUTPUT_DIR $BENCHMARK_DIR $DATASET_PREFIX $SAMPLE_FILTER $BULK_TYPE
 
 echo "Evaluation completed"
 EOF
