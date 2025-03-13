@@ -16,7 +16,6 @@ SOURCE_FILE="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_12
 MAPPING_FILE="${3:-/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt}"
 OUTPUT_BASE_DIR="${4:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
 PREFIX="${5:-TB1}"
-SAMPLE_FILTER="${6:-AB}"
 
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_BASE_DIR/$PREFIX"
@@ -27,10 +26,10 @@ module load r
 
 start=`date +%s`
 echo "START AT $(date)"
-echo "Processing pseudobulk data for $PREFIX with filter $SAMPLE_FILTER"
+echo "Processing pseudobulk data for $PREFIX"
 
-# Run the R script
-Rscript ${SCRIPT} ${RLIBRARY} ${SOURCE_FILE} ${MAPPING_FILE} ${OUTPUT_BASE_DIR} ${PREFIX} ${SAMPLE_FILTER}
+# Run the R script (removed the sample filter parameter)
+Rscript ${SCRIPT} ${RLIBRARY} ${SOURCE_FILE} ${MAPPING_FILE} ${OUTPUT_BASE_DIR} ${PREFIX}
 
 end=`date +%s`
 runtime=$((end-start))

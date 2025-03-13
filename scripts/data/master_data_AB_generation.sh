@@ -5,7 +5,7 @@
 # Output prefix for generated files
 PREFIX="TB1"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
-SAMPLE_FILTER="AB"
+SAMPLE_FILTER="B"
 # =====
 
 # Default parameters
@@ -170,7 +170,7 @@ Rscript $SCRIPT_DIR/singleCellSubjects_AB_generation.R $RLIBRARY $SEURAT_FILE $S
 echo "Submitting pseudobulk transfer job..." | tee -a "$MAIN_LOG"
 PSEUDOBULK_JOB_ID=$(submit_job "transfer_pseudobulk" "
 # Process pseudobulk data with gene name mapping
-Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_DIR $PREFIX $SAMPLE_FILTER
+Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_DIR $PREFIX
 " 4 "8G" "0:30:00")
 
 

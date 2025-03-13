@@ -1,13 +1,13 @@
-# Job mapping file for TB1_AB data generation - Created jeu 13 mar 2025 15:12:28 CET
-bulk_gen:Submitted bulk_gen job: 32933908
-32933908
-bulk_random_gen:Submitted bulk_random_gen job: 32933909
-32933909
-singleCellLabels_gen:Submitted singleCellLabels_gen job: 32933910
-32933910
-singleCellExpr_gen:Submitted singleCellExpr_gen job: 32933911
-32933911
-singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 32933912
-32933912
-transfer_pseudobulk:Submitted transfer_pseudobulk job: 32933913
-32933913
+# Job mapping file for TB1_AB data generation - Created jeu 13 mar 2025 15:18:41 CET
+bulk_gen:Submitted bulk_gen job: 32934238
+32934238
+bulk_random_gen:Submitted bulk_random_gen job: 32934239
+32934239
+singleCellLabels_gen:Submitted singleCellLabels_gen job: 32934240
+32934240
+singleCellExpr_gen:Submitted singleCellExpr_gen job: 32934241
+32934241
+singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 32934242
+32934242
+transfer_pseudobulk:Submitted transfer_pseudobulk job: 32934243
+32934243
