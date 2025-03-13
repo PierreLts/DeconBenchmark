@@ -1,0 +1,17 @@
+# Job mapping file for TB4_B data generation - Created jeu 13 mar 2025 20:06:20 CET
+bulk_gen:Submitted bulk_gen job: 32945044
+32945044
+bulk_random_gen:Submitted bulk_random_gen job: 32945045
+32945045
+singleCellLabels_gen:Submitted singleCellLabels_gen job: 32945046
+32945046
+singleCellExpr_gen:Submitted singleCellExpr_gen job: 32945047
+32945047
+singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 32945048
+32945048
+transfer_pseudobulk:Submitted transfer_pseudobulk job: 32945049
+32945049
+GT_gen:Submitted GT_gen job: 32945050
+32945050
+GT_per_sample_gen:Submitted GT_per_sample_gen job: 32945051
+32945051
