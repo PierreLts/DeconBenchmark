@@ -3,9 +3,9 @@
 
 # ===== EXPLICIT SETTINGS - MODIFY THESE DIRECTLY =====
 # Output prefix for generated files
-PREFIX="TB1"
+PREFIX="TB1-pseudo"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
-SAMPLE_FILTER="B"
+SAMPLE_FILTER="AB"
 # =====
 
 # Default parameters
@@ -93,7 +93,6 @@ submit_job() {
     echo "#SBATCH --mem=${mem}" >> "$temp_script"
     echo "#SBATCH --time=${time}" >> "$temp_script"
     
-    # Add dependency if provided
     # Add dependency if provided (and not empty)
     if [ ! -z "$dependency" ]; then
         echo "#SBATCH --dependency=${dependency}" >> "$temp_script"
@@ -167,12 +166,12 @@ SAMPLE_FILTER=\"$SAMPLE_FILTER\"
 Rscript $SCRIPT_DIR/singleCellSubjects_AB_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
 " 8 "16G" "1:00:00")
 
-
-echo "Submitting pseudobulk transfer job..." | tee -a "$MAIN_LOG"
-PSEUDOBULK_JOB_ID=$(submit_job "transfer_pseudobulk" "
-# Process pseudobulk data with gene name mapping
-Rscript $SCRIPT_DIR/transfer_pseudobulk.R $RLIBRARY /work/gr-fe/lorthiois/DeconBenchmark/data/pseudobulk_counts_120k.csv $MAPPING_FILE $OUTPUT_DIR $PREFIX
-" 4 "8G" "0:30:00")
+# Changed this part to use pseudobulk.R instead of transfer_pseudobulk.R
+echo "Submitting pseudobulk generation job..." | tee -a "$MAIN_LOG"
+PSEUDOBULK_JOB_ID=$(submit_job "pseudobulk" "
+# Generate pseudobulk data from Seurat object
+Rscript $SCRIPT_DIR/pseudobulk.R $RLIBRARY $SEURAT_FILE $MAPPING_FILE $OUTPUT_DIR $PREFIX $SAMPLE_FILTER
+" 8 "32G" "1:00:00")
 
 echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
 
@@ -200,11 +199,9 @@ echo "# Job mapping file for ${PREFIX}_${SAMPLE_FILTER} data generation - Create
 [ -n "$LABELS_JOB_ID" ] && echo "singleCellLabels_gen:${LABELS_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SCRNA_JOB_ID" ] && echo "singleCellExpr_gen:${SCRNA_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SUBJECTS_JOB_ID" ] && echo "singleCellSubjects_gen:${SUBJECTS_JOB_ID}" >> "$JOB_MAPPING_FILE"
-[ -n "$PSEUDOBULK_JOB_ID" ] && echo "transfer_pseudobulk:${PSEUDOBULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
+[ -n "$PSEUDOBULK_JOB_ID" ] && echo "pseudobulk:${PSEUDOBULK_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$GT_JOB_ID" ] && echo "GT_gen:${GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
 [ -n "$SAMPLE_GT_JOB_ID" ] && echo "GT_per_sample_gen:${SAMPLE_GT_JOB_ID}" >> "$JOB_MAPPING_FILE"
-
-
 
 # Add final job to create a consolidated RDA file when all others have completed
 JOBS_DEPENDENCY="${BULK_JOB_ID},${BULK_RANDOM_JOB_ID},${LABELS_JOB_ID},${SCRNA_JOB_ID},${SUBJECTS_JOB_ID},${PSEUDOBULK_JOB_ID},${GT_JOB_ID},${SAMPLE_GT_JOB_ID}"
