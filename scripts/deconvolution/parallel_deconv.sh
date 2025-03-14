@@ -2,7 +2,7 @@
 # parallel_deconv.sh - Run multiple deconvolution methods in parallel
 
 # Default parameters
-DEFAULT_DATASET_PREFIX="TB4"
+DEFAULT_DATASET_PREFIX="TB2"
 DEFAULT_SAMPLE_FILTER="AB"
 DEFAULT_BULK_TYPE="bulk"  # New parameter for bulk file type
 DEFAULT_METHODS="ARIC,AutoGeneS,BayCount,BayesPrism,BayICE,BisqueRef,CDSeq,CPM,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DESeq2,DSA,DWLS,EMeth,EPIC,FARDEEP,LinDeconSeq,Linseed,MCPcounter,MIXTURE,MuSic,MySort,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,TOAST"

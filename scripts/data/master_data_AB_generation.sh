@@ -3,13 +3,13 @@
 
 # ===== EXPLICIT SETTINGS - MODIFY THESE DIRECTLY =====
 # Output prefix for generated files
-PREFIX="TB4"
+PREFIX="TB2"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
 SAMPLE_FILTER="B"
 # =====
 
 # Default parameters
-DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-34331_HGTTGDSXC_4_scRNAseqWTATBseverityrun4_Seurat.rds"
+DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33251_HGVCGDSXC_1_scRNAseqWTATBseverityrun2_Seurat.rds"
 DEFAULT_BULK_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/cleaned_feature_counts_matrix.csv"
 DEFAULT_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt"
 DEFAULT_OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
