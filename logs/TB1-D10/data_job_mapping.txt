@@ -1,0 +1,2 @@
+# Job mapping file for TB1-D10 data generation - Created ven 14 mar 2025 11:44:00 CET
+downsampler:32954682
