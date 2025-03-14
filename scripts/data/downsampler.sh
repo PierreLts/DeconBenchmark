@@ -13,7 +13,7 @@ set -x  # Print commands as they're executed
 
 # ===== PARAMETERS TO ADJUST =====
 PREFIX="TB1"               # Input dataset prefix
-CELLS_PER_TYPE=1           # Number of cells to keep per cell type
+CELLS_PER_TYPE=5           # Number of cells to keep per cell type
 # ================================
 
 # Default parameters
