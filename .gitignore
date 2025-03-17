@@ -18,6 +18,7 @@
 # Log files
 *.log
 *.err
+*.txt
 
 /scratch/
 
