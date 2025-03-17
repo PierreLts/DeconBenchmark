@@ -116,9 +116,26 @@ for (result_file in result_files) {
     # Compute metrics
     pearson_cor <- cor(pred_vector, gt_vector, method = "pearson")
     spearman_cor <- cor(pred_vector, gt_vector, method = "spearman")
+    r_squared <- 1 - (sum((gt_vector - pred_vector)^2) / sum((gt_vector - mean(gt_vector))^2))
+
+    # Calculate regular MAE and RMSE
     mae <- mean(abs(pred_vector - gt_vector))
     rmse <- sqrt(mean((pred_vector - gt_vector)^2))
-    r_squared <- 1 - (sum((gt_vector - pred_vector)^2) / sum((gt_vector - mean(gt_vector))^2))
+
+    # Calculate normalized versions with NA handling for zero means
+    nmae <- if(mean(gt_vector) == 0) {
+      warning("Cannot compute normalized MAE: mean of ground truth vector is zero")
+      NA
+    } else {
+      mae / mean(gt_vector)
+    }
+
+    nrmse <- if(mean(gt_vector) == 0) {
+      warning("Cannot compute normalized RMSE: mean of ground truth vector is zero")
+      NA
+    } else {
+      rmse / mean(gt_vector)
+    }
     
     # Calculate Jensen-Shannon Divergence
     # Note: JSD requires positive values that sum to 1
