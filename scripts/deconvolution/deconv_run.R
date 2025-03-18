@@ -133,29 +133,32 @@ deconvolutionResult <- runDeconvolution(
 )
 print("CHECK: Deconvolution completed for all methods")
 
-# Normalize deconvolution results (absolute values and sum to 1 per sample)
+# Normalize deconvolution results - all-or-nothing approach for entire dataset to convert percentage to 0-1
 if (!is.null(deconvolutionResult[[method]]$P)) {
   prop_matrix <- deconvolutionResult[[method]]$P
   
-  # Process each sample (row) individually
+  # Check if ALL samples have sums close to 100
+  all_sums_near_100 <- TRUE
   for (i in 1:nrow(prop_matrix)) {
-    # Take absolute values to avoid negative proportions
-    prop_matrix[i, ] <- abs(prop_matrix[i, ])
-    
-    # Normalize to sum to 1
     row_sum <- sum(prop_matrix[i, ])
-    if (row_sum > 0) {  # Avoid division by zero
-      prop_matrix[i, ] <- prop_matrix[i, ] / row_sum
-    } else {
-      # If all values are zero, keep as zeros
-      prop_matrix[i, ] <- rep(0, ncol(prop_matrix))
-      print(paste("Warning: Sample", rownames(prop_matrix)[i], "had all zero values - keeping as zeros"))
+    if (abs(row_sum - 100) >= 1) {
+      all_sums_near_100 <- FALSE
+      print(paste("Sample", rownames(prop_matrix)[i], "has sum", row_sum, "- not applying percentage normalization"))
+      break  # Stop checking once we find one that doesn't match
     }
+  }
+  
+  # Apply normalization only if ALL samples sum to approximately 100
+  if (all_sums_near_100) {
+    # Normalize from percentage (0-100) to proportion (0-1)
+    prop_matrix <- prop_matrix / 100
+    print("All samples had sums close to 100, normalized from percentages (0-100) to proportions (0-1)")
+  } else {
+    print("Not all samples had sums close to 100, preserving original values")
   }
   
   # Update the proportions matrix in the result object
   deconvolutionResult[[method]]$P <- prop_matrix
-  print("Normalized cell type proportions (absolute values, sum to 1 per sample)")
 }
 
 # Save as RDA format with filter suffix
