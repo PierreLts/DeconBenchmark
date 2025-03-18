@@ -147,7 +147,7 @@ print(paste("Found", sum(metrics_data$SampleGroup == "B"), "samples in group B")
 # Filter to keep only A and B groups and relevant metrics
 filtered_data <- metrics_data %>%
   filter(SampleGroup %in% c("A", "B")) %>%
-  select(Method, Sample, SampleGroup, PearsonCorr, SpearmanCorr, MAE, RMSE, R2, JSD)
+  select(Method, Sample, SampleGroup, PearsonCorr, NRMSE, R2, JSD)
 
 # Calculate means and standard deviations by method and group
 summary_stats <- filtered_data %>%
@@ -155,12 +155,12 @@ summary_stats <- filtered_data %>%
   summarize(
     PearsonCorr_mean = mean(PearsonCorr, na.rm = TRUE),
     PearsonCorr_sd = sd(PearsonCorr, na.rm = TRUE),
-    SpearmanCorr_mean = mean(SpearmanCorr, na.rm = TRUE),
-    SpearmanCorr_sd = sd(SpearmanCorr, na.rm = TRUE),
-    MAE_mean = mean(MAE, na.rm = TRUE),
-    MAE_sd = sd(MAE, na.rm = TRUE),
-    RMSE_mean = mean(RMSE, na.rm = TRUE),
-    RMSE_sd = sd(RMSE, na.rm = TRUE),
+    # SpearmanCorr_mean = mean(SpearmanCorr, na.rm = TRUE),
+    # SpearmanCorr_sd = sd(SpearmanCorr, na.rm = TRUE),
+    # MAE_mean = mean(MAE, na.rm = TRUE),
+    # MAE_sd = sd(MAE, na.rm = TRUE),
+    NRMSE_mean = mean(NRMSE, na.rm = TRUE),
+    NRMSE_sd = sd(NRMSE, na.rm = TRUE),
     R2_mean = mean(R2, na.rm = TRUE),
     R2_sd = sd(R2, na.rm = TRUE),
     JSD_mean = mean(JSD, na.rm = TRUE),
@@ -170,7 +170,7 @@ summary_stats <- filtered_data %>%
   )
 
 # Define metrics and create the result table structure
-metrics <- c("PearsonCorr", "SpearmanCorr", "MAE", "RMSE", "R2", "JSD")
+metrics <- c("PearsonCorr", "NRMSE", "R2", "JSD")
 result_cols <- c()
 
 # Create column names with prefixes to avoid duplicates
@@ -217,7 +217,7 @@ for (group in c("A", "B")) {
     sd_col <- paste0(metric, "_sd")
     
     # Sort in appropriate direction
-    if (metric %in% c("PearsonCorr", "SpearmanCorr", "R2")) {
+    if (metric %in% c("PearsonCorr", "R2")) {
       sorted_data <- group_data %>% arrange(desc(!!sym(mean_col)))
     } else {
       sorted_data <- group_data %>% arrange(!!sym(mean_col))

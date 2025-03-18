@@ -2,7 +2,7 @@
 # run_benchmarks.sh - Run all benchmarking tasks for a dataset
 
 # Default parameters
-DEFAULT_DATASET_PREFIX="TB1-pseudo"
+DEFAULT_DATASET_PREFIX="TB1"
 DEFAULT_INCLUDE_OVERALL_GT="TRUE"
 DEFAULT_SAMPLE_FILTER="AB"
 

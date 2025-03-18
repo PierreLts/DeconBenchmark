@@ -115,20 +115,20 @@ for (result_file in result_files) {
     
     # Compute metrics
     pearson_cor <- cor(pred_vector, gt_vector, method = "pearson")
-    spearman_cor <- cor(pred_vector, gt_vector, method = "spearman")
+    # spearman_cor <- cor(pred_vector, gt_vector, method = "spearman")
     r_squared <- 1 - (sum((gt_vector - pred_vector)^2) / sum((gt_vector - mean(gt_vector))^2))
 
     # Calculate regular MAE and RMSE
-    mae <- mean(abs(pred_vector - gt_vector))
+    # mae <- mean(abs(pred_vector - gt_vector))
     rmse <- sqrt(mean((pred_vector - gt_vector)^2))
 
-    # Calculate normalized versions with NA handling for zero means
-    nmae <- if(mean(gt_vector) == 0) {
-      warning("Cannot compute normalized MAE: mean of ground truth vector is zero")
-      NA
-    } else {
-      mae / mean(gt_vector)
-    }
+    # # Calculate normalized versions with NA handling for zero means
+    # nmae <- if(mean(gt_vector) == 0) {
+    #   warning("Cannot compute normalized MAE: mean of ground truth vector is zero")
+    #   NA
+    # } else {
+    #   mae / mean(gt_vector)
+    # }
 
     nrmse <- if(mean(gt_vector) == 0) {
       warning("Cannot compute normalized RMSE: mean of ground truth vector is zero")
@@ -158,9 +158,9 @@ for (result_file in result_files) {
       Sample = pred_sample,
       GT_Sample = gt_sample,
       PearsonCorr = pearson_cor,
-      SpearmanCorr = spearman_cor,
-      MAE = mae,
-      RMSE = rmse,
+      # SpearmanCorr = spearman_cor,
+      # MAE = mae,
+      NRMSE = nrmse, # added normalization
       R2 = r_squared,
       JSD = js_divergence,
       CellTypeCount = length(all_cell_types),
