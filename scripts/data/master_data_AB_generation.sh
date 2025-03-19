@@ -166,7 +166,7 @@ SAMPLE_FILTER=\"$SAMPLE_FILTER\"
 Rscript $SCRIPT_DIR/singleCellSubjects_AB_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
 " 8 "16G" "1:00:00")
 
-# Changed this part to use pseudobulk.R instead of transfer_pseudobulk.R
+# use pseudobulk.R
 echo "Submitting pseudobulk generation job..." | tee -a "$MAIN_LOG"
 PSEUDOBULK_JOB_ID=$(submit_job "pseudobulk" "
 # Generate pseudobulk data from Seurat object
