@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --nodes 1
 #SBATCH --ntasks 1
-#SBATCH --cpus-per-task 70
-#SBATCH --mem 600G
+#SBATCH --cpus-per-task 16
+#SBATCH --mem 48G
 #SBATCH --time 3:00:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
