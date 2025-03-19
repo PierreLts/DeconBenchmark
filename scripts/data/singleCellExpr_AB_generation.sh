@@ -1,9 +1,9 @@
 #!/bin/sh
 #SBATCH --nodes 1
 #SBATCH --ntasks 1
-#SBATCH --cpus-per-task 16
-#SBATCH --mem 48G
-#SBATCH --time 2:00:00
+#SBATCH --cpus-per-task 64
+#SBATCH --mem 300G
+#SBATCH --time 3:00:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
 #SBATCH --job-name=singleCellExpr_AB_gen

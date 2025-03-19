@@ -12,7 +12,7 @@ set -e  # Exit on error
 set -x  # Print commands as they're executed
 
 # ===== PARAMETERS TO ADJUST =====
-PREFIX="TB1"               # Input dataset prefix
+PREFIX="TB"               # Input dataset prefix
 CELLS_PER_TYPE=100           # Number of cells to keep per cell type
 # ================================
 
