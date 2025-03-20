@@ -21,7 +21,7 @@ sc_data <- readRDS(input_data)
 print("CHECK: Seurat object loaded")
 
 # Filter out "Undetermined" and "Multiplet" cells
-cell_filter <- !sc_data@meta.data$Sample_Tag %in% c("Undetermined", "Multiplet")
+cell_filter <- !sc_data@meta.data$Sample_Tag %in% c("Multiplet")
 filtered_sc <- subset(sc_data, cells = rownames(sc_data@meta.data)[cell_filter])
 
 # Apply A/B filtering based on sample_filter parameter

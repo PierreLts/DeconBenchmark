@@ -19,7 +19,7 @@ library(reshape2)
 sc_data <- readRDS(seurat_file)
 
 # Filter out "Undetermined" and "Multiplet" cells
-valid_cells <- !sc_data@meta.data$Sample_Tag %in% c("Undetermined", "Multiplet")
+valid_cells <- !sc_data@meta.data$Sample_Tag %in% c("Multiplet")
 filtered_sc <- subset(sc_data, cells = rownames(sc_data@meta.data)[valid_cells])
 
 # Get the valid sample names

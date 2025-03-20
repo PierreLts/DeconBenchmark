@@ -3,13 +3,14 @@
 
 # ===== EXPLICIT SETTINGS - MODIFY THESE DIRECTLY =====
 # Output prefix for generated files
-PREFIX="TB"
+PREFIX="TB1"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
 SAMPLE_FILTER="AB"
 # =====
 
 # Default parameters
-DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/merged_batches.rds"
+DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds"
+DEFAULT_PSEUDOBULK_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/merged_batches.rds"
 DEFAULT_BULK_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/cleaned_feature_counts_matrix.csv"
 DEFAULT_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt"
 DEFAULT_OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
@@ -29,6 +30,8 @@ if [ -n "$6" ]; then
     SAMPLE_FILTER="$6"
 fi
 RLIBRARY="${7:-$DEFAULT_RLIBRARY}"
+# New parameter: specific Seurat file for pseudobulk generation
+PSEUDOBULK_SEURAT_FILE="${8:-$DEFAULT_PSEUDOBULK_SEURAT_FILE}"
 
 # Output prefix for filtered data
 FILTERED_PREFIX="${PREFIX}-${SAMPLE_FILTER}"
@@ -52,6 +55,7 @@ MAIN_LOG="$OUTPUT_LOG_DIR/master_data_AB_generation_$(date +%Y%m%d_%H%M%S).log"
 
 echo "==== Starting master data AB generation $(date) ====" | tee -a "$MAIN_LOG"
 echo "Seurat file: $SEURAT_FILE" | tee -a "$MAIN_LOG"
+echo "Pseudobulk Seurat file: $PSEUDOBULK_SEURAT_FILE" | tee -a "$MAIN_LOG"
 echo "Bulk file: $BULK_FILE" | tee -a "$MAIN_LOG" 
 echo "Mapping file: $MAPPING_FILE" | tee -a "$MAIN_LOG"
 echo "Output directory: $SUBDIR_PATH" | tee -a "$MAIN_LOG"
@@ -166,12 +170,12 @@ SAMPLE_FILTER=\"$SAMPLE_FILTER\"
 Rscript $SCRIPT_DIR/singleCellSubjects_AB_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX $SAMPLE_FILTER
 " 8 "16G" "1:00:00")
 
-# use pseudobulk.R
-echo "Submitting pseudobulk generation job..." | tee -a "$MAIN_LOG"
+# Use pseudobulk.R with the specific Seurat file
+echo "Submitting pseudobulk generation job with custom Seurat file..." | tee -a "$MAIN_LOG"
 PSEUDOBULK_JOB_ID=$(submit_job "pseudobulk" "
-# Generate pseudobulk data from Seurat object
-Rscript $SCRIPT_DIR/pseudobulk.R $RLIBRARY $SEURAT_FILE $MAPPING_FILE $OUTPUT_DIR $PREFIX $SAMPLE_FILTER
-" 8 "32G" "1:00:00")
+# Generate pseudobulk data from specified Seurat object
+Rscript $SCRIPT_DIR/pseudobulk.R $RLIBRARY $PSEUDOBULK_SEURAT_FILE $MAPPING_FILE $OUTPUT_DIR $PREFIX $SAMPLE_FILTER
+" 32 "128G" "1:00:00")
 
 echo "Submitting ground truth generation job..." | tee -a "$MAIN_LOG"
 
