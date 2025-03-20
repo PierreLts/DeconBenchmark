@@ -4,7 +4,7 @@
 # Default parameters
 DEFAULT_PREFIX="TB_D40"
 DEFAULT_RLIBRARY="/work/gr-fe/R_4.3.1"
-DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds"
+DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/merged_batches.rds"
 DEFAULT_BULK_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/cleaned_feature_counts_matrix.csv"
 DEFAULT_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt"
 DEFAULT_OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"

@@ -56,10 +56,7 @@ for (batch in batch_prefixes) {
   if (file.exists(labels_file)) {
     load(labels_file)
     
-    # Store full labels for ground truth generation
-    cell_names <- names(singleCellLabels)
-    clean_names <- gsub(paste0("^", batch, "[._]"), "", cell_names)
-    names(singleCellLabels) <- paste0(batch, "_", clean_names)
+    # Store full labels for ground truth generation - keep original cell names
     all_full_labels[[batch]] <- singleCellLabels
     
     # Down-sample the labels by cell type
@@ -90,10 +87,7 @@ for (batch in batch_prefixes) {
   if (file.exists(subjects_file)) {
     load(subjects_file)
     
-    # Store full subjects for ground truth generation
-    cell_names <- names(singleCellSubjects)
-    clean_names <- gsub(paste0("^", batch, "[._]"), "", cell_names)
-    names(singleCellSubjects) <- paste0(batch, "_", clean_names)
+    # Store full subjects for ground truth generation - keep original names
     all_full_subjects[[batch]] <- singleCellSubjects
     
     # Down-sample the subjects to match downsampled labels
@@ -124,11 +118,33 @@ if (length(singleCellSubjects) > 0) {
   cat("Unique subjects:", length(unique(singleCellSubjects)), "\n")
 }
 
-# Save merged labels
+# Clean up cell names by removing any potential batch prefixes that might exist
+clean_cell_names <- function(cell_names) {
+  # This will remove any batchname prefixes like "TB1." or "TB2_" from cell names
+  # It looks for patterns like "PREFIX." or "PREFIX_" at the start of cell names
+  clean_names <- cell_names
+  
+  # Apply cleaning for each batch prefix
+  for (batch in batch_prefixes) {
+    # Check for various separator patterns (., _, -)
+    clean_names <- gsub(paste0("^", batch, "\\."), "", clean_names)
+    clean_names <- gsub(paste0("^", batch, "_"), "", clean_names)
+    clean_names <- gsub(paste0("^", batch, "-"), "", clean_names)
+  }
+  
+  return(clean_names)
+}
+
+# Get clean cell names for labels
+clean_label_names <- clean_cell_names(names(singleCellLabels))
+clean_subjects_names <- clean_cell_names(names(singleCellSubjects))
+
+# Save merged labels with original cell names
 save(singleCellLabels, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_singleCellLabels", filter_suffix, ".rda")))
-# Also save as CSV
+
+# Create data frame with clean cell names for CSV output
 labels_df <- data.frame(
-  CellBarcode = names(singleCellLabels),
+  CellBarcode = clean_label_names,
   CellType = singleCellLabels,
   stringsAsFactors = FALSE
 )
@@ -138,9 +154,10 @@ write.csv(labels_df, file = file.path(output_dir, paste0(output_prefix_with_suff
 # Save merged subjects if available
 if (length(singleCellSubjects) > 0) {
   save(singleCellSubjects, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_singleCellSubjects", filter_suffix, ".rda")))
-  # Also save as CSV
+  
+  # Create data frame with clean cell names for CSV output
   subjects_df <- data.frame(
-    CellBarcode = names(singleCellSubjects),
+    CellBarcode = clean_subjects_names,
     Subject = singleCellSubjects,
     stringsAsFactors = FALSE
   )
@@ -231,18 +248,13 @@ for (batch in batch_prefixes) {
     load(expr_file)
     
     # Find cells that exist in both the expression data and our downsampled cells
-    # Note: we need to handle the batch prefix in cell names
-    clean_cell_names <- gsub(paste0("^", batch, "_"), "", batch_cells)
-    common_cells <- intersect(clean_cell_names, colnames(singleCellExpr))
+    common_cells <- intersect(batch_cells, colnames(singleCellExpr))
     
     if (length(common_cells) > 0) {
       # Subset expression data to include only downsampled cells
       batch_expr <- singleCellExpr[, common_cells, drop=FALSE]
       
-      # Add batch prefix to column names to avoid conflicts
-      colnames(batch_expr) <- paste0(batch, "_", colnames(batch_expr))
-      
-      # Store expression data
+      # Store expression data with original column names
       all_expr_data[[batch]] <- batch_expr
       
       # Update common genes
@@ -271,7 +283,7 @@ if (length(all_expr_data) > 0 && length(common_genes) > 0) {
   }
   
   # Merge expression data from all batches
-  # We need to create a combined matrix with all cells
+  # Using do.call cbind without modifying column names
   singleCellExpr <- do.call(cbind, all_expr_data)
   
   cat("Created merged expression matrix with dimensions:", nrow(singleCellExpr), "x", ncol(singleCellExpr), "\n")
@@ -289,58 +301,6 @@ if (length(all_expr_data) > 0 && length(common_genes) > 0) {
 } else {
   cat("WARNING: Could not create merged expression data - insufficient data\n")
 }
-
-# # === STEP 5: COPY BULK FILES FROM BATCH 1 ===
-# cat("\n=== Copying Bulk Files from Batch 1 ===\n")
-
-# # Source batch for bulk files
-# source_batch <- batch_prefixes[1]
-
-# # Copy bulk RDA file
-# bulk_file <- file.path(base_dir, source_batch, paste0(source_batch, "_bulk.rda"))
-# if (file.exists(bulk_file)) {
-#   file.copy(bulk_file, file.path(output_dir, paste0(output_prefix_with_suffix, "_bulk.rda")), overwrite = TRUE)
-#   cat("Copied bulk RDA file from", source_batch, "\n")
-# } else {
-#   cat("WARNING: Bulk RDA file not found in", source_batch, "\n")
-# }
-
-# # Copy bulk CSV file
-# bulk_csv_file <- file.path(base_dir, source_batch, paste0(source_batch, "_bulk.csv"))
-# if (file.exists(bulk_csv_file)) {
-#   file.copy(bulk_csv_file, file.path(output_dir, paste0(output_prefix_with_suffix, "_bulk.csv")), overwrite = TRUE)
-#   cat("Copied bulk CSV file from", source_batch, "\n")
-# } else {
-#   cat("WARNING: Bulk CSV file not found in", source_batch, "\n")
-# }
-
-# # Copy bulk_random RDA file
-# bulk_random_file <- file.path(base_dir, source_batch, paste0(source_batch, "_bulk_random.rda"))
-# if (file.exists(bulk_random_file)) {
-#   file.copy(bulk_random_file, file.path(output_dir, paste0(output_prefix_with_suffix, "_bulk_random.rda")), overwrite = TRUE)
-#   cat("Copied randomized bulk RDA file from", source_batch, "\n")
-# }
-
-# # Copy bulk_random CSV file
-# bulk_random_csv_file <- file.path(base_dir, source_batch, paste0(source_batch, "_bulk_random.csv"))
-# if (file.exists(bulk_random_csv_file)) {
-#   file.copy(bulk_random_csv_file, file.path(output_dir, paste0(output_prefix_with_suffix, "_bulk_random.csv")), overwrite = TRUE)
-#   cat("Copied randomized bulk CSV file from", source_batch, "\n")
-# }
-
-# # Copy pseudobulk RDA file
-# pseudobulk_file <- file.path(base_dir, source_batch, paste0(source_batch, "_pseudobulk.rda"))
-# if (file.exists(pseudobulk_file)) {
-#   file.copy(pseudobulk_file, file.path(output_dir, paste0(output_prefix_with_suffix, "_pseudobulk.rda")), overwrite = TRUE)
-#   cat("Copied pseudobulk RDA file from", source_batch, "\n")
-# }
-
-# # Copy pseudobulk CSV file
-# pseudobulk_csv_file <- file.path(base_dir, source_batch, paste0(source_batch, "_pseudobulk.csv"))
-# if (file.exists(pseudobulk_csv_file)) {
-#   file.copy(pseudobulk_csv_file, file.path(output_dir, paste0(output_prefix_with_suffix, "_pseudobulk.csv")), overwrite = TRUE)
-#   cat("Copied pseudobulk CSV file from", source_batch, "\n")
-# }
 
 cat("\n=== Processing completed successfully ===\n")
 cat("All merged and downsampled files saved to:", output_dir, "\n")
