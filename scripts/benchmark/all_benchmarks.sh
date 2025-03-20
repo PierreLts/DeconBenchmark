@@ -33,11 +33,20 @@ echo "Submitting benchmarking metrics calculation job..." | tee -a "${LOG_FILE}"
 METRICS_JOB_ID=$(sbatch "${SCRIPT_DIR}/detailed_metrics.sh" "${DATASET_PREFIX}" "${INCLUDE_OVERALL_GT}" "${SAMPLE_FILTER}" "${GLOBAL_LOG_DIR}" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
 echo "Metrics job ID: ${METRICS_JOB_ID}" | tee -a "${LOG_FILE}"
 
-# benchmarking
+# 3. Run benchmarking AB analysis (combined AB samples)
 echo "Submitting benchmark summary generation job..." | tee -a "${LOG_FILE}"
 SUMMARY_JOB_ID=$(sbatch --dependency=afterok:${METRICS_JOB_ID} "${SCRIPT_DIR}/benchmarking_AB.sh" "/work/gr-fe/R_4.3.1" "${DATASET_PREFIX}" "${SAMPLE_FILTER}" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
 echo "Summary job ID: ${SUMMARY_JOB_ID}" | tee -a "${LOG_FILE}"
 echo "summary:${SUMMARY_JOB_ID}" >> "${GLOBAL_LOG_DIR}/stats_job_mapping.txt"
+
+# 4. NEW: Run benchmark_select.sh for specific sample subsets (A, B, and AB)
+# These jobs depend on the metrics calculation being completed
+for SELECTION in "A" "B" "AB"; do
+    echo "Submitting benchmark selection analysis for ${SELECTION} samples..." | tee -a "${LOG_FILE}"
+    SELECT_JOB_ID=$(sbatch --dependency=afterok:${METRICS_JOB_ID} "${SCRIPT_DIR}/benchmark_select.sh" "/work/gr-fe/R_4.3.1" "${DATASET_PREFIX}" "${SAMPLE_FILTER}" "${SELECTION}" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
+    echo "Selection (${SELECTION}) job ID: ${SELECT_JOB_ID}" | tee -a "${LOG_FILE}"
+    echo "select_${SELECTION}:${SELECT_JOB_ID}" >> "${GLOBAL_LOG_DIR}/stats_job_mapping.txt"
+done
 
 # Save job IDs to global stats mapping file
 echo "# Stats job mapping for ${DATASET_PREFIX}_${SAMPLE_FILTER} - $(date)" > "${GLOBAL_LOG_DIR}/stats_job_mapping.txt"
