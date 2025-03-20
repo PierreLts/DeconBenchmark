@@ -25,7 +25,7 @@ echo "Job mappings will be saved to: ${GLOBAL_LOG_DIR}" | tee -a "${LOG_FILE}"
 
 # 1. Run per-sample plots for all methods
 echo "Submitting paired plot generation jobs..." | tee -a "${LOG_FILE}"
-PLOT_JOB_ID=$(sbatch "${SCRIPT_DIR}/per_sample_multi_plot.sh" "${DATASET_PREFIX}" "${INCLUDE_OVERALL_GT}" "${SAMPLE_FILTER}" "${GLOBAL_LOG_DIR}" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
+PLOT_JOB_ID=$(sbatch "${SCRIPT_DIR}/all_per_sample_plot.sh" "${DATASET_PREFIX}" "${INCLUDE_OVERALL_GT}" "${SAMPLE_FILTER}" "${GLOBAL_LOG_DIR}" | grep -oP 'Submitted batch job \K[0-9]+' || echo "")
 echo "Paired plot job ID: ${PLOT_JOB_ID}" | tee -a "${LOG_FILE}"
 
 # 2. Run benchmarking metrics calculation

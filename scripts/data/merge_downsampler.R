@@ -180,13 +180,13 @@ P <- matrix(proportions, nrow = 1, dimnames = list("true_proportions", names(cel
 groundTruth <- list(P = P)
 
 # Save ground truth
-save(groundTruth, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions", filter_suffix, ".rda")))
+save(groundTruth, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions.rda")))
 # Save as CSV
 gt_df <- as.data.frame(t(groundTruth$P))
 gt_df$CellType <- rownames(gt_df)
 colnames(gt_df) <- c("Proportion", "CellType")
 gt_df <- gt_df[, c("CellType", "Proportion")]
-write.csv(gt_df, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions", filter_suffix, ".csv")), 
+write.csv(gt_df, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions.csv")), 
           row.names = FALSE)
 
 # === STEP 3: CALCULATE PER-SAMPLE GROUND TRUTH ===
@@ -212,14 +212,14 @@ if (length(full_singleCellSubjects) > 0) {
   
   # Save per-sample ground truth
   groundTruth <- list(P = sample_proportions)
-  save(groundTruth, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions_per_sample", filter_suffix, ".rda")))
+  save(groundTruth, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions_per_sample.rda")))
   
   # Save as CSV
   per_sample_df <- as.data.frame(groundTruth$P)
   per_sample_df$Sample <- rownames(per_sample_df)
   per_sample_long <- melt(per_sample_df, id.vars = "Sample", 
                                    variable.name = "CellType", value.name = "Proportion")
-  write.csv(per_sample_long, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions_per_sample", filter_suffix, ".csv")), 
+  write.csv(per_sample_long, file = file.path(output_dir, paste0(output_prefix_with_suffix, "_GT_proportions_per_sample.csv")), 
             row.names = FALSE)
   
   cat("Created per-sample ground truth for", nrow(sample_proportions), "samples\n")
