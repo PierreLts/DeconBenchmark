@@ -13,7 +13,7 @@ set -x  # Print commands as they're executed
 
 # ===== PARAMETERS TO ADJUST =====
 OUTPUT_PREFIX="TB"
-CELLS_PER_TYPE=10
+CELLS_PER_TYPE=1
 FILTER_TYPE="AB"  # Default filter type (AB, A, or B)
 BATCH1="TB1"
 BATCH2="TB2"
