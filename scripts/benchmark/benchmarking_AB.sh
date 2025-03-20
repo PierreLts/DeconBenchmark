@@ -17,7 +17,7 @@ BENCHMARK_DIR="${4:-/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/${DAT
 OUTPUT_DIR="${BENCHMARK_DIR}"  # Use the benchmarks subdirectory directly
 
 # Path to R script
-SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/benchmarking.R"
+SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/benchmarking_AB.R"
 
 # Path to detailed metrics CSV - update with filter in filename
 METRICS_CSV="${BENCHMARK_DIR}/${DATASET_PREFIX}_detailed_metrics_${SAMPLE_FILTER}.csv"
