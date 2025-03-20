@@ -19,16 +19,20 @@ library(tidyr)
 library(Metrics)  # For common error metrics
 print("Check Libraries")
 
+# Extract base prefix (remove suffixes like -bulk, -pseudobulk)
+parts <- strsplit(dataset_prefix, "-")[[1]]
+base_prefix <- if(length(parts) > 1) parts[1] else dataset_prefix
+
 # Setup paths
 results_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/deconv_results", dataset_prefix)
-data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
+data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", base_prefix)
 output_dir <- file.path(output_base_dir, dataset_prefix, "benchmarks")
 
 # Create output directory
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Load per-sample ground truth without filter suffix
-per_sample_gt_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample.rda"))
+per_sample_gt_path <- file.path(data_dir, paste0(base_prefix, "_GT_proportions_per_sample.rda"))
 if (!file.exists(per_sample_gt_path)) {
   stop(paste("Per-sample ground truth file not found:", per_sample_gt_path))
 }

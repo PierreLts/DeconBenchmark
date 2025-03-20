@@ -18,8 +18,12 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 
+# Extract base prefix (remove suffixes like -bulk, -pseudobulk)
+parts <- strsplit(dataset_prefix, "-")[[1]]
+base_prefix <- if(length(parts) > 1) parts[1] else dataset_prefix
+
 # Setup paths based on dataset prefix
-data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", dataset_prefix)
+data_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/generated_data", base_prefix)
 results_dir <- file.path("/work/gr-fe/lorthiois/DeconBenchmark/deconv_results", dataset_prefix)
 output_dir <- file.path(output_base_dir, dataset_prefix)
 
@@ -27,8 +31,8 @@ output_dir <- file.path(output_base_dir, dataset_prefix)
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Load ground truth files - Use consistent GT file naming without filter suffix
-overall_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions.rda"))
-per_sample_ground_truth_path <- file.path(data_dir, paste0(dataset_prefix, "_GT_proportions_per_sample.rda"))
+overall_ground_truth_path <- file.path(data_dir, paste0(base_prefix, "_GT_proportions.rda"))
+per_sample_ground_truth_path <- file.path(data_dir, paste0(base_prefix, "_GT_proportions_per_sample.rda"))
 
 # Check if ground truth files exist
 if (!file.exists(overall_ground_truth_path)) {
