@@ -40,8 +40,7 @@ mkdir -p $SINGULARITY_TMPDIR
 export SINGULARITYENV_APPEND_PATH=/scratch/lorthiois/temp
 
 #(ORDER IS IMPORTANT)
-Rscript ${SCRIPT} ${RLIBRARY} ${dataset_prefix} ${sample_filter} ${output_base_dir} ${deconv_method} ${sparse_conversion} ${bulk_type}
-
+Rscript ${SCRIPT} ${RLIBRARY} ${dataset_prefix} ${sample_filter} ${output_base_dir}/${dataset_prefix}-${bulk_type} ${deconv_method} ${sparse_conversion} ${bulk_type}
 # print end date and echo total runtime
 end=`date +%s`
 runtime=$((end-start))

@@ -21,7 +21,8 @@ library(Matrix)
 print("CHECK: Libraries loaded")
 
 # Create dataset-specific output directory
-output_dir <- file.path(output_base_dir, dataset_prefix)
+output_dir_name <- paste0(dataset_prefix, "-", bulk_type)
+output_dir <- file.path(output_base_dir, output_dir_name)
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 print(paste("Results will be saved to:", output_dir))
 
