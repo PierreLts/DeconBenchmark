@@ -1,8 +1,5 @@
 #!/usr/bin/Rscript
 
-# This script generates radar plots from benchmark files
-# It extracts metrics from benchmark CSV files and plots them in a radar chart
-
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 3) {
   stop("Usage: Rscript radar_compare.R <R_library_path> <output_file> <file1> <file2> ...")
@@ -28,10 +25,11 @@ install_if_missing <- function(pkg) {
 }
 
 # Install and load required packages
-install_if_missing("fmsb")
+install_if_missing("ggplot2")
 install_if_missing("readr")
 install_if_missing("dplyr")
-install_if_missing("stringr")
+install_if_missing("tidyr")
+install_if_missing("scales")
 
 # Function to extract dataset name and selection from file path
 extract_name_and_selection <- function(file_path) {
@@ -101,16 +99,12 @@ for (file_path in benchmark_files) {
     
     cat("  Extracted metrics - Pearson:", pearson_val, "JSD:", jsd_val, "NRMSE:", nrmse_val, "R2:", r2_val, "\n")
     
-    # Transform values to ensure best values are at the outer edge of radar plot
-    # For JSD and NRMSE, lower is better, so we invert them
-    metrics <- c(
-      "PearsonCorr" = pearson_val,  # Range: -1 to 1, 1 is best (outer)
-      "JSD" = 1 - jsd_val,          # Range: 0 to 1, 0 is best (outer) -> transform to 1 to 0
-      "NRMSE" = -nrmse_val,         # Range: 0 to some+, 0 is best (outer) -> transform to negative
-      "R2" = r2_val                 # Range: -5 to 1, 1 is best (outer)
+    # Put them in a data frame and add to our list
+    data_list[[label]] <- data.frame(
+      metric = c("PearsonCorr", "JSD", "NRMSE", "R2"),
+      value = c(pearson_val, jsd_val, nrmse_val, r2_val),
+      method = label
     )
-    
-    data_list[[label]] <- metrics
     
   }, error = function(e) {
     warning("Error processing file ", file_path, ": ", e$message)
@@ -121,61 +115,84 @@ if (length(data_list) == 0) {
   stop("No valid data found in any of the provided files")
 }
 
-# Create data frame for radar plot
-radar_data <- as.data.frame(do.call(rbind, data_list))
-rownames(radar_data) <- labels
+# Combine all data frames into one
+all_data <- do.call(rbind, data_list)
 
-# Define max and min values for each metric - fixed scales
-max_values <- c(
-  "PearsonCorr" = 1,     # Perfect positive correlation
-  "JSD" = 1,             # Transformed, so 1 means JSD=0 (perfect match)
-  "NRMSE" = 0,           # Transformed, so 0 means NRMSE=0 (perfect match)
-  "R2" = 1               # Perfect R2 score
+# Transform values for consistent scale direction
+# For JSD and NRMSE, lower is better, so we invert them
+all_data$display_value <- all_data$value
+all_data$display_value[all_data$metric == "JSD"] <- 1 - all_data$value[all_data$metric == "JSD"]
+all_data$display_value[all_data$metric == "NRMSE"] <- -all_data$value[all_data$metric == "NRMSE"]
+
+# Set factor level order for metrics to control display order
+all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "JSD", "R2", "NRMSE"))
+
+# Set up colors - use distinctive colors that match Image 2
+colors <- c(
+  "#1E90FF",  # Dodger Blue - for select-A
+  "#32CD32",  # Lime Green - for select-AB
+  "#FF69B4"   # Hot Pink - for select-B
 )
+names(colors) <- unique(all_data$method)
 
-min_values <- c(
-  "PearsonCorr" = -1,    # Perfect negative correlation
-  "JSD" = 0,             # Transformed, so 0 means JSD=1 (worst)
-  "NRMSE" = -5,          # Transformed, so -5 means NRMSE=5 (bad)
-  "R2" = -5              # Very bad R2 score
-)
+# Create a function to properly close the polygon by adding the first point at the end
+close_path <- function(df) {
+  metrics <- unique(df$metric)
+  methods <- unique(df$method)
+  result <- df
+  
+  for (m in methods) {
+    # Get the first point for this method
+    first_point <- df[df$method == m & df$metric == metrics[1], ]
+    # Add it to the end
+    result <- rbind(result, first_point)
+  }
+  return(result)
+}
 
-# Add max and min rows required by fmsb
-radar_data <- rbind(max_values, min_values, radar_data)
+# Close the paths for proper polygon formation
+all_data_closed <- close_path(all_data)
 
-# Set up colors
-colors_palette <- c("#1E90FF", "#FF69B4", "#32CD32", "#FFA500", "#9370DB", "#FF6347")
-colors <- colors_palette[1:length(labels)]
+# Define the breaks for the radial grid lines
+breaks <- c(-1, -0.5, 0, 0.5, 1)
 
-# Create the radar chart
-pdf(output_file, width = 10, height = 10)
-par(mar = c(2, 2, 2, 2))
+# Create a circular radar chart using ggplot2
+p <- ggplot(all_data_closed, aes(x = metric, y = display_value, color = method, group = method)) +
+  # Add lines connecting points (no fill)
+  geom_path(linewidth = 1.2) +
+  # Add points
+  geom_point(size = 3) +
+  # Use the same colors for lines
+  scale_color_manual(values = colors) +
+  # Make it circular
+  coord_polar() +
+  # Add title
+  labs(title = "Performance Metrics Comparison") +
+  # Set y-axis breaks for the grid circles
+  scale_y_continuous(
+    breaks = breaks,
+    labels = breaks,
+    limits = c(-1, 1),
+    expand = expansion(mult = c(0.1, 0.2))  # Expand the plot margins
+  ) +
+  # Remove default axis labels
+  theme_minimal() +
+  theme(
+    # Center title
+    plot.title = element_text(hjust = 0.5, size = 16),
+    # Format axis text (metric labels)
+    axis.text.x = element_text(size = 12, margin = margin(t = 15, unit = "pt")),
+    axis.text.y = element_text(size = 9),
+    axis.title = element_blank(),
+    # Format legend
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 12, color = colors[match(levels(factor(all_data$method)), names(colors))]),
+    # Format grid
+    panel.grid.major = element_line(color = "grey85"),
+    panel.grid.minor = element_line(color = "grey95")
+  )
 
-radarchart(
-  radar_data,
-  pcol = colors,
-  pfcol = adjustcolor(colors, alpha.f = 0.3),
-  plwd = 2,
-  cglcol = "black",
-  cglty = 1,
-  axislabcol = "black",
-  caxislabels = c("-5", "-4", "-1", "0.2", "1"),  # Fixed scale labels
-  axistype = 1,
-  calcex = 1.2,
-  vlcex = 1.2,
-  title = "Performance Metrics Comparison"
-)
-
-# Add a legend
-legend(
-  "bottomright",
-  legend = labels,
-  col = colors,
-  lty = 1,
-  lwd = 2,
-  pch = 20,
-  bty = "n"
-)
-
-dev.off()
+# Save plot
+ggsave(output_file, p, width = 8, height = 8, units = "in")
 cat("Radar plot saved to:", output_file, "\n")
