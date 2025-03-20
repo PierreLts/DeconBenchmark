@@ -206,12 +206,42 @@ result_cols <- c(result_cols,
 result_df <- data.frame(matrix(ncol = length(result_cols), nrow = 0))
 colnames(result_df) <- result_cols
 
-# Add header row
-header_row <- data.frame(matrix(ncol = length(result_cols), nrow = 1))
-colnames(header_row) <- result_cols
+# Calculate overall metrics (mean values across all samples)
+overall_metrics <- filtered_data %>%
+  summarize(
+    PearsonCorr_mean = mean(PearsonCorr, na.rm = TRUE),
+    PearsonCorr_sd = sd(PearsonCorr, na.rm = TRUE),
+    NRMSE_mean = mean(NRMSE, na.rm = TRUE),
+    NRMSE_sd = sd(NRMSE, na.rm = TRUE),
+    R2_mean = mean(R2, na.rm = TRUE),
+    R2_sd = sd(R2, na.rm = TRUE),
+    JSD_mean = mean(JSD, na.rm = TRUE),
+    JSD_sd = sd(JSD, na.rm = TRUE)
+  )
 
-# Fill header row with selection label
-header_row[1, ] <- paste0(selection, " samples")
+# Create summary row
+summary_row <- data.frame(matrix(NA, nrow = 1, ncol = length(result_cols)))
+colnames(summary_row) <- result_cols
+
+# Fill in overall metrics for each measure type
+for (metric in metrics) {
+  value_col <- paste0(prefix, metric)
+  sd_col_name <- paste0(prefix, "SD_", metric)
+  
+  # For "Models" columns, display text indicating this is overall value
+  model_col <- paste0(prefix, "Models_", metric)
+  summary_row[1, model_col] <- paste0("Overall (", selection, ")")
+  
+  # Add overall means and standard deviations
+  summary_row[1, value_col] <- overall_metrics[[paste0(metric, "_mean")]]
+  summary_row[1, sd_col_name] <- overall_metrics[[paste0(metric, "_sd")]]
+}
+
+# Add runtime info columns
+runtime_model_col <- paste0(prefix, "Models_Runtime")
+runtime_col <- paste0(prefix, "Runtime")
+summary_row[1, runtime_model_col] <- paste0("Overall (", selection, ")")
+summary_row[1, runtime_col] <- "N/A"
 
 # Process metrics
 max_models <- nrow(summary_stats)
@@ -271,8 +301,8 @@ if (nrow(group_runtime_data) > 0) {
   }
 }
 
-# Combine header and data
-final_result <- rbind(header_row, result_data)
+# Combine summary and data
+final_result <- rbind(summary_row, result_data)
 
 # Clean up column names for output
 clean_colnames <- gsub(paste0("^", prefix, "Models_"), "Models ", colnames(final_result))
