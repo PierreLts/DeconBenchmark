@@ -437,5 +437,5 @@ if (num_methods > 5) {
 p <- p + theme_settings
 
 # Save plot with dynamic dimensions
-ggsave(output_file, p, width = plot_size, height = plot_size, units = "in")
+ggsave(output_file, p, width = 1.5*plot_size, height = plot_size, units = "in")
 cat("Radar plot saved to:", output_file, "\n")

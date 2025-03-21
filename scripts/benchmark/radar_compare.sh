@@ -9,22 +9,15 @@
 #SBATCH --job-name=radar_plot
 
 # This script generates radar plots from benchmark files
-# It will find benchmark files based on dataset names or use direct file paths
 
 #############################################################
-# CONFIGURATION - MODIFY THESE LINES TO CHANGE WHICH FILES TO PLOT
+# CONFIGURATION - MODIFY THESE LINES AS NEEDED
 #############################################################
 # List the benchmark files you want to include in the radar plot
-# You can use:
-#   - Full file paths: "/path/to/benchmark_file.csv"
-#   - Dataset/file names: The script will look in $BENCHMARK_DIR/$DATASET/benchmarks/
-#   - Dataset:selection: To find files ending with "_select-X.csv"
 DATASETS_TO_PLOT=(
-    # Examples - replace with your actual files:
     "TB_D100-bulk_benchmark_AB_select-AB.csv"  
     "TB_D100-pseudobulk_benchmark_AB_select-AB.csv"
     "TB_D100-bulk_random_benchmark_AB_select-AB.csv"
-    # Add more files here
 )
 #############################################################
 
@@ -52,15 +45,12 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     -h|--help)
-      echo "Usage: $(basename $0) [options] <file1> <file2> ..."
+      echo "Usage: $(basename $0) [options] [filename1] [filename2] ..."
       echo "Options:"
       echo "  -o, --output FILE      Output file name (default: radar_comparison.pdf)"
       echo "  -l, --library PATH     R library path (default: /work/gr-fe/R_4.3.1)"
       echo "  -d, --directory PATH   Benchmark directory (default: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results)"
       echo "  -h, --help             Show this help message"
-      echo ""
-      echo "You can provide full file paths or just dataset names."
-      echo "If you provide dataset names, the script will look for files in benchmark directories."
       exit 0
       ;;
     *)
@@ -74,7 +64,7 @@ benchmark_files=()
 
 # Check if any benchmark files are provided via command line
 if [ $# -eq 0 ]; then
-  echo "No command-line arguments provided. Using predefined dataset list from script."
+  echo "No command-line arguments provided. Using predefined dataset list."
   # Use the predefined DATASETS_TO_PLOT array
   set -- "${DATASETS_TO_PLOT[@]}"
 else
@@ -83,93 +73,76 @@ fi
 
 # Make sure we have files to process
 if [ $# -eq 0 ]; then
-  echo "Error: No benchmark files provided in command line or in the script configuration"
-  echo "Either provide files as arguments or modify the DATASETS_TO_PLOT array in the script"
-  echo "Run $(basename $0) --help for usage information"
+  echo "Error: No benchmark files provided"
   exit 1
 fi
 
+# Process each input file
 for input_file in "$@"; do
-  # Check if this is a direct file path
+  echo "Processing: $input_file"
+  
+  # Case 1: It's a full path that exists directly
   if [[ -f "$input_file" ]]; then
-    # It's a direct file path
     benchmark_files+=("$input_file")
-    echo "Using file: $input_file"
+    echo "  Using direct file path: $input_file"
     continue
   fi
   
-  # Check for dataset:selection format
-  if [[ "$input_file" == *":"* ]]; then
-    dataset_name="${input_file%%:*}"
-    selection="${input_file##*:}"
+  # Case 2: Just search through all subdirectories in the benchmark dir
+  found=false
+  
+  # Use find to locate the file regardless of directory structure
+  while IFS= read -r found_file; do
+    benchmark_files+=("$found_file")
+    echo "  Found file: $found_file"
+    found=true
+  done < <(find "$BENCHMARK_DIR" -type f -name "$input_file" 2>/dev/null)
+  
+  # If the file wasn't found, try to get more specific
+  if [ "$found" = false ]; then
+    echo "  File not found directly. Attempting to extract dataset name..."
     
-    # Look in the benchmark directory for any file ending with _select-X.csv
-    benchmark_dir="${BENCHMARK_DIR}/${dataset_name}/benchmarks"
+    # Extract approximate dataset prefix (TB_DXXX-something)
+    dataset_prefix=$(echo "$input_file" | grep -oE '^[^_]+_[^_]+-[^_]+')
     
-    if [ ! -d "$benchmark_dir" ]; then
-      echo "Warning: Benchmark directory not found: $benchmark_dir"
-      continue
+    if [ -n "$dataset_prefix" ]; then
+      echo "  Looking in directories for dataset: $dataset_prefix"
+      
+      # Search more specifically in benchmark directories
+      potential_dirs=(
+        "$BENCHMARK_DIR/$dataset_prefix/benchmarks"
+        "$BENCHMARK_DIR/$dataset_prefix"
+      )
+      
+      for dir in "${potential_dirs[@]}"; do
+        if [ -d "$dir" ]; then
+          echo "  Checking directory: $dir"
+          
+          # Look for exact name match
+          if [ -f "$dir/$input_file" ]; then
+            benchmark_files+=("$dir/$input_file")
+            echo "  Found exact match: $dir/$input_file"
+            found=true
+            break
+          fi
+          
+          # Look for partial matches if exact match not found
+          for f in "$dir"/*; do
+            if [[ -f "$f" && "$f" == *"$input_file"* ]]; then
+              benchmark_files+=("$f")
+              echo "  Found partial match: $f"
+              found=true
+              break 2
+            fi
+          done
+        fi
+      done
     fi
-    
-    # Find files matching pattern
-    matching_files=( "${benchmark_dir}"/*"_select-${selection}.csv" )
-    
-    if [ ${#matching_files[@]} -gt 0 ] && [ -f "${matching_files[0]}" ]; then
-      benchmark_files+=("${matching_files[0]}")
-      echo "Found: ${matching_files[0]}"
-    else
-      echo "Warning: No files found matching *_select-${selection}.csv in $benchmark_dir"
-    fi
-    continue
   fi
   
-  # If it ends with .csv, look in the benchmark directory
-  if [[ "$input_file" == *.csv ]]; then
-    # Extract dataset from filename (assuming TB_X-Y format)
-    dataset_base=$(echo "$input_file" | grep -oP '^[^_]+(_[^_]+)?')
-    
-    if [ -z "$dataset_base" ]; then
-      echo "Warning: Could not extract dataset name from $input_file"
-      continue
-    fi
-    
-    # Check in both the benchmark directory and benchmarks subdirectory
-    potential_paths=(
-      "${BENCHMARK_DIR}/${dataset_base}/benchmarks/${input_file}"
-      "${BENCHMARK_DIR}/${dataset_base}/${input_file}"
-    )
-    
-    file_found=false
-    for potential_path in "${potential_paths[@]}"; do
-      if [ -f "$potential_path" ]; then
-        benchmark_files+=("$potential_path")
-        echo "Found: $potential_path"
-        file_found=true
-        break
-      fi
-    done
-    
-    if [ "$file_found" = false ]; then
-      echo "Warning: Could not find $input_file in benchmark directories"
-    fi
-    continue
-  fi
-  
-  # Otherwise, treat as simple dataset name and look for any benchmark file
-  dataset_dir="${BENCHMARK_DIR}/${input_file}/benchmarks"
-  if [ -d "$dataset_dir" ]; then
-    # Find any benchmark CSV file
-    benchmark_csv_files=( "${dataset_dir}"/*benchmark*.csv )
-    
-    if [ ${#benchmark_csv_files[@]} -gt 0 ] && [ -f "${benchmark_csv_files[0]}" ]; then
-      benchmark_files+=("${benchmark_csv_files[0]}")
-      echo "Found: ${benchmark_csv_files[0]} (first matching file)"
-      echo "Note: Multiple files found, using the first one. To specify a particular file, use the full name."
-    else
-      echo "Warning: No benchmark files found for dataset $input_file"
-    fi
-  else
-    echo "Warning: Dataset directory not found: $dataset_dir"
+  # If still not found, report it
+  if [ "$found" = false ]; then
+    echo "  WARNING: Could not find file matching '$input_file' in benchmark directories"
   fi
 done
 
@@ -181,27 +154,16 @@ fi
 # Processing summary
 echo "Processing ${#benchmark_files[@]} files for radar plot:"
 for file in "${benchmark_files[@]}"; do
-  echo "  - $(basename "$file")"
+  echo "  - $file"
 done
-
-# Optional warning for many files
-if [ ${#benchmark_files[@]} -gt 10 ]; then
-  echo "Warning: Processing more than 10 files may make the radar plot difficult to read"
-fi
 
 # Load R module
 module use /work/scitas-share/spack-r-gr-fe/share/spack/lmod/linux-rhel8-x86_64/Core/
 module load r
 
-echo "Generating radar plot from ${#benchmark_files[@]} benchmark files..."
-# Run R script with the same base name as this script
-script_dir=$(dirname "$0")
-r_script="${script_dir}/radar_compare.R"
-
-# If R script doesn't exist at the same location, use a standard path
-if [ ! -f "$r_script" ]; then
-  r_script="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/radar_compare.R"
-fi
+echo "Generating radar plot..."
+# Run the R script
+r_script="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/radar_compare.R"
 
 # Check if R script exists
 if [ ! -f "$r_script" ]; then
