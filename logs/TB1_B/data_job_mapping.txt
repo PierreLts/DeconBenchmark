@@ -1,17 +1,17 @@
-# Job mapping file for TB1_B data generation - Created ven 14 mar 2025 17:42:08 CET
-bulk_gen:Submitted bulk_gen job: 32980622
-32980622
-bulk_random_gen:Submitted bulk_random_gen job: 32980623
-32980623
-singleCellLabels_gen:Submitted singleCellLabels_gen job: 32980624
-32980624
-singleCellExpr_gen:Submitted singleCellExpr_gen job: 32980625
-32980625
-singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 32980626
-32980626
-pseudobulk:Submitted pseudobulk job: 32980627
-32980627
-GT_gen:Submitted GT_gen job: 32980628
-32980628
-GT_per_sample_gen:Submitted GT_per_sample_gen job: 32980629
-32980629
+# Job mapping file for TB1_B data generation - Created ven 21 mar 2025 12:38:24 CET
+bulk_gen:Submitted bulk_gen job: 33167261
+33167261
+bulk_random_gen:Submitted bulk_random_gen job: 33167262
+33167262
+singleCellLabels_gen:Submitted singleCellLabels_gen job: 33167263
+33167263
+singleCellExpr_gen:Submitted singleCellExpr_gen job: 33167264
+33167264
+singleCellSubjects_gen:Submitted singleCellSubjects_gen job: 33167265
+33167265
+pseudobulk:Submitted pseudobulk job: 33167266
+33167266
+GT_gen:Submitted GT_gen job: 33167267
+33167267
+GT_per_sample_gen:Submitted GT_per_sample_gen job: 33167268
+33167268

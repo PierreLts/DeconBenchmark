@@ -3,12 +3,12 @@
 
 # Default parameters
 DEFAULT_DATASET_PREFIX="TB_D100"
-DEFAULT_SAMPLE_FILTER="AB"
+DEFAULT_SAMPLE_FILTER="A"
 DEFAULT_BULK_TYPE="bulk"  # bulk, bulk_random, pseudobulk
-DEFAULT_METHODS="ARIC,AutoGeneS,BayesPrism,BisqueRef,DeconPeaker,DeconRNASeq,DESeq2,DSA,EMeth,EPIC,FARDEEP,LinDeconSeq,MIXTURE,MuSic,MySort,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,TOAST"
+DEFAULT_METHODS="ARIC,AutoGeneS,BayesPrism,BisqueRef,DeconPeaker,DeconRNASeq,DESeq2,EMeth,EPIC,FARDEEP,LinDeconSeq,MIXTURE,MuSic,MySort,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,TOAST"
 
 # Working ref, but long: "deconvSeq,DWLS,CPM,BayICE"
-# Working ref free: "BayCount,CDSeq,deconf,DeconICA,Linseed,MCPcounter"
+# Working ref free: "BayCount,CDSeq,deconf,DeconICA,DSA,Linseed,MCPcounter"
 # Entire list: "AdRoit,ARIC,AutoGeneS,BayCount,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CDSeq,CellDistinguisher,CIBERSORT,CIBERSORTx,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
 
 # Parse command line arguments

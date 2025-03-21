@@ -218,8 +218,17 @@ grid_data <- expand.grid(
 grid_data$x <- grid_data$radius * cos(grid_data$angle)
 grid_data$y <- grid_data$radius * sin(grid_data$angle)
 
-# Axis label position (moved further outside the chart with specific adjustments for labels)
-axis_data <- data.frame(
+# Create axis line data (for the straight lines)
+axis_line_data <- data.frame(
+  angle = angles,
+  radius = 1.0,  # Extend to edge of radar plot
+  x = 1.0 * cos(angles),
+  y = 1.0 * sin(angles),
+  metric = metrics
+)
+
+# Create separate data for labels that can be adjusted independently
+label_data <- data.frame(
   angle = angles,
   radius = 1.25,  # Base distance from chart edge
   x = 1.25 * cos(angles),
@@ -227,16 +236,14 @@ axis_data <- data.frame(
   metric = metrics
 )
 
-# Specifically adjust JSD and PearsonCorr label positions
-for (i in 1:nrow(axis_data)) {
-  if (axis_data$metric[i] == "JSD") {
-    # JSD is on the left side, move it up
-    axis_data$y[i] <- axis_data$y[i] + 0.15
-    axis_data$x[i] <- axis_data$x[i] + 0.03  # Small horizontal adjustment too
-  } else if (axis_data$metric[i] == "PearsonCorr") {
-    # PearsonCorr is on the right side, move it up
-    axis_data$y[i] <- axis_data$y[i] + 0.15
-    axis_data$x[i] <- axis_data$x[i] - 0.03  # Small horizontal adjustment too
+# Adjust only the label positions, not the axis lines
+for (i in 1:nrow(label_data)) {
+  if (label_data$metric[i] == "JSD") {
+    label_data$y[i] <- label_data$y[i] + 0.15
+    label_data$x[i] <- label_data$x[i] + 0.03
+  } else if (label_data$metric[i] == "PearsonCorr") {
+    label_data$y[i] <- label_data$y[i] + 0.15
+    label_data$x[i] <- label_data$x[i] - 0.03
   }
 }
 
@@ -318,9 +325,9 @@ p <- ggplot() +
     color = "grey85",
     size = 0.5
   ) +
-  # Add radial axes
+  # Add radial axes - use axis_line_data for straight lines
   geom_segment(
-    data = data.frame(x = 0, y = 0, xend = axis_data$x, yend = axis_data$y),
+    data = data.frame(x = 0, y = 0, xend = axis_line_data$x, yend = axis_line_data$y),
     aes(x = x, y = y, xend = xend, yend = yend),
     color = "grey85",
     size = 0.5
@@ -354,9 +361,9 @@ p <- ggplot() +
   scale_color_manual(values = colors) +
   # Add title
   labs(title = "Performance Metrics Comparison") +
-  # Add axis labels
+  # Add axis labels - use label_data for adjusted positions
   geom_text(
-    data = axis_data,
+    data = label_data,
     aes(x = x, y = y, label = metric),
     hjust = 0.5,
     vjust = 0.5,
