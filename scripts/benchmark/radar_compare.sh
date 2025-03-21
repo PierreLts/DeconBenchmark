@@ -21,9 +21,9 @@
 #   - Dataset:selection: To find files ending with "_select-X.csv"
 DATASETS_TO_PLOT=(
     # Examples - replace with your actual files:
-    "TB_D100-bulk_benchmark_AB_select-A.csv"    # Blue line in your example  
-    "TB_D100-bulk_benchmark_AB_select-B.csv"    # Pink line in your example
-    "TB_D100-bulk_benchmark_AB_select-AB.csv"   # Green line in your example
+    "TB_D100-bulk_benchmark_AB_select-AB.csv"  
+    "TB_D100-pseudobulk_benchmark_AB_select-AB.csv"
+    "TB_D100-bulk_random_benchmark_AB_select-AB.csv"
     # Add more files here
 )
 #############################################################
@@ -176,6 +176,17 @@ done
 if [ ${#benchmark_files[@]} -eq 0 ]; then
   echo "Error: No valid benchmark files found"
   exit 1
+fi
+
+# Processing summary
+echo "Processing ${#benchmark_files[@]} files for radar plot:"
+for file in "${benchmark_files[@]}"; do
+  echo "  - $(basename "$file")"
+done
+
+# Optional warning for many files
+if [ ${#benchmark_files[@]} -gt 10 ]; then
+  echo "Warning: Processing more than 10 files may make the radar plot difficult to read"
 fi
 
 # Load R module

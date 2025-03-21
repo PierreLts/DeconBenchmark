@@ -15,6 +15,10 @@ output_file <- args[2]
 # Get benchmark file paths
 benchmark_files <- args[3:length(args)]
 
+if (length(benchmark_files) == 0) {
+  stop("No benchmark files provided")
+}
+
 # Function to install packages if not available
 install_if_missing <- function(pkg) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
@@ -133,6 +137,16 @@ if (length(data_list) == 0) {
 # Combine all data frames into one
 all_data <- do.call(rbind, data_list)
 
+# Check for minimum number of metrics
+if (length(unique(all_data$metric)) < 3) {
+  stop("At least 3 metrics are required for a meaningful radar plot")
+}
+
+# Check for single method case
+if (length(unique(all_data$method)) == 1) {
+  cat("Only one dataset provided - creating radar chart with single polygon\n")
+}
+
 # Transform values for consistent scale direction with specified ranges
 all_data$display_value <- all_data$value  # Start with original values
 
@@ -151,13 +165,34 @@ all_data$display_value[all_data$metric == "PearsonCorr"] <- (pmax(-1, pmin(1, al
 # Set factor level order for metrics to control display order
 all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE"))
 
-# Set up colors - use distinctive colors
+# Set up colors - use the provided colors and continue the gradient
+# Starting with your colors and continuing the gradient
 colors <- c(
-  "#1E90FF",  # Dodger Blue - for select-A
-  "#32CD32",  # Lime Green - for select-AB
-  "#FF69B4"   # Hot Pink - for select-B
+  "#FF7E1D",  # Orange (your specified)
+  "#DE0099",  # Pink (your specified)
+  "#B300F2",  # Purple (your specified)
+  "#6C13FF",  # Violet/Indigo
+  "#0066FF",  # Blue
+  "#00A3D7",  # Light Blue
+  "#00C292",  # Teal
+  "#00D858",  # Green
+  "#78E100",  # Lime
+  "#F1DF00"   # Yellow
 )
-names(colors) <- unique(all_data$method)
+
+# Create a proper color mapping regardless of the number of methods
+methods <- unique(all_data$method)
+num_methods <- length(methods)
+
+if (num_methods > length(colors)) {
+  # If more than 10 methods, create a colorful palette by interpolation
+  warning("More than 10 methods provided. Using interpolated color palette.")
+  colors <- colorRampPalette(colors)(num_methods)
+}
+
+# Assign colors to methods
+color_mapping <- colors[1:num_methods]
+names(color_mapping) <- methods
 
 # Function to calculate Cartesian coordinates for true straight lines in radar plot
 create_polygon_data <- function(df) {
@@ -316,6 +351,9 @@ scale_labels$label <- ifelse(
   sprintf("%.2f", scale_labels$actual_value)   # 2 decimals for Pearson and JSD
 )
 
+# Dynamic plot size adjustment based on number of methods
+plot_size <- 8 + (num_methods > 5) * 2  # Base size 8", add 2" if more than 5 methods
+
 # Set up the plot
 p <- ggplot() +
   # Add grid lines
@@ -358,7 +396,7 @@ p <- ggplot() +
   # Use Cartesian coordinates with equal aspect ratio
   coord_equal() +
   # Use custom colors
-  scale_color_manual(values = colors) +
+  scale_color_manual(values = color_mapping) +
   # Add title
   labs(title = "Performance Metrics Comparison") +
   # Add axis labels - use label_data for adjusted positions
@@ -369,9 +407,10 @@ p <- ggplot() +
     vjust = 0.5,
     size = 4,
     fontface = "bold"
-  ) +
-  # Set theme
-  theme_void() +
+  )
+
+# Create theme with adjustments based on number of methods
+theme_settings <- theme_void() +
   theme(
     # Center title
     plot.title = element_text(hjust = 0.5, size = 16),
@@ -384,6 +423,19 @@ p <- ggplot() +
     plot.margin = margin(20, 20, 20, 20)
   )
 
-# Save plot
-ggsave(output_file, p, width = 8, height = 8, units = "in")
+# If many methods, arrange legend in multiple rows
+if (num_methods > 5) {
+  theme_settings <- theme_settings + 
+    theme(
+      legend.box = "horizontal",
+      legend.key.size = unit(0.8, "cm"),
+      legend.spacing.x = unit(0.2, "cm")
+    )
+}
+
+# Apply theme settings
+p <- p + theme_settings
+
+# Save plot with dynamic dimensions
+ggsave(output_file, p, width = plot_size, height = plot_size, units = "in")
 cat("Radar plot saved to:", output_file, "\n")
