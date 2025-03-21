@@ -95,7 +95,7 @@ for (file_path in benchmark_files) {
     pearson_val <- as.numeric(metrics_row[[pearson_col]])
     jsd_val <- as.numeric(metrics_row[[jsd_col]])
     nrmse_val <- as.numeric(metrics_row[[nrmse_col]])
-    r2_val <- as.numeric(metrics_row[[r2_col]])  # FIXED: Was using r2_val instead of r2_col
+    r2_val <- as.numeric(metrics_row[[r2_col]])
     
     cat("  Extracted metrics - Pearson:", pearson_val, "JSD:", jsd_val, "NRMSE:", nrmse_val, "R2:", r2_val, "\n")
     
@@ -128,63 +128,6 @@ all_data$display_value[all_data$metric == "NRMSE"] <- 1 - (all_data$value[all_da
 # Set factor level order for metrics to control display order
 all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE"))
 
-# Instead of using geom_path with polar coordinates which creates curved lines,
-# we'll manually create straight line segments between points in polar coordinates
-create_straight_segments <- function(df) {
-  metrics <- levels(df$metric)
-  methods <- unique(df$method)
-  n_metrics <- length(metrics)
-  
-  # Create a list to store segment data frames
-  segment_dfs <- list()
-  
-  for (m in methods) {
-    method_data <- df[df$method == m, ]
-    
-    # Make sure data is ordered by metric factor levels
-    method_data <- method_data[order(method_data$metric), ]
-    
-    # Add the first point at the end to close the polygon
-    method_data <- rbind(method_data, method_data[1, ])
-    
-    # Create segment data with x1,y1,x2,y2 coordinates for each pair of points
-    for (i in 1:(nrow(method_data) - 1)) {
-      # Get adjacent points
-      p1 <- method_data[i, ]
-      p2 <- method_data[i + 1, ]
-      
-      # Convert metrics to angles (in radians)
-      x1 <- (match(as.character(p1$metric), metrics) - 1) * 2 * pi / n_metrics
-      x2 <- (match(as.character(p2$metric), metrics) - 1) * 2 * pi / n_metrics
-      
-      # For the closing segment, adjust angle
-      if (i == n_metrics) {
-        x2 <- 2 * pi  # Return to the starting point
-      }
-      
-      # Use display_value for radius
-      y1 <- p1$display_value
-      y2 <- p2$display_value
-      
-      # Store as a segment
-      segment_dfs[[length(segment_dfs) + 1]] <- data.frame(
-        x1 = x1, y1 = y1, 
-        x2 = x2, y2 = y2,
-        method = m
-      )
-    }
-  }
-  
-  # Combine all segments
-  do.call(rbind, segment_dfs)
-}
-
-# Create data with straight line segments
-segments_data <- create_straight_segments(all_data)
-
-
-
-
 # Set up colors - use distinctive colors
 colors <- c(
   "#1E90FF",  # Dodger Blue - for select-A
@@ -193,121 +136,128 @@ colors <- c(
 )
 names(colors) <- unique(all_data$method)
 
-# Instead of using geom_path with polar coordinates which creates curved lines,
-# we'll manually create straight line segments between points in polar coordinates
-create_straight_segments <- function(df) {
-  metrics <- levels(df$metric)
+# Function to calculate Cartesian coordinates for true straight lines in radar plot
+create_polygon_data <- function(df) {
   methods <- unique(df$method)
+  metrics <- levels(df$metric)
   n_metrics <- length(metrics)
   
-  # Create a list to store segment data frames
-  segment_dfs <- list()
+  result <- data.frame()
   
   for (m in methods) {
+    # Filter data for this method
     method_data <- df[df$method == m, ]
-    
-    # Make sure data is ordered by metric factor levels
     method_data <- method_data[order(method_data$metric), ]
     
-    # Add the first point at the end to close the polygon
-    method_data <- rbind(method_data, method_data[1, ])
+    # Convert to polar coordinates for plotting
+    angles <- (as.numeric(method_data$metric) - 1) * 2 * pi / n_metrics
+    radii <- method_data$display_value
     
-    # Create segment data with x1,y1,x2,y2 coordinates for each pair of points
-    for (i in 1:(nrow(method_data) - 1)) {
-      # Get adjacent points
-      p1 <- method_data[i, ]
-      p2 <- method_data[i + 1, ]
-      
-      # Convert metrics to angles (in radians)
-      x1 <- (match(as.character(p1$metric), metrics) - 1) * 2 * pi / n_metrics
-      x2 <- (match(as.character(p2$metric), metrics) - 1) * 2 * pi / n_metrics
-      
-      # For the closing segment, adjust angle
-      if (i == n_metrics) {
-        x2 <- 2 * pi  # Return to the starting point
-      }
-      
-      # Use display_value for radius
-      y1 <- p1$display_value
-      y2 <- p2$display_value
-      
-      # Store as a segment
-      segment_dfs[[length(segment_dfs) + 1]] <- data.frame(
-        x1 = x1, y1 = y1, 
-        x2 = x2, y2 = y2,
-        method = m
-      )
-    }
+    # Convert to Cartesian coordinates
+    x <- radii * cos(angles)
+    y <- radii * sin(angles)
+    
+    # Create a data frame for this method
+    method_df <- data.frame(
+      x = x,
+      y = y,
+      radius = radii,
+      angle = angles,
+      method = m,
+      metric = method_data$metric
+    )
+    
+    result <- rbind(result, method_df)
   }
   
-  # Combine all segments
-  do.call(rbind, segment_dfs)
+  return(result)
 }
 
-# Create data with straight line segments
-segments_data <- create_straight_segments(all_data)
+# Create data for plotting
+polygon_data <- create_polygon_data(all_data)
 
 # Define the breaks for the radial grid lines
 breaks <- c(0, 0.25, 0.5, 0.75, 1)
 
-# Set up the plot
+# Prepare grid lines data for radar chart
+metrics <- levels(all_data$metric)
+n_metrics <- length(metrics)
+angles <- (seq_along(metrics) - 1) * 2 * pi / n_metrics
+
+grid_data <- expand.grid(
+  angle = angles,
+  radius = breaks
+)
+
+grid_data$x <- grid_data$radius * cos(grid_data$angle)
+grid_data$y <- grid_data$radius * sin(grid_data$angle)
+
+axis_data <- data.frame(
+  angle = angles,
+  radius = 1.1,  # Just beyond the outermost grid line
+  x = 1.1 * cos(angles),
+  y = 1.1 * sin(angles),
+  metric = metrics
+)
+
 # Set up the plot
 p <- ggplot() +
-  # Add the straight line segments
-  geom_segment(
-    data = segments_data,
-    aes(
-      x = x1, y = y1, 
-      xend = x2, yend = y2,
-      color = method
-    ),
-    linewidth = 1.2
+  # Add grid lines
+  geom_path(
+    data = grid_data %>% group_by(radius) %>% summarize(x = c(x, x[1]), y = c(y, y[1])),
+    aes(x = x, y = y, group = radius),
+    color = "grey85",
+    size = 0.5
   ) +
-  # Add the points on top
-  geom_point(
-    data = all_data,
-    aes(
-      x = (as.numeric(metric) - 1) * 2 * pi / length(levels(metric)),
-      y = display_value,
-      color = method
+  # Add radial axes
+  geom_segment(
+    data = data.frame(x = 0, y = 0, xend = axis_data$x, yend = axis_data$y),
+    aes(x = x, y = y, xend = xend, yend = yend),
+    color = "grey85",
+    size = 0.5
+  ) +
+  # Add lines connecting points (using path with Cartesian coordinates)
+  geom_polygon(
+    data = polygon_data %>% group_by(method) %>% summarize(
+      x = c(x, x[1]),
+      y = c(y, y[1])
     ),
+    aes(x = x, y = y, group = method, color = method),
+    fill = NA,
+    size = 1.2
+  ) +
+  # Add the points
+  geom_point(
+    data = polygon_data,
+    aes(x = x, y = y, color = method),
     size = 3
   ) +
-  # Use polar coordinates with theta starting at top (0=north, pi/2=east)
-  coord_polar(start = pi/2) +
-  # Use the same colors for lines and points
+  # Use Cartesian coordinates with equal aspect ratio
+  coord_equal() +
+  # Use custom colors
   scale_color_manual(values = colors) +
   # Add title
   labs(title = "Performance Metrics Comparison") +
-  # Set y-axis breaks for the grid circles
-  scale_y_continuous(
-    breaks = breaks,
-    labels = breaks,
-    limits = c(0, 1),
-    expand = expansion(mult = c(0.1, 0.2))  # Expand the plot margins
+  # Add axis labels
+  geom_text(
+    data = axis_data,
+    aes(x = x, y = y, label = metric),
+    hjust = 0.5,
+    vjust = 0.5,
+    size = 4
   ) +
-  # Add axis labels at the correct positions
-  scale_x_continuous(
-    breaks = seq(0, 2*pi, length.out = length(levels(all_data$metric)) + 1)[1:4],
-    labels = levels(all_data$metric),
-    limits = c(0, 2*pi)
-  ) +
-  # Remove default axis labels
-  theme_minimal() +
+  # Set theme
+  theme_void() +
   theme(
     # Center title
     plot.title = element_text(hjust = 0.5, size = 16),
-    # Format axis text (metric labels)
-    axis.text.x = element_text(size = 12, margin = margin(t = 15, unit = "pt")),
-    axis.text.y = element_text(size = 9),
-    axis.title = element_blank(),
     # Format legend
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = 12),
-    # Format grid
-    panel.grid.major = element_line(color = "grey85"),
-    panel.grid.minor = element_line(color = "grey95")
+    # Background and margins
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(20, 20, 20, 20)
   )
 
 # Save plot
