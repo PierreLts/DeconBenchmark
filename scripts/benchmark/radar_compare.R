@@ -47,6 +47,21 @@ extract_name_and_selection <- function(file_path) {
   return(dataset_name)
 }
 
+# Function to convert display values back to actual metric values
+display_to_actual <- function(display_value, metric) {
+  actual <- NA
+  if (metric == "JSD") {
+    actual <- 0.5 * (1 - display_value)
+  } else if (metric == "R2") {
+    actual <- (display_value * 16) - 15
+  } else if (metric == "NRMSE") {
+    actual <- 5 * (1 - display_value)
+  } else if (metric == "PearsonCorr") {
+    actual <- (display_value * 2) - 1
+  }
+  return(actual)
+}
+
 # Read and process benchmark files
 data_list <- list()
 labels <- character()
@@ -118,8 +133,6 @@ if (length(data_list) == 0) {
 # Combine all data frames into one
 all_data <- do.call(rbind, data_list)
 
-# Transform values for consistent scale direction
-# For JSD and NRMSE, lower is better, so we invert them
 # Transform values for consistent scale direction with specified ranges
 all_data$display_value <- all_data$value  # Start with original values
 
@@ -186,8 +199,11 @@ create_polygon_data <- function(df) {
 # Create data for plotting
 polygon_data <- create_polygon_data(all_data)
 
-# Define the breaks for the radial grid lines
-breaks <- c(0, 0.25, 0.5, 0.75, 1)
+# Define the breaks for the radial grid lines - keep all intermediate lines
+grid_breaks <- c(0, 0.25, 0.5, 0.75, 1)
+
+# But only show labels at key points
+label_breaks <- c(0, 0.5, 1)
 
 # Prepare grid lines data for radar chart
 metrics <- levels(all_data$metric)
@@ -196,18 +212,101 @@ angles <- (seq_along(metrics) - 1) * 2 * pi / n_metrics
 
 grid_data <- expand.grid(
   angle = angles,
-  radius = breaks
+  radius = grid_breaks
 )
 
 grid_data$x <- grid_data$radius * cos(grid_data$angle)
 grid_data$y <- grid_data$radius * sin(grid_data$angle)
 
+# Axis label position (moved further outside the chart with specific adjustments for labels)
 axis_data <- data.frame(
   angle = angles,
-  radius = 1.1,  # Just beyond the outermost grid line
-  x = 1.1 * cos(angles),
-  y = 1.1 * sin(angles),
+  radius = 1.25,  # Base distance from chart edge
+  x = 1.25 * cos(angles),
+  y = 1.25 * sin(angles),
   metric = metrics
+)
+
+# Specifically adjust JSD and PearsonCorr label positions
+for (i in 1:nrow(axis_data)) {
+  if (axis_data$metric[i] == "JSD") {
+    # JSD is on the left side, move it up
+    axis_data$y[i] <- axis_data$y[i] + 0.15
+    axis_data$x[i] <- axis_data$x[i] + 0.03  # Small horizontal adjustment too
+  } else if (axis_data$metric[i] == "PearsonCorr") {
+    # PearsonCorr is on the right side, move it up
+    axis_data$y[i] <- axis_data$y[i] + 0.15
+    axis_data$x[i] <- axis_data$x[i] - 0.03  # Small horizontal adjustment too
+  }
+}
+
+# Create data for scale value labels - only at key points (0, 0.5, 1)
+scale_labels <- data.frame()
+
+for (i in seq_along(metrics)) {
+  metric_name <- metrics[i]
+  angle <- angles[i]
+  
+  # For each key break point (0, 0.5, 1)
+  for (br in label_breaks) {
+    # Calculate actual value for this display value
+    actual <- display_to_actual(br, as.character(metric_name))
+    
+    # Calculate label position along the axis
+    x <- br * cos(angle)
+    y <- br * sin(angle)
+    
+    # Calculate position for the text label - aligned with axis direction
+    # Use the angle to determine alignment
+    hjust <- 0.5 # Default horizontal alignment
+    vjust <- 0.5 # Default vertical alignment
+    
+    # Special case for center (0,0)
+    if (br == 0) {
+      # For center value, slightly offset in the direction of the axis
+      # to avoid overlapping at the center
+      center_offset <- 0.03  # Reduced from 0.05 to be closer to center
+      x <- center_offset * cos(angle)
+      y <- center_offset * sin(angle)
+    }
+    
+    # Adjust alignment based on axis quadrant
+    if (angle == 0) { # Right
+      hjust <- -0.1
+      vjust <- 0.5
+      x <- x + 0.05
+    } else if (angle == pi/2) { # Top
+      hjust <- 0.5
+      vjust <- -0.1
+      y <- y + 0.05
+    } else if (angle == pi) { # Left
+      hjust <- 1.1
+      vjust <- 0.5
+      x <- x - 0.05
+    } else if (angle == 3*pi/2) { # Bottom
+      hjust <- 0.5
+      vjust <- 1.1
+      y <- y - 0.05
+    }
+    
+    # Add to data frame
+    scale_labels <- rbind(scale_labels, data.frame(
+      metric = metric_name,
+      display_value = br,
+      actual_value = actual,
+      x = x,
+      y = y,
+      hjust = hjust,
+      vjust = vjust
+    ))
+  }
+}
+
+# Format scale labels (round to appropriate decimal places)
+scale_labels$label <- ifelse(
+  scale_labels$metric == "R2" | scale_labels$metric == "NRMSE", 
+  sprintf("%.1f", scale_labels$actual_value),  # 1 decimal for R2 and NRMSE
+  sprintf("%.2f", scale_labels$actual_value)   # 2 decimals for Pearson and JSD
 )
 
 # Set up the plot
@@ -242,6 +341,13 @@ p <- ggplot() +
     aes(x = x, y = y, color = method),
     size = 3
   ) +
+  # Add scale value labels with proper alignment
+  geom_text(
+    data = scale_labels,
+    aes(x = x, y = y, label = label, hjust = hjust, vjust = vjust),
+    color = "grey40",
+    size = 3
+  ) +
   # Use Cartesian coordinates with equal aspect ratio
   coord_equal() +
   # Use custom colors
@@ -254,7 +360,8 @@ p <- ggplot() +
     aes(x = x, y = y, label = metric),
     hjust = 0.5,
     vjust = 0.5,
-    size = 4
+    size = 4,
+    fontface = "bold"
   ) +
   # Set theme
   theme_void() +
