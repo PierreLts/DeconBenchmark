@@ -63,13 +63,13 @@ for (file_path in benchmark_files) {
     data <- read_csv(file_path)
     
     # Check file structure
-    if (nrow(data) < 2) {
+    if (nrow(data) < 1) {
       warning("File has fewer than 2 rows: ", file_path)
       next
     }
     
     # Extract the overall values row (second row)
-    metrics_row <- data[2, ]
+    metrics_row <- data[1, ]
     
     # Find columns for metrics
     # First try exact matches
@@ -124,10 +124,10 @@ all_data <- do.call(rbind, data_list)
 all_data$display_value <- all_data$value  # Start with original values
 
 # JSD: 0 (outer/best) to 0.2 (center/worst)
-all_data$display_value[all_data$metric == "JSD"] <- 1 - pmin(1, all_data$value[all_data$metric == "JSD"] / 0.2)
+all_data$display_value[all_data$metric == "JSD"] <- 1 - pmin(1, all_data$value[all_data$metric == "JSD"] / 0.5)
 
 # R2: 1 (outer/best) to -4 (center/worst)
-all_data$display_value[all_data$metric == "R2"] <- (pmax(-4, all_data$value[all_data$metric == "R2"]) + 4) / 5
+all_data$display_value[all_data$metric == "R2"] <- (pmax(-15, all_data$value[all_data$metric == "R2"]) + 15) / 16
 
 # NRMSE: 0 (outer/best) to 5 (center/worst)
 all_data$display_value[all_data$metric == "NRMSE"] <- 1 - pmin(1, all_data$value[all_data$metric == "NRMSE"] / 5)
