@@ -1,8 +1,8 @@
 #!/usr/bin/Rscript
 
 args <- commandArgs(trailingOnly = TRUE)
-if (length(args) < 3) {
-  stop("Usage: Rscript radar_compare.R <R_library_path> <output_file> <file1> <file2> ...")
+if (length(args) < 4) {
+  stop("Usage: Rscript radar_compare.R <R_library_path> <output_file> <plot_title> <file1> <file2> ...")
 }
 
 # Set R library path
@@ -12,8 +12,11 @@ r_library_path <- args[1]
 # Get output file path
 output_file <- args[2]
 
+# Get plot title
+plot_title <- args[3]
+
 # Get benchmark file paths
-benchmark_files <- args[3:length(args)]
+benchmark_files <- args[4:length(args)]
 
 if (length(benchmark_files) == 0) {
   stop("No benchmark files provided")
@@ -398,7 +401,7 @@ p <- ggplot() +
   # Use custom colors
   scale_color_manual(values = color_mapping) +
   # Add title
-  labs(title = "Performance Metrics Comparison") +
+  labs(title = plot_title) +
   # Add axis labels - use label_data for adjusted positions
   geom_text(
     data = label_data,

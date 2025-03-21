@@ -15,10 +15,13 @@
 #############################################################
 # List the benchmark files you want to include in the radar plot
 DATASETS_TO_PLOT=(
-    "TB_D100-bulk_benchmark_AB_select-AB.csv"  
-    "TB_D100-pseudobulk_benchmark_AB_select-AB.csv"
-    "TB_D100-bulk_random_benchmark_AB_select-AB.csv"
+    "TB_D100-bulk_benchmark_A_select-A.csv"  
+    "TB_D100-bulk_benchmark_A_select-AB.csv"
+    "TB_D100-bulk_benchmark_B_select-B.csv"
+    "TB_D100-bulk_benchmark_B_select-AB.csv"
 )
+
+PLOT_TITLE="Non-treated (A) vs. Treated (B) References"
 #############################################################
 
 # Default parameters
@@ -44,12 +47,17 @@ while [[ $# -gt 0 ]]; do
       BENCHMARK_DIR="$2"
       shift 2
       ;;
+    -t|--title)
+      PLOT_TITLE="$2"
+      shift 2
+      ;;
     -h|--help)
       echo "Usage: $(basename $0) [options] [filename1] [filename2] ..."
       echo "Options:"
       echo "  -o, --output FILE      Output file name (default: radar_comparison.pdf)"
       echo "  -l, --library PATH     R library path (default: /work/gr-fe/R_4.3.1)"
       echo "  -d, --directory PATH   Benchmark directory (default: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results)"
+      echo "  -t, --title TITLE      Plot title (default: 'Performance Metrics Comparison')"
       echo "  -h, --help             Show this help message"
       exit 0
       ;;
@@ -172,7 +180,7 @@ if [ ! -f "$r_script" ]; then
 fi
 
 # Run R script
-Rscript "$r_script" "$RLIBRARY" "$OUTPUT_FILE" "${benchmark_files[@]}"
+Rscript "$r_script" "$RLIBRARY" "$OUTPUT_FILE" "$PLOT_TITLE" "${benchmark_files[@]}"
 
 # Check if the output file was created
 if [ -f "$OUTPUT_FILE" ]; then
