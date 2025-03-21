@@ -120,10 +120,20 @@ all_data <- do.call(rbind, data_list)
 
 # Transform values for consistent scale direction
 # For JSD and NRMSE, lower is better, so we invert them
-all_data$display_value <- all_data$value
-all_data$display_value[all_data$metric == "JSD"] <- 1 - all_data$value[all_data$metric == "JSD"]
-all_data$display_value[all_data$metric == "NRMSE"] <- 1 - (all_data$value[all_data$metric == "NRMSE"] / 
-                                                          max(all_data$value[all_data$metric == "NRMSE"]))
+# Transform values for consistent scale direction with specified ranges
+all_data$display_value <- all_data$value  # Start with original values
+
+# JSD: 0 (outer/best) to 0.2 (center/worst)
+all_data$display_value[all_data$metric == "JSD"] <- 1 - pmin(1, all_data$value[all_data$metric == "JSD"] / 0.2)
+
+# R2: 1 (outer/best) to -4 (center/worst)
+all_data$display_value[all_data$metric == "R2"] <- (pmax(-4, all_data$value[all_data$metric == "R2"]) + 4) / 5
+
+# NRMSE: 0 (outer/best) to 5 (center/worst)
+all_data$display_value[all_data$metric == "NRMSE"] <- 1 - pmin(1, all_data$value[all_data$metric == "NRMSE"] / 5)
+
+# Pearson Correlation: 1 (outer/best) to -1 (center/worst)
+all_data$display_value[all_data$metric == "PearsonCorr"] <- (pmax(-1, pmin(1, all_data$value[all_data$metric == "PearsonCorr"])) + 1) / 2
 
 # Set factor level order for metrics to control display order
 all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE"))
