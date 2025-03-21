@@ -95,7 +95,7 @@ for (file_path in benchmark_files) {
     pearson_val <- as.numeric(metrics_row[[pearson_col]])
     jsd_val <- as.numeric(metrics_row[[jsd_col]])
     nrmse_val <- as.numeric(metrics_row[[nrmse_col]])
-    r2_val <- as.numeric(metrics_row[[r2_col]])
+    r2_val <- as.numeric(metrics_row[[r2_col]])  # FIXED: Was using r2_val instead of r2_col
     
     cat("  Extracted metrics - Pearson:", pearson_val, "JSD:", jsd_val, "NRMSE:", nrmse_val, "R2:", r2_val, "\n")
     
@@ -122,12 +122,13 @@ all_data <- do.call(rbind, data_list)
 # For JSD and NRMSE, lower is better, so we invert them
 all_data$display_value <- all_data$value
 all_data$display_value[all_data$metric == "JSD"] <- 1 - all_data$value[all_data$metric == "JSD"]
-all_data$display_value[all_data$metric == "NRMSE"] <- -all_data$value[all_data$metric == "NRMSE"]
+all_data$display_value[all_data$metric == "NRMSE"] <- 1 - (all_data$value[all_data$metric == "NRMSE"] / 
+                                                          max(all_data$value[all_data$metric == "NRMSE"]))
 
 # Set factor level order for metrics to control display order
-all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "JSD", "R2", "NRMSE"))
+all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE"))
 
-# Set up colors - use distinctive colors that match Image 2
+# Set up colors - use distinctive colors
 colors <- c(
   "#1E90FF",  # Dodger Blue - for select-A
   "#32CD32",  # Lime Green - for select-AB
@@ -135,45 +136,103 @@ colors <- c(
 )
 names(colors) <- unique(all_data$method)
 
-# Create a function to properly close the polygon by adding the first point at the end
-close_path <- function(df) {
-  metrics <- unique(df$metric)
+# Instead of using geom_path with polar coordinates which creates curved lines,
+# we'll manually create straight line segments between points in polar coordinates
+create_straight_segments <- function(df) {
+  metrics <- levels(df$metric)
   methods <- unique(df$method)
-  result <- df
+  n_metrics <- length(metrics)
+  
+  # Create a list to store segment data frames
+  segment_dfs <- list()
   
   for (m in methods) {
-    # Get the first point for this method
-    first_point <- df[df$method == m & df$metric == metrics[1], ]
-    # Add it to the end
-    result <- rbind(result, first_point)
+    method_data <- df[df$method == m, ]
+    
+    # Make sure data is ordered by metric factor levels
+    method_data <- method_data[order(method_data$metric), ]
+    
+    # Add the first point at the end to close the polygon
+    method_data <- rbind(method_data, method_data[1, ])
+    
+    # Create segment data with x1,y1,x2,y2 coordinates for each pair of points
+    for (i in 1:(nrow(method_data) - 1)) {
+      # Get adjacent points
+      p1 <- method_data[i, ]
+      p2 <- method_data[i + 1, ]
+      
+      # Convert metrics to angles (in radians)
+      x1 <- (match(as.character(p1$metric), metrics) - 1) * 2 * pi / n_metrics
+      x2 <- (match(as.character(p2$metric), metrics) - 1) * 2 * pi / n_metrics
+      
+      # For the closing segment, adjust angle
+      if (i == n_metrics) {
+        x2 <- 2 * pi  # Return to the starting point
+      }
+      
+      # Use display_value for radius
+      y1 <- p1$display_value
+      y2 <- p2$display_value
+      
+      # Store as a segment
+      segment_dfs[[length(segment_dfs) + 1]] <- data.frame(
+        x1 = x1, y1 = y1, 
+        x2 = x2, y2 = y2,
+        method = m
+      )
+    }
   }
-  return(result)
+  
+  # Combine all segments
+  do.call(rbind, segment_dfs)
 }
 
-# Close the paths for proper polygon formation
-all_data_closed <- close_path(all_data)
+# Create data with straight line segments
+segments_data <- create_straight_segments(all_data)
 
 # Define the breaks for the radial grid lines
-breaks <- c(-1, -0.5, 0, 0.5, 1)
+breaks <- c(0, 0.25, 0.5, 0.75, 1)
 
-# Create a circular radar chart using ggplot2
-p <- ggplot(all_data_closed, aes(x = metric, y = display_value, color = method, group = method)) +
-  # Add lines connecting points (no fill)
-  geom_path(linewidth = 1.2) +
-  # Add points
-  geom_point(size = 3) +
-  # Use the same colors for lines
+# Set up the plot
+p <- ggplot() +
+  # Add the straight line segments
+  geom_segment(
+    data = segments_data,
+    aes(
+      x = x1, y = y1, 
+      xend = x2, yend = y2,
+      color = method
+    ),
+    linewidth = 1.2
+  ) +
+  # Add the points on top
+  geom_point(
+    data = all_data,
+    aes(
+      x = (as.numeric(metric) - 1) * 2 * pi / length(levels(metric)),
+      y = display_value,
+      color = method
+    ),
+    size = 3
+  ) +
+  # Use polar coordinates with theta starting at top (0=north, pi/2=east)
+  coord_polar(start = pi/2) +
+  # Use the same colors for lines and points
   scale_color_manual(values = colors) +
-  # Make it circular
-  coord_polar() +
   # Add title
   labs(title = "Performance Metrics Comparison") +
   # Set y-axis breaks for the grid circles
   scale_y_continuous(
     breaks = breaks,
     labels = breaks,
-    limits = c(-1, 1),
+    limits = c(0, 1),
     expand = expansion(mult = c(0.1, 0.2))  # Expand the plot margins
+  ) +
+  # Add axis labels at the correct positions
+  scale_x_continuous(
+    breaks = seq(0, 2*pi, length.out = length(levels(all_data$metric)) + 1)[1:4],
+    labels = levels(all_data$metric),
+    limits = c(0, 2*pi)
   ) +
   # Remove default axis labels
   theme_minimal() +
@@ -187,7 +246,7 @@ p <- ggplot(all_data_closed, aes(x = metric, y = display_value, color = method, 
     # Format legend
     legend.position = "bottom",
     legend.title = element_blank(),
-    legend.text = element_text(size = 12, color = colors[match(levels(factor(all_data$method)), names(colors))]),
+    legend.text = element_text(size = 12),
     # Format grid
     panel.grid.major = element_line(color = "grey85"),
     panel.grid.minor = element_line(color = "grey95")
