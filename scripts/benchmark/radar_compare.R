@@ -128,6 +128,63 @@ all_data$display_value[all_data$metric == "NRMSE"] <- 1 - (all_data$value[all_da
 # Set factor level order for metrics to control display order
 all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE"))
 
+# Instead of using geom_path with polar coordinates which creates curved lines,
+# we'll manually create straight line segments between points in polar coordinates
+create_straight_segments <- function(df) {
+  metrics <- levels(df$metric)
+  methods <- unique(df$method)
+  n_metrics <- length(metrics)
+  
+  # Create a list to store segment data frames
+  segment_dfs <- list()
+  
+  for (m in methods) {
+    method_data <- df[df$method == m, ]
+    
+    # Make sure data is ordered by metric factor levels
+    method_data <- method_data[order(method_data$metric), ]
+    
+    # Add the first point at the end to close the polygon
+    method_data <- rbind(method_data, method_data[1, ])
+    
+    # Create segment data with x1,y1,x2,y2 coordinates for each pair of points
+    for (i in 1:(nrow(method_data) - 1)) {
+      # Get adjacent points
+      p1 <- method_data[i, ]
+      p2 <- method_data[i + 1, ]
+      
+      # Convert metrics to angles (in radians)
+      x1 <- (match(as.character(p1$metric), metrics) - 1) * 2 * pi / n_metrics
+      x2 <- (match(as.character(p2$metric), metrics) - 1) * 2 * pi / n_metrics
+      
+      # For the closing segment, adjust angle
+      if (i == n_metrics) {
+        x2 <- 2 * pi  # Return to the starting point
+      }
+      
+      # Use display_value for radius
+      y1 <- p1$display_value
+      y2 <- p2$display_value
+      
+      # Store as a segment
+      segment_dfs[[length(segment_dfs) + 1]] <- data.frame(
+        x1 = x1, y1 = y1, 
+        x2 = x2, y2 = y2,
+        method = m
+      )
+    }
+  }
+  
+  # Combine all segments
+  do.call(rbind, segment_dfs)
+}
+
+# Create data with straight line segments
+segments_data <- create_straight_segments(all_data)
+
+
+
+
 # Set up colors - use distinctive colors
 colors <- c(
   "#1E90FF",  # Dodger Blue - for select-A
@@ -193,6 +250,7 @@ segments_data <- create_straight_segments(all_data)
 # Define the breaks for the radial grid lines
 breaks <- c(0, 0.25, 0.5, 0.75, 1)
 
+# Set up the plot
 # Set up the plot
 p <- ggplot() +
   # Add the straight line segments
