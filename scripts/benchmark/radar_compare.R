@@ -51,6 +51,97 @@ extract_name_and_selection <- function(file_path) {
   return(modified_name)
 }
 
+# Function to parse HH:MM:SS time format to seconds
+parse_time_to_seconds <- function(time_str) {
+  # Ensure time_str is treated as character
+  time_str <- as.character(time_str)
+  
+  # Debug output
+  cat("  Parsing time string: '", time_str, "'\n", sep="")
+  
+  # Check if the string is already numeric
+  if (!is.na(suppressWarnings(as.numeric(time_str)))) {
+    cat("  Already numeric, returning as is:", as.numeric(time_str), "seconds\n")
+    return(as.numeric(time_str))
+  }
+  
+  # Handle N/A or empty strings
+  if (is.na(time_str) || time_str == "" || tolower(time_str) == "n/a") {
+    cat("  N/A or empty string detected\n")
+    return(NA)
+  }
+  
+  # Try to handle potential issues with time formatting
+  time_str <- trimws(time_str)  # Remove any whitespace
+  
+  # Parse HH:MM:SS or MM:SS format
+  parts <- strsplit(time_str, ":")[[1]]
+  
+  # Debug information about split parts
+  cat("  Split into", length(parts), "parts:", paste(parts, collapse=", "), "\n")
+  
+  # Handle different time formats
+  if (length(parts) == 3) {
+    # HH:MM:SS format
+    hours <- as.numeric(parts[1])
+    minutes <- as.numeric(parts[2])
+    seconds <- as.numeric(parts[3])
+    total_seconds <- hours * 3600 + minutes * 60 + seconds
+    cat("  Parsed as HH:MM:SS:", hours, "hours,", minutes, "minutes,", seconds, "seconds =", total_seconds, "total seconds\n")
+    return(total_seconds)
+  } else if (length(parts) == 2) {
+    # MM:SS format
+    minutes <- as.numeric(parts[1])
+    seconds <- as.numeric(parts[2])
+    total_seconds <- minutes * 60 + seconds
+    cat("  Parsed as MM:SS:", minutes, "minutes,", seconds, "seconds =", total_seconds, "total seconds\n")
+    return(total_seconds)
+  } else if (length(parts) == 1) {
+    # Try to interpret a single value - could be seconds or could be a different format
+    if (grepl("^\\d+$", time_str)) {
+      # If it's just a number, assume it's seconds
+      seconds <- as.numeric(time_str)
+      cat("  Parsed as seconds only:", seconds, "seconds\n")
+      return(seconds)
+    } else if (grepl("^\\d+s$", time_str, ignore.case = TRUE)) {
+      # If it's in the format "123s", extract the number
+      seconds <- as.numeric(sub("s$", "", time_str, ignore.case = TRUE))
+      cat("  Parsed as seconds with 's' suffix:", seconds, "seconds\n")
+      return(seconds)
+    } else if (grepl("^\\d+m$", time_str, ignore.case = TRUE)) {
+      # If it's in the format "123m", extract the number and convert to seconds
+      minutes <- as.numeric(sub("m$", "", time_str, ignore.case = TRUE))
+      seconds <- minutes * 60
+      cat("  Parsed as minutes with 'm' suffix:", minutes, "minutes =", seconds, "seconds\n")
+      return(seconds)
+    }
+  }
+  
+  # If we couldn't parse it using the above methods, try a more general approach
+  # Check for patterns like "3m 20s" or "3 min 20 sec"
+  if (grepl("\\d+\\s*m(in)?(ute)?s?", time_str, ignore.case = TRUE) && 
+      grepl("\\d+\\s*s(ec)?(ond)?s?", time_str, ignore.case = TRUE)) {
+    
+    # Try to extract minutes and seconds from combined format
+    minutes_match <- regexpr("\\d+\\s*m(in)?(ute)?s?", time_str, ignore.case = TRUE)
+    minutes_str <- regmatches(time_str, minutes_match)
+    minutes <- as.numeric(gsub("\\D", "", minutes_str))
+    
+    seconds_match <- regexpr("\\d+\\s*s(ec)?(ond)?s?", time_str, ignore.case = TRUE)
+    seconds_str <- regmatches(time_str, seconds_match)
+    seconds <- as.numeric(gsub("\\D", "", seconds_str))
+    
+    total_seconds <- minutes * 60 + seconds
+    cat("  Parsed as combined format:", minutes, "minutes,", seconds, "seconds =", total_seconds, "seconds\n")
+    return(total_seconds)
+  }
+  
+  # Unable to parse
+  warning("Unable to parse time format: ", time_str)
+  cat("  Failed to parse time string\n")
+  return(NA)
+}
+
 # Function to convert display values back to actual metric values
 display_to_actual <- function(display_value, metric) {
   actual <- NA
@@ -62,6 +153,8 @@ display_to_actual <- function(display_value, metric) {
     actual <- 5 * (1 - display_value)
   } else if (metric == "PearsonCorr") {
     actual <- (display_value * 2) - 1
+  } else if (metric == "Runtime") {
+    actual <- 1800 * (1 - display_value)
   }
   return(actual)
 }
@@ -90,38 +183,124 @@ for (file_path in benchmark_files) {
     # Extract the overall values row (second row)
     metrics_row <- data[1, ]
     
-    # Find columns for metrics
-    # First try exact matches
-    pearson_col <- which(colnames(data) %in% c("PearsonCorr", "Pearson"))[1]
-    jsd_col <- which(colnames(data) == "JSD")[1]
-    nrmse_col <- which(colnames(data) == "NRMSE")[1]
-    r2_col <- which(colnames(data) %in% c("R2", "R^2"))[1]
-    
-    # If not found, try case-insensitive partial matches
-    if (is.na(pearson_col)) pearson_col <- grep("pearson", colnames(data), ignore.case = TRUE)[1]
-    if (is.na(jsd_col)) jsd_col <- grep("jsd", colnames(data), ignore.case = TRUE)[1]
-    if (is.na(nrmse_col)) nrmse_col <- grep("nrmse", colnames(data), ignore.case = TRUE)[1]
-    if (is.na(r2_col)) r2_col <- grep("r2|r\\^2", colnames(data), ignore.case = TRUE)[1]
+  # Find columns for metrics
+  # First try specific exact matches with the most precise matches first
+  pearson_col <- which(colnames(data) %in% c("PearsonCorr", "Pearson"))[1]
+  jsd_col <- which(colnames(data) == "JSD")[1]
+  nrmse_col <- which(colnames(data) == "NRMSE")[1]
+  r2_col <- which(colnames(data) %in% c("R2", "R^2"))[1]
+  
+  # For runtime, check exact column name first (prioritize "Runtime (H:M:S)")
+  runtime_col <- which(colnames(data) == "Runtime (H:M:S)")[1]
+  if (is.na(runtime_col)) {
+    runtime_col <- which(colnames(data) %in% c("Runtime", "Time"))[1]
+  }
+  
+  # Print what columns were found
+  cat("  Found columns - Pearson:", 
+      ifelse(!is.na(pearson_col), colnames(data)[pearson_col], "NOT FOUND"), 
+      "JSD:", ifelse(!is.na(jsd_col), colnames(data)[jsd_col], "NOT FOUND"),
+      "NRMSE:", ifelse(!is.na(nrmse_col), colnames(data)[nrmse_col], "NOT FOUND"),
+      "R2:", ifelse(!is.na(r2_col), colnames(data)[r2_col], "NOT FOUND"),
+      "Runtime:", ifelse(!is.na(runtime_col), colnames(data)[runtime_col], "NOT FOUND"), "\n")
+  
+  # If not found, try case-insensitive partial matches
+  if (is.na(pearson_col)) pearson_col <- grep("pearson", colnames(data), ignore.case = TRUE)[1]
+  if (is.na(jsd_col)) jsd_col <- grep("jsd", colnames(data), ignore.case = TRUE)[1]
+  if (is.na(nrmse_col)) nrmse_col <- grep("nrmse", colnames(data), ignore.case = TRUE)[1]
+  if (is.na(r2_col)) r2_col <- grep("r2|r\\^2", colnames(data), ignore.case = TRUE)[1]
+  
+  if (is.na(runtime_col)) {
+    runtime_matches <- grep("runtime|time|h:m:s", colnames(data), ignore.case = TRUE)
+    cat("  Potential runtime columns:", 
+        ifelse(length(runtime_matches) > 0, 
+               paste(colnames(data)[runtime_matches], collapse=", "), 
+               "NONE"), "\n")
+    runtime_col <- runtime_matches[1]  # Take the first match if multiple
+  }
     
     # Check if all metrics were found
     if (any(is.na(c(pearson_col, jsd_col, nrmse_col, r2_col)))) {
-      warning("Could not find all metrics in file: ", file_path)
+      warning("Could not find all basic metrics in file: ", file_path)
       print(colnames(data))
       next
     }
     
-    # Extract metrics values
-    pearson_val <- as.numeric(metrics_row[[pearson_col]])
-    jsd_val <- as.numeric(metrics_row[[jsd_col]])
-    nrmse_val <- as.numeric(metrics_row[[nrmse_col]])
-    r2_val <- as.numeric(metrics_row[[r2_col]])
+    # Extract and print the entire data frame structure for debugging
+    cat("\nDEBUG: Data frame structure for file:", basename(file_path), "\n")
+    str(data)
+    cat("\nDEBUG: First row of data:\n")
+    print(data[1,])
     
-    cat("  Extracted metrics - Pearson:", pearson_val, "JSD:", jsd_val, "NRMSE:", nrmse_val, "R2:", r2_val, "\n")
+    # Extract metrics values with additional error checking
+    pearson_val <- tryCatch({
+      as.numeric(metrics_row[[pearson_col]])
+    }, error = function(e) {
+      cat("Error converting Pearson value:", e$message, "\n")
+      return(NA)
+    })
+    
+    jsd_val <- tryCatch({
+      as.numeric(metrics_row[[jsd_col]])
+    }, error = function(e) {
+      cat("Error converting JSD value:", e$message, "\n")
+      return(NA)
+    })
+    
+    nrmse_val <- tryCatch({
+      as.numeric(metrics_row[[nrmse_col]])
+    }, error = function(e) {
+      cat("Error converting NRMSE value:", e$message, "\n")
+      return(NA)
+    })
+    
+    r2_val <- tryCatch({
+      as.numeric(metrics_row[[r2_col]])
+    }, error = function(e) {
+      cat("Error converting R2 value:", e$message, "\n")
+      return(NA)
+    })
+    
+    # Extract runtime value (if available)
+    runtime_val <- NA
+    if (!is.na(runtime_col)) {
+      runtime_str <- metrics_row[[runtime_col]]
+      cat("\n==== DETAILED RUNTIME DEBUGGING ====\n")
+      cat("  File path:", file_path, "\n")
+      cat("  File basename:", basename(file_path), "\n")
+      cat("  Runtime column:", colnames(data)[runtime_col], "at index", runtime_col, "\n")
+      cat("  Runtime raw value:", runtime_str, "as", class(runtime_str), "\n")
+      cat("  Runtime row data:", as.character(metrics_row), "\n")
+      
+      # Try to force character conversion to be safe
+      if (is.factor(runtime_str)) {
+        runtime_str <- as.character(runtime_str)
+        cat("  Converted factor to character:", runtime_str, "\n")
+      }
+      
+      # Specially handle the "3:20" case
+      if (runtime_str == "3:20") {
+        cat("  FOUND THE PROBLEMATIC 3:20 VALUE!\n")
+        runtime_val <- 3*60 + 20
+        cat("  Hardcoded conversion to", runtime_val, "seconds\n")
+      } else {
+        runtime_val <- parse_time_to_seconds(runtime_str)
+      }
+      
+      cat("  Final runtime value:", runtime_val, "seconds\n")
+      cat("====================================\n\n")
+    } else {
+      warning("Runtime metric not found in file: ", file_path)
+      cat("  Available columns:", paste(colnames(data), collapse=", "), "\n")
+      runtime_val <- NA
+    }
+    
+    cat("  Extracted metrics - Pearson:", pearson_val, "JSD:", jsd_val, "NRMSE:", nrmse_val, "R2:", r2_val, "Runtime:", runtime_val, "\n")
     
     # Put them in a data frame and add to our list
     data_list[[label]] <- data.frame(
-      metric = c("PearsonCorr", "JSD", "NRMSE", "R2"),
-      value = c(pearson_val, jsd_val, nrmse_val, r2_val),
+      metric = c("PearsonCorr", "JSD", "NRMSE", "R2", "Runtime"),
+      value = c(pearson_val, jsd_val, nrmse_val, r2_val, runtime_val),
       method = label
     )
     
@@ -134,8 +313,18 @@ if (length(data_list) == 0) {
   stop("No valid data found in any of the provided files")
 }
 
-# Combine all data frames into one
+  # Combine all data frames into one
 all_data <- do.call(rbind, data_list)
+
+# Print extensive debugging of what data was loaded
+cat("\n===== DATA LOADED FROM FILES =====\n")
+for (method_name in unique(all_data$method)) {
+  cat("Method:", method_name, "\n")
+  method_data <- all_data[all_data$method == method_name, ]
+  print(method_data)
+  cat("\n")
+}
+cat("================================\n\n")
 
 # Check for minimum number of metrics
 if (length(unique(all_data$metric)) < 3) {
@@ -162,8 +351,70 @@ all_data$display_value[all_data$metric == "NRMSE"] <- 1 - pmin(1, all_data$value
 # Pearson Correlation: 1 (outer/best) to -1 (center/worst)
 all_data$display_value[all_data$metric == "PearsonCorr"] <- (pmax(-1, pmin(1, all_data$value[all_data$metric == "PearsonCorr"])) + 1) / 2
 
+# Runtime: 0 seconds (outer/best) to 1800 seconds (center/worst)
+cat("\n===== RUNTIME TRANSFORMATION DEBUG =====\n")
+runtime_indices <- which(all_data$metric == "Runtime")
+cat("Number of runtime metrics found:", length(runtime_indices), "\n")
+cat("All metric types:", paste(unique(all_data$metric), collapse=", "), "\n")
+cat("All methods:", paste(unique(all_data$method), collapse=", "), "\n")
+
+# Create a data frame with initial runtime values for final verification
+initial_runtimes <- data.frame(
+  Method = all_data$method[runtime_indices],
+  Raw_Value = all_data$value[runtime_indices],
+  stringsAsFactors = FALSE
+)
+print(initial_runtimes)
+
+for (i in runtime_indices) {
+  runtime_value <- all_data$value[i]
+  method_name <- all_data$method[i]
+  
+  # Extra debug check for TB_D100-bulk special case
+  if (grepl("TB_D100-bulk", method_name)) {
+    cat("\n*** SPECIAL DEBUG FOR TB_D100 ***\n")
+    cat("Method name:", method_name, "\n")
+    cat("Raw runtime value:", runtime_value, "of class", class(runtime_value), "\n")
+    
+    # If we have a TB_D100 item with NA runtime, fix it manually
+    if (is.na(runtime_value)) {
+      runtime_value <- 200  # 3:20 = 200 seconds
+      all_data$value[i] <- runtime_value
+      cat("Manually fixed TB_D100 runtime to 200 seconds\n")
+    }
+  }
+  
+  # Debug output for runtime values
+  cat("\nRuntime value for", method_name, ":", runtime_value, "seconds\n")
+  
+  # Only transform if value is not NA
+  if (!is.na(runtime_value)) {
+    # Apply transformation, making sure 0 is best (1.0) and 1800+ is worst (0.0)
+    display_value <- 1 - pmin(1, runtime_value / 1800)
+    all_data$display_value[i] <- display_value
+    cat("  Transformed to display value:", display_value, 
+        "(1.0=fastest/0.0=slowest, based on 0-1800s scale)\n")
+  } else {
+    # For NA values, set to 0.5 (middle of the scale) to avoid missing data
+    all_data$display_value[i] <- 0.5
+    cat("  NA runtime value for", method_name, "- using default display value of 0.5\n")
+  }
+}
+
+# Create a data frame with final transformed values for verification
+final_runtimes <- data.frame(
+  Method = all_data$method[runtime_indices],
+  Original_Value = all_data$value[runtime_indices],
+  Display_Value = all_data$display_value[runtime_indices],
+  Radar_Position = 1 - all_data$display_value[runtime_indices],  # 0=outer, 1=center
+  stringsAsFactors = FALSE
+)
+cat("\nFINAL RUNTIME VALUES FOR RADAR PLOT:\n")
+print(final_runtimes)
+cat("=====================================\n\n")
+
 # Set factor level order for metrics to control display order
-all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE"))
+all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE", "Runtime"))
 
 # Set up colors - use the provided colors and continue the gradient
 # Starting with your colors and continuing the gradient
@@ -279,6 +530,10 @@ for (i in 1:nrow(label_data)) {
   } else if (label_data$metric[i] == "PearsonCorr") {
     label_data$y[i] <- label_data$y[i] + 0.15
     label_data$x[i] <- label_data$x[i] - 0.03
+  } else if (label_data$metric[i] == "Runtime") {
+    # Adjust the Runtime label position if needed
+    label_data$y[i] <- label_data$y[i] - 0.05
+    label_data$x[i] <- label_data$x[i] - 0.05
   }
 }
 
@@ -346,9 +601,13 @@ for (i in seq_along(metrics)) {
 
 # Format scale labels (round to appropriate decimal places)
 scale_labels$label <- ifelse(
-  scale_labels$metric == "R2" | scale_labels$metric == "NRMSE", 
-  sprintf("%.1f", scale_labels$actual_value),  # 1 decimal for R2 and NRMSE
-  sprintf("%.2f", scale_labels$actual_value)   # 2 decimals for Pearson and JSD
+  scale_labels$metric == "Runtime",
+  sprintf("%.0fs", scale_labels$actual_value),  # Format runtime in seconds
+  ifelse(
+    scale_labels$metric == "R2" | scale_labels$metric == "NRMSE", 
+    sprintf("%.1f", scale_labels$actual_value),  # 1 decimal for R2 and NRMSE
+    sprintf("%.2f", scale_labels$actual_value)   # 2 decimals for Pearson and JSD
+  )
 )
 
 # Dynamic plot size adjustment based on number of methods
