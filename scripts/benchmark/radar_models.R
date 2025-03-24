@@ -572,9 +572,9 @@ legend_columns <- ceiling(num_methods / legend_rows_per_column)
 legend_items_per_column <- ceiling(num_methods / legend_columns)
 
 # Position the legend in the top right corner
-legend_x <- 1  # Position on the right side
+legend_x <- 0.8  # Position on the right side
 legend_spacing <- 0.06  # Vertical spacing between items
-col_width <- 0.3  # Width of each column - REDUCED to bring columns closer
+col_width <- 0.5  # Width of each column - REDUCED to bring columns closer
 
 # Create the legend data
 legend_data <- data.frame(
