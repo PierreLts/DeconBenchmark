@@ -510,14 +510,14 @@ scale_labels$label <- ifelse(
   )
 )
 
-# Dynamic plot size adjustment based on number of methods
-plot_size <- 8 + (num_methods > 5) * 2  # Base size 8", add 2" if more than 5 methods
+# Fixed plot size - no longer depends on number of methods
+plot_size <- 10  # Fixed 10 inches regardless of dataset count
 
 # Set up the plot
 p <- ggplot() +
   # Add grid lines
   geom_path(
-    data = grid_data %>% group_by(radius) %>% summarize(x = c(x, x[1]), y = c(y, y[1])),
+    data = grid_data %>% group_by(radius) %>% summarize(x = c(x, x[1]), y = c(y, y[1]), .groups = "drop"),
     aes(x = x, y = y, group = radius),
     color = "grey85",
     size = 0.5
@@ -533,24 +533,25 @@ p <- ggplot() +
   geom_polygon(
     data = polygon_data %>% group_by(method) %>% summarize(
       x = c(x, x[1]),
-      y = c(y, y[1])
+      y = c(y, y[1]),
+      .groups = "drop"
     ),
     aes(x = x, y = y, group = method, color = method),
     fill = NA,
-    size = 1.2
+    size = 0.8
   ) +
   # Add the points
   geom_point(
     data = polygon_data,
     aes(x = x, y = y, color = method),
-    size = 3
+    size = 2
   ) +
   # Add scale value labels with proper alignment
   geom_text(
     data = scale_labels,
     aes(x = x, y = y, label = label, hjust = hjust, vjust = vjust),
     color = "grey40",
-    size = 3.5,  # Increased from 3 to 3.5
+    size = 3.5
   ) +
   # Use Cartesian coordinates with equal aspect ratio
   coord_equal(xlim = c(-2, 2), ylim = c(-1.6, 1.6), expand = FALSE) +
@@ -564,11 +565,58 @@ p <- ggplot() +
     aes(x = x, y = y, label = metric),
     hjust = 0.5,
     vjust = 0.5,
-    size = 5,  # Increased from 4 to 5
+    size = 5,
     fontface = "bold"
   )
 
-# Create theme with adjustments based on number of methods
+# Fixed: Always use 10 datasets per column for legend
+legend_items_per_column <- 10  # Always 10 datasets per column 
+legend_columns <- ceiling(num_methods / legend_items_per_column)
+
+# Position the legend in the top right corner
+legend_x <- 0.8  # Position on the right side
+
+# Reduce spacing between legend items for many datasets
+legend_spacing <- 0.08  # Tighter spacing for many datasets
+
+col_width <- 0.5  # Width of each column
+legend_start_y <- 1.3  # Starting position
+
+# Create the legend data
+legend_data <- data.frame(
+  x = numeric(),
+  y = numeric(),
+  label = character(),
+  method = character(),
+  stringsAsFactors = FALSE
+)
+
+# Calculate positions for each legend item
+for (col in 1:legend_columns) {
+  x_pos <- legend_x + (col - 1) * col_width
+  
+  # Calculate starting and ending indices for this column
+  start_idx <- (col - 1) * legend_items_per_column + 1
+  end_idx <- min(col * legend_items_per_column, length(methods))
+  
+  # Calculate y positions for this column's items
+  y_positions <- seq(from = legend_start_y, by = -legend_spacing, length.out = end_idx - start_idx + 1)
+  
+  for (i in start_idx:end_idx) {
+    item_idx <- i - start_idx + 1
+    method_name <- methods[i]
+    
+    legend_data <- rbind(legend_data, data.frame(
+      x = x_pos,
+      y = y_positions[item_idx],
+      label = method_name,
+      method = method_name,
+      stringsAsFactors = FALSE
+    ))
+  }
+}
+
+# Create theme settings
 theme_settings <- theme_void() +
   theme(
     # Center title
@@ -583,31 +631,27 @@ theme_settings <- theme_void() +
 # Apply theme settings
 p <- p + theme_settings
 
-# Create custom colored legend text - vertically in the top right
-# Use smaller vertical spacing
-legend_x <- 0.75  # Position on the right side
-legend_spacing <- 0.1  # Reduced vertical spacing between items (was 0.2)
-legend_start_y <- 1.4  # Start from the top
-
-# Create dataframe for legend items
-legend_data <- data.frame(
-  x = rep(legend_x, length(methods)),
-  y = seq(from = legend_start_y, by = -legend_spacing, length.out = length(methods)),
-  label = methods
-)
+# Adjust legend font size based on number of methods
+legend_font_size <- 4.0 
 
 # Add colored text annotations as legend
 p <- p + 
   geom_text(
     data = legend_data,
-    aes(x = x, y = y, label = label, color = label),
-    size = 4,  # Increased from 3.5 to 4
+    aes(x = x, y = y, label = label, color = method),
+    size = legend_font_size,
     fontface = "bold",
     hjust = 0,  # Left-align the text
     vjust = 0.5  # Center vertically
   )
-p <- p + theme(plot.margin = margin(20, 20, 20, 20))  # top, right, bottom, left
 
-# Save plot with dynamic dimensions
-ggsave(output_file, p, width = 1.5*plot_size, height = plot_size, units = "in")
+# Scale down width adjustment for many datasets to prevent excessive width
+legend_width_adjustment <- 0.8
+
+# Cap the maximum width to ensure it doesn't get too wide
+max_width <- 15  # Maximum width in inches
+final_width <- min(plot_size + legend_width_adjustment, max_width)
+
+# Save plot with controlled dimensions
+ggsave(output_file, p, width = final_width, height = plot_size, units = "in")
 cat("Radar plot saved to:", output_file, "\n")
