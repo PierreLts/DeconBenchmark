@@ -459,7 +459,7 @@ for (i in seq_along(metrics)) {
     # Special case for center (0,0)
     if (br == 0) {
       # For center value, slightly offset in the direction of the axis
-      center_offset <- 0.03
+      center_offset <- 0.08
       x <- center_offset * cos(angle)
       y <- center_offset * sin(angle)
     }
@@ -547,7 +547,7 @@ p <- ggplot() +
     data = scale_labels,
     aes(x = x, y = y, label = label, hjust = hjust, vjust = vjust),
     color = "grey40",
-    size = 3
+    size = 3.5
   ) +
   # Use Cartesian coordinates with equal aspect ratio
   coord_equal(xlim = c(-2, 2), ylim = c(-1.6, 1.6), expand = FALSE) +
@@ -561,7 +561,7 @@ p <- ggplot() +
     aes(x = x, y = y, label = metric),
     hjust = 0.5,
     vjust = 0.5,
-    size = 4,
+    size = 5,
     fontface = "bold"
   )
 
@@ -627,7 +627,7 @@ p <- p +
   geom_text(
     data = legend_data,
     aes(x = x, y = y, label = label, color = method),
-    size = 3.0,
+    size = 4.0,
     fontface = "bold",
     hjust = 0,  # Left-align the text
     vjust = 0.5  # Center vertically

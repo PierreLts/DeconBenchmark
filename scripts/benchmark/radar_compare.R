@@ -462,7 +462,7 @@ for (i in seq_along(metrics)) {
     if (br == 0) {
       # For center value, slightly offset in the direction of the axis
       # to avoid overlapping at the center
-      center_offset <- 0.03  # Reduced from 0.05 to be closer to center
+      center_offset <- 0.08  # Increased from 0.03 to 0.08 to space labels from center
       x <- center_offset * cos(angle)
       y <- center_offset * sin(angle)
     }
@@ -550,7 +550,7 @@ p <- ggplot() +
     data = scale_labels,
     aes(x = x, y = y, label = label, hjust = hjust, vjust = vjust),
     color = "grey40",
-    size = 3
+    size = 3.5,  # Increased from 3 to 3.5
   ) +
   # Use Cartesian coordinates with equal aspect ratio
   coord_equal(xlim = c(-2, 2), ylim = c(-1.6, 1.6), expand = FALSE) +
@@ -564,7 +564,7 @@ p <- ggplot() +
     aes(x = x, y = y, label = metric),
     hjust = 0.5,
     vjust = 0.5,
-    size = 4,
+    size = 5,  # Increased from 4 to 5
     fontface = "bold"
   )
 
@@ -601,7 +601,7 @@ p <- p +
   geom_text(
     data = legend_data,
     aes(x = x, y = y, label = label, color = label),
-    size = 3.5,  # Slightly smaller text (was 4)
+    size = 4,  # Increased from 3.5 to 4
     fontface = "bold",
     hjust = 0,  # Left-align the text
     vjust = 0.5  # Center vertically
