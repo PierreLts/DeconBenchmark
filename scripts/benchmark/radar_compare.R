@@ -180,44 +180,44 @@ for (file_path in benchmark_files) {
       next
     }
     
-    # Extract the overall values row (second row)
+    # Extract the overall values row (first row)
     metrics_row <- data[1, ]
     
-  # Find columns for metrics
-  # First try specific exact matches with the most precise matches first
-  pearson_col <- which(colnames(data) %in% c("PearsonCorr", "Pearson"))[1]
-  jsd_col <- which(colnames(data) == "JSD")[1]
-  nrmse_col <- which(colnames(data) == "NRMSE")[1]
-  r2_col <- which(colnames(data) %in% c("R2", "R^2"))[1]
-  
-  # For runtime, check exact column name first (prioritize "Runtime (H:M:S)")
-  runtime_col <- which(colnames(data) == "Runtime (H:M:S)")[1]
-  if (is.na(runtime_col)) {
-    runtime_col <- which(colnames(data) %in% c("Runtime", "Time"))[1]
-  }
-  
-  # Print what columns were found
-  cat("  Found columns - Pearson:", 
-      ifelse(!is.na(pearson_col), colnames(data)[pearson_col], "NOT FOUND"), 
-      "JSD:", ifelse(!is.na(jsd_col), colnames(data)[jsd_col], "NOT FOUND"),
-      "NRMSE:", ifelse(!is.na(nrmse_col), colnames(data)[nrmse_col], "NOT FOUND"),
-      "R2:", ifelse(!is.na(r2_col), colnames(data)[r2_col], "NOT FOUND"),
-      "Runtime:", ifelse(!is.na(runtime_col), colnames(data)[runtime_col], "NOT FOUND"), "\n")
-  
-  # If not found, try case-insensitive partial matches
-  if (is.na(pearson_col)) pearson_col <- grep("pearson", colnames(data), ignore.case = TRUE)[1]
-  if (is.na(jsd_col)) jsd_col <- grep("jsd", colnames(data), ignore.case = TRUE)[1]
-  if (is.na(nrmse_col)) nrmse_col <- grep("nrmse", colnames(data), ignore.case = TRUE)[1]
-  if (is.na(r2_col)) r2_col <- grep("r2|r\\^2", colnames(data), ignore.case = TRUE)[1]
-  
-  if (is.na(runtime_col)) {
-    runtime_matches <- grep("runtime|time|h:m:s", colnames(data), ignore.case = TRUE)
-    cat("  Potential runtime columns:", 
-        ifelse(length(runtime_matches) > 0, 
-               paste(colnames(data)[runtime_matches], collapse=", "), 
-               "NONE"), "\n")
-    runtime_col <- runtime_matches[1]  # Take the first match if multiple
-  }
+    # Find columns for metrics
+    # In the new format, we expect direct columns without "Models" prefix
+    pearson_col <- which(colnames(data) %in% c("PearsonCorr", "Pearson"))[1]
+    jsd_col <- which(colnames(data) == "JSD")[1]
+    nrmse_col <- which(colnames(data) == "NRMSE")[1]
+    r2_col <- which(colnames(data) %in% c("R2", "R^2"))[1]
+    
+    # For runtime, check exact column name first (prioritize "Runtime (H:M:S)")
+    runtime_col <- which(colnames(data) == "Runtime (H:M:S)")[1]
+    if (is.na(runtime_col)) {
+      runtime_col <- which(colnames(data) %in% c("Runtime", "Time"))[1]
+    }
+    
+    # Print what columns were found
+    cat("  Found columns - Pearson:", 
+        ifelse(!is.na(pearson_col), colnames(data)[pearson_col], "NOT FOUND"), 
+        "JSD:", ifelse(!is.na(jsd_col), colnames(data)[jsd_col], "NOT FOUND"),
+        "NRMSE:", ifelse(!is.na(nrmse_col), colnames(data)[nrmse_col], "NOT FOUND"),
+        "R2:", ifelse(!is.na(r2_col), colnames(data)[r2_col], "NOT FOUND"),
+        "Runtime:", ifelse(!is.na(runtime_col), colnames(data)[runtime_col], "NOT FOUND"), "\n")
+    
+    # If not found, try case-insensitive partial matches
+    if (is.na(pearson_col)) pearson_col <- grep("pearson", colnames(data), ignore.case = TRUE)[1]
+    if (is.na(jsd_col)) jsd_col <- grep("jsd", colnames(data), ignore.case = TRUE)[1]
+    if (is.na(nrmse_col)) nrmse_col <- grep("nrmse", colnames(data), ignore.case = TRUE)[1]
+    if (is.na(r2_col)) r2_col <- grep("r2|r\\^2", colnames(data), ignore.case = TRUE)[1]
+    
+    if (is.na(runtime_col)) {
+      runtime_matches <- grep("runtime|time|h:m:s", colnames(data), ignore.case = TRUE)
+      cat("  Potential runtime columns:", 
+          ifelse(length(runtime_matches) > 0, 
+                 paste(colnames(data)[runtime_matches], collapse=", "), 
+                 "NONE"), "\n")
+      runtime_col <- runtime_matches[1]  # Take the first match if multiple
+    }
     
     # Check if all metrics were found
     if (any(is.na(c(pearson_col, jsd_col, nrmse_col, r2_col)))) {

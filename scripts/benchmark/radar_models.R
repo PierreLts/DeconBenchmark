@@ -44,18 +44,13 @@ parse_time_to_seconds <- function(time_str) {
   # Ensure time_str is treated as character
   time_str <- as.character(time_str)
   
-  # Debug output
-  cat("  Parsing time string: '", time_str, "'\n", sep="")
-  
   # Check if the string is already numeric
   if (!is.na(suppressWarnings(as.numeric(time_str)))) {
-    cat("  Already numeric, returning as is:", as.numeric(time_str), "seconds\n")
     return(as.numeric(time_str))
   }
   
   # Handle N/A or empty strings
   if (is.na(time_str) || time_str == "" || tolower(time_str) == "n/a") {
-    cat("  N/A or empty string detected\n")
     return(NA)
   }
   
@@ -118,38 +113,27 @@ if (nrow(data) < 2) {
   stop("Benchmark file must have at least 2 rows (header row and at least one model)")
 }
 
+# Print column names for debugging
+cat("All column names in benchmark file:\n")
+print(colnames(data))
+
 # Skip the first row (summary/header) and use only model rows
 model_data <- data[2:nrow(data), ]
 cat("Found", nrow(model_data), "models in benchmark file\n")
 
-# Find columns for metrics
-# First try specific exact matches with the most precise matches first
+# Find columns for metrics - try exact matches first
 pearson_col <- which(colnames(data) %in% c("PearsonCorr", "Pearson"))[1]
 jsd_col <- which(colnames(data) == "JSD")[1]
 nrmse_col <- which(colnames(data) == "NRMSE")[1]
 r2_col <- which(colnames(data) %in% c("R2", "R^2"))[1]
 
-# For runtime, check exact column name first (prioritize "Runtime (H:M:S)")
+# For runtime, check exact column name first
 runtime_col <- which(colnames(data) == "Runtime (H:M:S)")[1]
 if (is.na(runtime_col)) {
   runtime_col <- which(colnames(data) %in% c("Runtime", "Time"))[1]
 }
 
-# Find model name columns for each metric
-# Expect columns like "Models PearsonCorr", "Models R2", etc.
-model_pearson_col <- grep("Models PearsonCorr", colnames(data))[1]
-model_jsd_col <- grep("Models JSD", colnames(data))[1]
-model_nrmse_col <- grep("Models NRMSE", colnames(data))[1]
-model_r2_col <- grep("Models R2", colnames(data))[1]
-model_runtime_col <- grep("Models Runtime", colnames(data))[1]
-
-cat("Found metric columns - Pearson:", ifelse(!is.na(pearson_col), colnames(data)[pearson_col], "NOT FOUND"), 
-    ", JSD:", ifelse(!is.na(jsd_col), colnames(data)[jsd_col], "NOT FOUND"),
-    ", NRMSE:", ifelse(!is.na(nrmse_col), colnames(data)[nrmse_col], "NOT FOUND"),
-    ", R2:", ifelse(!is.na(r2_col), colnames(data)[r2_col], "NOT FOUND"),
-    ", Runtime:", ifelse(!is.na(runtime_col), colnames(data)[runtime_col], "NOT FOUND"), "\n")
-
-# If not found, try case-insensitive partial matches
+# If not found, try partial matches
 if (is.na(pearson_col)) pearson_col <- grep("pearson", colnames(data), ignore.case = TRUE)[1]
 if (is.na(jsd_col)) jsd_col <- grep("jsd", colnames(data), ignore.case = TRUE)[1]
 if (is.na(nrmse_col)) nrmse_col <- grep("nrmse", colnames(data), ignore.case = TRUE)[1]
@@ -159,6 +143,9 @@ if (is.na(runtime_col)) {
   runtime_matches <- grep("runtime|time|h:m:s", colnames(data), ignore.case = TRUE)
   runtime_col <- runtime_matches[1]  # Take the first match if multiple
 }
+
+# Find models column - IMPORTANT: Models are in the first column
+model_col <- 1  # First column contains model names
 
 # Check if all metrics were found
 if (any(is.na(c(pearson_col, jsd_col, nrmse_col, r2_col)))) {
@@ -179,28 +166,17 @@ all_data <- data.frame()
 # Create a list to store JSD values for each model
 model_jsd_values <- list()
 
+# Extract model names and values
 for (i in 1:nrow(model_data)) {
-  model_row <- model_data[i, ]
-  
-  # Determine model name - use the first non-NA model name column
-  model_name <- NA
-  for (col in c(model_pearson_col, model_jsd_col, model_nrmse_col, model_r2_col, model_runtime_col)) {
-    if (!is.na(col) && !is.na(model_row[[col]])) {
-      model_name <- model_row[[col]]
-      break
-    }
-  }
-  
-  # If still NA, use row number
-  if (is.na(model_name)) {
-    model_name <- paste("Model", i)
-  }
+  # Get model name directly from the first column
+  model_name <- as.character(model_data[[model_col]][i])
+  cat("Model name from first column:", model_name, "\n")
   
   # Extract metric values
-  pearson_val <- as.numeric(model_row[[pearson_col]])
-  jsd_val <- as.numeric(model_row[[jsd_col]])
-  nrmse_val <- as.numeric(model_row[[nrmse_col]])
-  r2_val <- as.numeric(model_row[[r2_col]])
+  pearson_val <- as.numeric(model_data[[pearson_col]][i])
+  jsd_val <- as.numeric(model_data[[jsd_col]][i])
+  nrmse_val <- as.numeric(model_data[[nrmse_col]][i])
+  r2_val <- as.numeric(model_data[[r2_col]][i])
   
   # Store JSD value for this model for later sorting
   model_jsd_values[[model_name]] <- jsd_val
@@ -208,7 +184,7 @@ for (i in 1:nrow(model_data)) {
   # Extract runtime value (if available)
   runtime_val <- NA
   if (!is.na(runtime_col)) {
-    runtime_str <- model_row[[runtime_col]]
+    runtime_str <- model_data[[runtime_col]][i]
     runtime_val <- parse_time_to_seconds(runtime_str)
   }
   
@@ -224,19 +200,8 @@ for (i in 1:nrow(model_data)) {
 
 # Sort models by JSD (lowest/best to highest/worst)
 jsd_order <- names(sort(unlist(model_jsd_values)))
+cat("Models sorted by JSD:", paste(jsd_order, collapse=", "), "\n")
 all_data$method <- factor(all_data$method, levels = jsd_order)
-
-# Add rank numbers to method names
-ranked_methods <- paste0(1:length(jsd_order), ". ", jsd_order)
-names(ranked_methods) <- jsd_order
-
-# Replace method names with ranked versions
-all_data$display_method <- ranked_methods[as.character(all_data$method)]
-
-# Check for minimum number of metrics
-if (length(unique(all_data$metric)) < 3) {
-  stop("At least 3 metrics are required for a meaningful radar plot")
-}
 
 # Transform values for consistent scale direction with specified ranges
 all_data$display_value <- all_data$value  # Start with original values
@@ -328,7 +293,7 @@ get_extended_palette <- function(n) {
 }
 
 # Get unique methods and create color mapping
-methods <- unique(all_data$method)
+methods <- levels(all_data$method)  # Use factor levels to maintain JSD order
 num_methods <- length(methods)
 cat("Creating color palette for", num_methods, "methods\n")
 
@@ -337,11 +302,11 @@ color_palette <- get_extended_palette(num_methods)
 
 # Assign colors to methods (in JSD-sorted order)
 color_mapping <- color_palette[1:num_methods]
-names(color_mapping) <- jsd_order  # Original method names
+names(color_mapping) <- methods  # Use the sorted method names
 
 # Function to calculate Cartesian coordinates for radar plot
 create_polygon_data <- function(df) {
-  methods <- unique(df$method)
+  methods <- levels(df$method)  # Use factor levels to maintain order
   metrics <- levels(df$metric)
   n_metrics <- length(metrics)
   
@@ -360,9 +325,6 @@ create_polygon_data <- function(df) {
     x <- radii * cos(angles)
     y <- radii * sin(angles)
     
-    # Get the display method with rank
-    display_m <- df$display_method[df$method == m][1]
-    
     # Create a data frame for this method
     method_df <- data.frame(
       x = x,
@@ -370,7 +332,6 @@ create_polygon_data <- function(df) {
       radius = radii,
       angle = angles,
       method = m,
-      display_method = display_m,
       metric = method_data$metric
     )
     
@@ -507,14 +468,14 @@ scale_labels$label <- ifelse(
   )
 )
 
-# Dynamic plot size adjustment based on number of methods
-plot_size <- 10 + (num_methods > 15) * 2 + (num_methods > 30) * 2  # Base size 10", add 2" if more than 15 methods, 4" if more than 30
+# Fixed plot size - no longer depends on number of methods
+plot_size <- 10  # Fixed 10 inches regardless of model count
 
 # Set up the plot
 p <- ggplot() +
   # Add grid lines
   geom_path(
-    data = grid_data %>% group_by(radius) %>% summarize(x = c(x, x[1]), y = c(y, y[1])),
+    data = grid_data %>% group_by(radius) %>% summarize(x = c(x, x[1]), y = c(y, y[1]), .groups = "drop"),
     aes(x = x, y = y, group = radius),
     color = "grey85",
     size = 0.5
@@ -530,7 +491,8 @@ p <- ggplot() +
   geom_polygon(
     data = polygon_data %>% group_by(method) %>% summarize(
       x = c(x, x[1]),
-      y = c(y, y[1])
+      y = c(y, y[1]),
+      .groups = "drop"
     ),
     aes(x = x, y = y, group = method, color = method),
     fill = NA,
@@ -565,22 +527,25 @@ p <- ggplot() +
     fontface = "bold"
   )
 
-# Calculate optimal legend layout based on number of methods
-legend_rows_per_column <- 15  # Maximum rows per column
-legend_columns <- ceiling(num_methods / legend_rows_per_column)
-legend_items_per_column <- ceiling(num_methods / legend_columns)
+# Fixed: Always use 10 models per column for legend
+legend_items_per_column <- 10  # Always 10 models per column 
+legend_columns <- ceiling(num_methods / legend_items_per_column)
 
 # Position the legend in the top right corner
 legend_x <- 0.8  # Position on the right side
-legend_spacing <- 0.06  # Vertical spacing between items
-col_width <- 0.5  # Width of each column - REDUCED to bring columns closer
-legend_start_y <- 1.3  # Higher starting position (was 1.0)
 
-# Create the legend data
+# Reduce spacing between legend items for many models
+legend_spacing <- 0.08  # Tighter spacing for many models
+
+col_width <- 0.5  # Width of each column
+legend_start_y <- 1.3  # Starting position
+
+# Create the legend data - simple approach for numbering
 legend_data <- data.frame(
   x = numeric(),
   y = numeric(),
   label = character(),
+  method = character(),
   stringsAsFactors = FALSE
 )
 
@@ -597,11 +562,17 @@ for (col in 1:legend_columns) {
   
   for (i in start_idx:end_idx) {
     item_idx <- i - start_idx + 1
+    model_index <- i
+    
+    # Create a numbered label directly
+    model_name <- methods[model_index]
+    numbered_label <- paste0(model_index, ". ", model_name)
+    
     legend_data <- rbind(legend_data, data.frame(
       x = x_pos,
       y = y_positions[item_idx],
-      label = methods[i],
-      method = jsd_order[i],  # Match with original method name for color mapping
+      label = numbered_label,
+      method = model_name,
       stringsAsFactors = FALSE
     ))
   }
@@ -622,20 +593,27 @@ theme_settings <- theme_void() +
 # Apply theme settings
 p <- p + theme_settings
 
+# Adjust legend font size based on number of models
+legend_font_size <- 4.0 
+
 # Add colored text annotations as legend
 p <- p + 
   geom_text(
     data = legend_data,
     aes(x = x, y = y, label = label, color = method),
-    size = 4.5,  # Increased font size from 4.0 to 4.5
+    size = legend_font_size,
     fontface = "bold",
     hjust = 0,  # Left-align the text
     vjust = 0.5  # Center vertically
   )
 
-# Calculate width adjustment based on number of legend columns
-legend_width_adjustment <- 0.2 + (legend_columns * 0.4)  # Reduced from 0.6 to bring columns closer
+# Scale down width adjustment for many models to prevent excessive width
+legend_width_adjustment <- 0.8
 
-# Save plot with dynamic dimensions
-ggsave(output_file, p, width = plot_size + legend_width_adjustment, height = plot_size, units = "in")
+# Cap the maximum width to ensure it doesn't get too wide
+max_width <- 15  # Maximum width in inches
+final_width <- min(plot_size + legend_width_adjustment, max_width)
+
+# Save plot with controlled dimensions
+ggsave(output_file, p, width = final_width, height = plot_size, units = "in")
 cat("Radar plot saved to:", output_file, "\n")

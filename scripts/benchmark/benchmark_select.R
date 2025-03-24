@@ -199,23 +199,25 @@ summary_stats <- filtered_data %>%
     .groups = "drop"
   )
 
+# *** MODIFIED SECTION: Sort all methods by JSD (lowest to highest) ***
+# This is the key change - we sort all models by JSD once
+sorted_by_jsd <- summary_stats %>% arrange(JSD_mean)
+model_order <- sorted_by_jsd$Method
+
 # Define metrics and create the result table structure
 metrics <- c("PearsonCorr", "NRMSE", "R2", "JSD")
-result_cols <- c()
+result_cols <- c("Model")  # Start with a single Model column
 
-# Create column names
+# Create column names for metric values and SDs
 prefix <- paste0(selection, "_")
 for (metric in metrics) {
   result_cols <- c(result_cols, 
-                  paste0(prefix, "Models_", metric),
                   paste0(prefix, metric),
                   paste0(prefix, "SD_", metric))
 }
 
-# Add runtime columns
-result_cols <- c(result_cols, 
-                paste0(prefix, "Models_Runtime"),
-                paste0(prefix, "Runtime"))
+# Add runtime column
+result_cols <- c(result_cols, paste0(prefix, "Runtime"))
 
 # Create empty result dataframe with properly named columns
 result_df <- data.frame(matrix(ncol = length(result_cols), nrow = 0))
@@ -238,101 +240,85 @@ overall_metrics <- filtered_data %>%
 summary_row <- data.frame(matrix(NA, nrow = 1, ncol = length(result_cols)))
 colnames(summary_row) <- result_cols
 
+# Set the Model column to "Overall"
+summary_row[1, "Model"] <- paste0("Overall (", selection, ")")
+
 # Fill in overall metrics for each measure type
 for (metric in metrics) {
   value_col <- paste0(prefix, metric)
   sd_col_name <- paste0(prefix, "SD_", metric)
-  
-  # For "Models" columns, display text indicating this is overall value
-  model_col <- paste0(prefix, "Models_", metric)
-  summary_row[1, model_col] <- paste0("Overall (", selection, ")")
   
   # Add overall means and standard deviations
   summary_row[1, value_col] <- overall_metrics[[paste0(metric, "_mean")]]
   summary_row[1, sd_col_name] <- overall_metrics[[paste0(metric, "_sd")]]
 }
 
-# Add initial runtime info columns (will update the runtime value later)
-runtime_model_col <- paste0(prefix, "Models_Runtime")
+# Add initial runtime info column (will update the runtime value later)
 runtime_col <- paste0(prefix, "Runtime")
-summary_row[1, runtime_model_col] <- paste0("Overall (", selection, ")")
 summary_row[1, runtime_col] <- "N/A" # Temporary, will be updated with average
 
-# Process metrics
-max_models <- nrow(summary_stats)
+# *** MODIFIED SECTION: Use JSD-sorted order for all metrics ***
+# Initialize result data with the right number of rows
+max_models <- nrow(sorted_by_jsd)
 result_data <- as.data.frame(matrix(NA, nrow = max_models, ncol = length(result_cols)))
 colnames(result_data) <- result_cols
 
+# First, fill in the Model column with method names in JSD-sorted order
+for (i in 1:nrow(sorted_by_jsd)) {
+  if (i <= nrow(result_data)) {
+    # Get the method at this position in the sorted list
+    method <- sorted_by_jsd$Method[i]
+    
+    # Set the model name in the Model column
+    result_data[i, "Model"] <- method
+  }
+}
+
+# Process all metrics using the same JSD-based sorting
 for (metric in metrics) {
   mean_col <- paste0(metric, "_mean")
   sd_col <- paste0(metric, "_sd")
   
-  # Sort in appropriate direction
-  if (metric %in% c("PearsonCorr", "R2")) {
-    sorted_data <- summary_stats %>% arrange(desc(!!sym(mean_col)))
-  } else {
-    sorted_data <- summary_stats %>% arrange(!!sym(mean_col))
-  }
-  
-  # Fill in the appropriate columns
-  model_col <- paste0(prefix, "Models_", metric)
+  # Column names for this metric
   value_col <- paste0(prefix, metric)
   sd_col_name <- paste0(prefix, "SD_", metric)
   
-  # Fill in data
-  for (i in 1:nrow(sorted_data)) {
+  # Fill in data in JSD-sorted order
+  for (i in 1:nrow(sorted_by_jsd)) {
     if (i <= nrow(result_data)) {
-      result_data[i, model_col] <- sorted_data$Method[i]
-      result_data[i, value_col] <- sorted_data[[mean_col]][i]
-      result_data[i, sd_col_name] <- sorted_data[[sd_col]][i]
+      # For all metrics, use the same row index to maintain consistency
+      result_data[i, value_col] <- sorted_by_jsd[[mean_col]][i]
+      result_data[i, sd_col_name] <- sorted_by_jsd[[sd_col]][i]
     }
   }
 }
 
-# Add Runtime processing
-# Get runtime data for methods
-group_runtime_data <- runtime_data
-
-if (nrow(group_runtime_data) > 0) {
-  # Make sure the runtime data has unique methods by taking the first occurrence of each method
-  unique_methods <- unique(group_runtime_data$Method)
-  unique_runtime_data <- data.frame(
-    Method = character(0),
-    Runtime = numeric(0),
-    stringsAsFactors = FALSE
-  )
+# *** MODIFIED SECTION: Use JSD-sorted order for runtime as well ***
+# Add Runtime processing - using the same JSD-sorted order
+# Join runtime data with the method list
+if (nrow(runtime_data) > 0) {
+  # Create a mapping of runtime data by method
+  runtime_lookup <- setNames(runtime_data$Runtime, runtime_data$Method)
   
-  for (m in unique_methods) {
-    method_rows <- group_runtime_data[group_runtime_data$Method == m, ]
-    if (nrow(method_rows) > 0) {
-      # Use the first entry for each method (which should be the most recent)
-      unique_runtime_data <- rbind(unique_runtime_data, method_rows[1, ])
-    }
-  }
-  
-  # Join with summary_stats but only keep methods that are in the summary stats
-  unique_runtime_data <- unique_runtime_data %>%
-    inner_join(select(summary_stats, Method), by = "Method")
-  
-  # Sort by runtime (ascending)
-  sorted_runtime <- unique_runtime_data %>%
-    arrange(Runtime)
-  
-  # Fill in the appropriate columns
-  model_col <- paste0(prefix, "Models_Runtime")
+  # Fill runtime data in the same JSD-sorted order
   runtime_col <- paste0(prefix, "Runtime")
   
-  # Fill in data for each method
-  for (i in 1:nrow(sorted_runtime)) {
+  for (i in 1:nrow(sorted_by_jsd)) {
     if (i <= nrow(result_data)) {
-      result_data[i, model_col] <- sorted_runtime$Method[i]
-      # Format runtime in a readable way
-      result_data[i, runtime_col] <- format_runtime(sorted_runtime$Runtime[i])
+      method <- sorted_by_jsd$Method[i]
+      
+      # Look up runtime for this method
+      runtime_value <- runtime_lookup[method]
+      if (!is.na(runtime_value)) {
+        result_data[i, runtime_col] <- format_runtime(runtime_value)
+      } else {
+        result_data[i, runtime_col] <- "N/A"
+      }
     }
   }
   
   # Calculate average runtime for the Overall row
-  avg_runtime <- mean(sorted_runtime$Runtime, na.rm = TRUE)
+  avg_runtime <- mean(runtime_data$Runtime, na.rm = TRUE)
   summary_row[1, runtime_col] <- format_runtime(avg_runtime)
 }
 
@@ -340,9 +326,8 @@ if (nrow(group_runtime_data) > 0) {
 final_result <- rbind(summary_row, result_data)
 
 # Clean up column names for output
-clean_colnames <- gsub(paste0("^", prefix, "Models_"), "Models ", colnames(final_result))
+clean_colnames <- colnames(final_result)
 clean_colnames <- gsub(paste0("^", prefix, "SD_"), "SD ", clean_colnames)
-clean_colnames <- gsub(paste0("^", prefix, "Models_Runtime"), "Models Runtime", clean_colnames)
 clean_colnames <- gsub(paste0("^", prefix, "Runtime"), "Runtime (H:M:S)", clean_colnames)
 clean_colnames <- gsub(paste0("^", prefix), "", clean_colnames)
 colnames(final_result) <- clean_colnames

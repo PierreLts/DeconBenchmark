@@ -15,17 +15,27 @@
 #############################################################
 # List the benchmark files you want to include in the radar plot
 DATASETS_TO_PLOT=(
-    "TB_D4-bulk_benchmark_AB_select-AB.csv"
-    "TB_D12-bulk_benchmark_AB_select-AB.csv"
-    "TB_D52-bulk_benchmark_AB_select-AB.csv"  
-    "TB_D100-bulk_benchmark_AB_select-AB.csv"
-    "TB_D300-bulk_benchmark_AB_select-AB.csv"
-    "TB_D500-bulk_benchmark_AB_select-AB.csv"
-    "TB_D1000-bulk_benchmark_AB_select-AB.csv"
-    "TB_D5000-bulk_benchmark_AB_select-AB.csv"
-    "TB_D10000-bulk_benchmark_AB_select-AB.csv"
-    "TB_D33348-bulk_benchmark_AB_select-AB.csv"
+  "TB_D100-bulk_benchmark_A_select-A.csv"
+  "TB_D100-bulk_benchmark_AB_select-A.csv"
+  "TB_D100-bulk_benchmark_B_select-B.csv"
+  "TB_D100-bulk_benchmark_AB_select-B.csv"
+
 )
+
+  # "TB_D100-bulk_benchmark_AB_select-AB.csv"
+  # "TB_D100-pseudobulk_benchmark_AB_select-AB.csv"
+  # "TB_D100-bulk_random_benchmark_AB_select-AB.csv"
+
+    # "TB_D4-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D12-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D52-bulk_benchmark_AB_select-AB.csv"  
+    # "TB_D100-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D300-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D500-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D1000-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D5000-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D10000-bulk_benchmark_AB_select-AB.csv"
+    # "TB_D33348-bulk_benchmark_AB_select-AB.csv"
 
 PLOT_TITLE="Comparison Number of Cells per Cell Type"
 #############################################################
