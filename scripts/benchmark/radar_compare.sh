@@ -15,13 +15,13 @@
 #############################################################
 # List the benchmark files you want to include in the radar plot
 DATASETS_TO_PLOT=(
-    "TB_D100-bulk_benchmark_A_select-A.csv"  
-    "TB_D100-bulk_benchmark_A_select-AB.csv"
-    "TB_D100-bulk_benchmark_B_select-B.csv"
-    "TB_D100-bulk_benchmark_B_select-AB.csv"
+    "TB_D12-bulk_benchmark_AB_select-AB.csv"  
+    "TB_D100-bulk_benchmark_AB_select-AB.csv"
+    "TB_D1000-bulk_benchmark_AB_select-AB.csv"
+    "TB_D10000-bulk_benchmark_AB_select-AB.csv"
 )
 
-PLOT_TITLE="Non-treated (A) vs. Treated (B) References"
+PLOT_TITLE="Comparison Number of Cells per Cell Type"
 #############################################################
 
 # Default parameters

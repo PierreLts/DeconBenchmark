@@ -2,7 +2,7 @@
 # all_bulk.sh - Run all bulk data generation tasks
 
 # Default parameters
-DEFAULT_PREFIX="TB_D12"
+DEFAULT_PREFIX="TB_D10000"
 DEFAULT_RLIBRARY="/work/gr-fe/R_4.3.1"
 DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/merged_batches.rds"
 DEFAULT_BULK_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/cleaned_feature_counts_matrix.csv"

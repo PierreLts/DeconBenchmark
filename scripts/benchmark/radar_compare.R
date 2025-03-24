@@ -47,8 +47,18 @@ extract_name_and_selection <- function(file_path) {
   
   # Extract selection (if present)
   if (grepl("select-", base_name)) {
+    # Extract the filter letter (part between "benchmark_" and "_select-")
+    filter_letter <- ""
+    if (grepl("_benchmark_[A-Z]_select-", base_name)) {
+      filter_letter <- gsub(".*_benchmark_([A-Z])_select-.*$", "\\1", base_name)
+      filter_letter <- paste0("_", filter_letter)
+    }
+    
+    # Extract the selection part
     selection <- gsub(".*_select-([^\\.]+)\\.csv$", "\\1", base_name)
-    return(paste0(dataset_name, "_select-", selection))
+    
+    # Combine dataset name, filter letter, and selection
+    return(paste0(dataset_name, filter_letter, "_select-", selection))
   }
   
   return(dataset_name)
