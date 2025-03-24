@@ -41,7 +41,7 @@ extract_runtime <- function(job_id) {
   return(NA)  # Return NA if runtime information not found
 }
 
-# Function to find and read model-job mapping file
+# Function to find and read model-job mapping file, selecting only the most recent job for each model
 read_job_mapping <- function(dataset_prefix, sample_filter) {
   # Try different possible mapping file locations
   mapping_file_paths <- c(
@@ -62,20 +62,34 @@ read_job_mapping <- function(dataset_prefix, sample_filter) {
     return(data.frame(Method = character(), JobID = character(), stringsAsFactors = FALSE))
   }
   
-  # Read and parse the mapping file
+  # Read the file content
   mapping_lines <- readLines(mapping_file)
-  mapping_data <- data.frame(Method = character(), JobID = character(), stringsAsFactors = FALSE)
   
+  # Initialize a hash map to store the latest job ID for each method
+  latest_jobs <- list()
+  
+  # Process mapping entries in order (so later entries override earlier ones)
   for (line in mapping_lines) {
-    if (grepl(":", line)) {
+    if (grepl(":", line) && !startsWith(line, "#")) {
       parts <- strsplit(line, ":")[[1]]
       if (length(parts) == 2) {
-        method <- parts[1]
-        job_id <- parts[2]
-        mapping_data <- rbind(mapping_data, data.frame(Method = method, JobID = job_id, stringsAsFactors = FALSE))
+        method <- trimws(parts[1])
+        job_id <- trimws(parts[2])
+        
+        # Store this job ID for the method, replacing any previous entry
+        latest_jobs[[method]] <- job_id
       }
     }
   }
+  
+  # Convert the hash map to a data frame
+  mapping_data <- data.frame(
+    Method = names(latest_jobs),
+    JobID = unlist(latest_jobs),
+    stringsAsFactors = FALSE
+  )
+  
+  print(paste("Found", nrow(mapping_data), "unique methods in job mapping"))
   
   return(mapping_data)
 }
@@ -84,10 +98,20 @@ read_job_mapping <- function(dataset_prefix, sample_filter) {
 format_runtime <- function(seconds) {
   if (is.na(seconds)) return("N/A")
   
+  # Ensure seconds is a numeric value
+  seconds <- as.numeric(seconds)
+  
+  # Calculate hours, minutes, and seconds components
   hours <- floor(seconds / 3600)
   minutes <- floor((seconds %% 3600) / 60)
-  remaining_seconds <- seconds %% 60
+  remaining_seconds <- floor(seconds %% 60)  # Ensure it's an integer
   
+  # Ensure all values are integers for sprintf
+  hours <- as.integer(hours)
+  minutes <- as.integer(minutes)
+  remaining_seconds <- as.integer(remaining_seconds)
+  
+  # Format based on whether hours are present
   if (hours > 0) {
     return(sprintf("%d:%02d:%02d", hours, minutes, remaining_seconds))
   } else {
@@ -237,11 +261,11 @@ for (metric in metrics) {
   summary_row[1, sd_col_name] <- overall_metrics[[paste0(metric, "_sd")]]
 }
 
-# Add runtime info columns
+# Add initial runtime info columns (will update the runtime value later)
 runtime_model_col <- paste0(prefix, "Models_Runtime")
 runtime_col <- paste0(prefix, "Runtime")
 summary_row[1, runtime_model_col] <- paste0("Overall (", selection, ")")
-summary_row[1, runtime_col] <- "N/A"
+summary_row[1, runtime_col] <- "N/A" # Temporary, will be updated with average
 
 # Process metrics
 max_models <- nrow(summary_stats)
@@ -279,19 +303,35 @@ for (metric in metrics) {
 group_runtime_data <- runtime_data
 
 if (nrow(group_runtime_data) > 0) {
-  # Join with summary_stats
-  group_runtime_data <- group_runtime_data %>%
+  # Make sure the runtime data has unique methods by taking the first occurrence of each method
+  unique_methods <- unique(group_runtime_data$Method)
+  unique_runtime_data <- data.frame(
+    Method = character(0),
+    Runtime = numeric(0),
+    stringsAsFactors = FALSE
+  )
+  
+  for (m in unique_methods) {
+    method_rows <- group_runtime_data[group_runtime_data$Method == m, ]
+    if (nrow(method_rows) > 0) {
+      # Use the first entry for each method (which should be the most recent)
+      unique_runtime_data <- rbind(unique_runtime_data, method_rows[1, ])
+    }
+  }
+  
+  # Join with summary_stats but only keep methods that are in the summary stats
+  unique_runtime_data <- unique_runtime_data %>%
     inner_join(select(summary_stats, Method), by = "Method")
   
   # Sort by runtime (ascending)
-  sorted_runtime <- group_runtime_data %>%
+  sorted_runtime <- unique_runtime_data %>%
     arrange(Runtime)
   
   # Fill in the appropriate columns
   model_col <- paste0(prefix, "Models_Runtime")
   runtime_col <- paste0(prefix, "Runtime")
   
-  # Fill in data
+  # Fill in data for each method
   for (i in 1:nrow(sorted_runtime)) {
     if (i <= nrow(result_data)) {
       result_data[i, model_col] <- sorted_runtime$Method[i]
@@ -299,6 +339,10 @@ if (nrow(group_runtime_data) > 0) {
       result_data[i, runtime_col] <- format_runtime(sorted_runtime$Runtime[i])
     }
   }
+  
+  # Calculate average runtime for the Overall row
+  avg_runtime <- mean(sorted_runtime$Runtime, na.rm = TRUE)
+  summary_row[1, runtime_col] <- format_runtime(avg_runtime)
 }
 
 # Combine summary and data
