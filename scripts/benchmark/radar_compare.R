@@ -42,26 +42,13 @@ install_if_missing("scales")
 extract_name_and_selection <- function(file_path) {
   base_name <- basename(file_path)
   
-  # Extract dataset name (everything before "_benchmark_")
-  dataset_name <- gsub("_benchmark_.*$", "", base_name)
+  # Replace "_benchmark_" with "_" to keep everything but remove "benchmark_"
+  modified_name <- gsub("_benchmark_", "_", base_name)
   
-  # Extract selection (if present)
-  if (grepl("select-", base_name)) {
-    # Extract the filter letter (part between "benchmark_" and "_select-")
-    filter_letter <- ""
-    if (grepl("_benchmark_[A-Z]_select-", base_name)) {
-      filter_letter <- gsub(".*_benchmark_([A-Z])_select-.*$", "\\1", base_name)
-      filter_letter <- paste0("_", filter_letter)
-    }
-    
-    # Extract the selection part
-    selection <- gsub(".*_select-([^\\.]+)\\.csv$", "\\1", base_name)
-    
-    # Combine dataset name, filter letter, and selection
-    return(paste0(dataset_name, filter_letter, "_select-", selection))
-  }
+  # Remove file extension
+  modified_name <- gsub("\\.csv$", "", modified_name)
   
-  return(dataset_name)
+  return(modified_name)
 }
 
 # Function to convert display values back to actual metric values
