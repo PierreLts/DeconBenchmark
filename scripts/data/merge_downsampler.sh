@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --nodes 1
 #SBATCH --ntasks 1
-#SBATCH --cpus-per-task 16
-#SBATCH --mem 64G
+#SBATCH --cpus-per-task 64
+#SBATCH --mem 256G
 #SBATCH --time 2:00:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
@@ -13,7 +13,7 @@ set -x  # Print commands as they're executed
 
 # ===== PARAMETERS TO ADJUST =====
 OUTPUT_PREFIX="TB"
-CELLS_PER_TYPE=2500 # 4 batches --> multiply by 4 nb of cells/celltype
+CELLS_PER_TYPE=8337 # 4 batches --> multiply by 4 nb of cells/celltype
 FILTER_TYPE="AB"  # Default filter type (AB, A, or B)
 BATCH1="TB1"
 BATCH2="TB2"

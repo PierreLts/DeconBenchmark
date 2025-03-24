@@ -394,7 +394,7 @@ p <- ggplot() +
     size = 3
   ) +
   # Use Cartesian coordinates with equal aspect ratio
-  coord_equal() +
+  coord_equal(xlim = c(-2, 2), ylim = c(-1.6, 1.6), expand = FALSE) +
   # Use custom colors
   scale_color_manual(values = color_mapping) +
   # Add title
@@ -426,9 +426,9 @@ p <- p + theme_settings
 
 # Create custom colored legend text - vertically in the top right
 # Use smaller vertical spacing
-legend_x <- 0.4  # Position on the right side
+legend_x <- 0.75  # Position on the right side
 legend_spacing <- 0.1  # Reduced vertical spacing between items (was 0.2)
-legend_start_y <- 1.2  # Start from the top
+legend_start_y <- 1.4  # Start from the top
 
 # Create dataframe for legend items
 legend_data <- data.frame(
