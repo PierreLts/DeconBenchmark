@@ -414,27 +414,33 @@ theme_settings <- theme_void() +
   theme(
     # Center title
     plot.title = element_text(hjust = 0.5, size = 16),
-    # Format legend
-    legend.position = "bottom",
-    legend.title = element_blank(),
-    legend.text = element_text(size = 12),
+    # Hide the default legend
+    legend.position = "none",
     # Background and margins
     plot.background = element_rect(fill = "white", color = NA),
     plot.margin = margin(20, 20, 20, 20)
   )
 
-# If many methods, arrange legend in multiple rows
-if (num_methods > 5) {
-  theme_settings <- theme_settings + 
-    theme(
-      legend.box = "horizontal",
-      legend.key.size = unit(0.8, "cm"),
-      legend.spacing.x = unit(0.2, "cm")
-    )
-}
-
 # Apply theme settings
 p <- p + theme_settings
+
+# Create custom colored legend text
+# Position the labels at the bottom of the plot
+legend_data <- data.frame(
+  x = seq(-1.5, 1.5, length.out = length(methods)),
+  y = rep(-1.5, length(methods)),
+  label = methods
+)
+
+# Add colored text annotations as legend
+p <- p + 
+  geom_text(
+    data = legend_data,
+    aes(x = x, y = y, label = label, color = label),
+    size = 4,
+    fontface = "bold",
+    hjust = 0.5
+  )
 
 # Save plot with dynamic dimensions
 ggsave(output_file, p, width = 1.5*plot_size, height = plot_size, units = "in")
