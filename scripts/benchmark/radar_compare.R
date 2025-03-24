@@ -424,11 +424,16 @@ theme_settings <- theme_void() +
 # Apply theme settings
 p <- p + theme_settings
 
-# Create custom colored legend text
-# Position the labels at the bottom of the plot
+# Create custom colored legend text - vertically in the top right
+# Use smaller vertical spacing
+legend_x <- 0.4  # Position on the right side
+legend_spacing <- 0.1  # Reduced vertical spacing between items (was 0.2)
+legend_start_y <- 1.2  # Start from the top
+
+# Create dataframe for legend items
 legend_data <- data.frame(
-  x = seq(-1.5, 1.5, length.out = length(methods)),
-  y = rep(-1.5, length(methods)),
+  x = rep(legend_x, length(methods)),
+  y = seq(from = legend_start_y, by = -legend_spacing, length.out = length(methods)),
   label = methods
 )
 
@@ -437,10 +442,12 @@ p <- p +
   geom_text(
     data = legend_data,
     aes(x = x, y = y, label = label, color = label),
-    size = 4,
+    size = 3.5,  # Slightly smaller text (was 4)
     fontface = "bold",
-    hjust = 0.5
+    hjust = 0,  # Left-align the text
+    vjust = 0.5  # Center vertically
   )
+p <- p + theme(plot.margin = margin(20, 20, 20, 20))  # top, right, bottom, left
 
 # Save plot with dynamic dimensions
 ggsave(output_file, p, width = 1.5*plot_size, height = plot_size, units = "in")
