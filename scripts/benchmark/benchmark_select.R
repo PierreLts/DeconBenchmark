@@ -104,19 +104,10 @@ format_runtime <- function(seconds) {
   # Calculate hours, minutes, and seconds components
   hours <- floor(seconds / 3600)
   minutes <- floor((seconds %% 3600) / 60)
-  remaining_seconds <- floor(seconds %% 60)  # Ensure it's an integer
+  remaining_seconds <- floor(seconds %% 60)  # Using floor to ensure integer values
   
-  # Ensure all values are integers for sprintf
-  hours <- as.integer(hours)
-  minutes <- as.integer(minutes)
-  remaining_seconds <- as.integer(remaining_seconds)
-  
-  # Format based on whether hours are present
-  if (hours > 0) {
-    return(sprintf("%d:%02d:%02d", hours, minutes, remaining_seconds))
-  } else {
-    return(sprintf("%d:%02d", minutes, remaining_seconds))
-  }
+  # Always include hours with zero-padding for all components
+  return(sprintf("%02d:%02d:%02d", hours, minutes, remaining_seconds))
 }
 
 # Validate selection parameter
