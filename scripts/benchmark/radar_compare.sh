@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
-#SBATCH --time=0:30:00
+#SBATCH --time=0:10:00
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
 #SBATCH --job-name=radar_plot
@@ -14,12 +14,17 @@
 # CONFIGURATION - MODIFY THESE LINES AS NEEDED
 #############################################################
 # List the benchmark files you want to include in the radar plot
-PLOT_TITLE="Bulk vs. Pseudobulk vs. Random Bulk"
+PLOT_TITLE="Treated vs. Untreated"
 
 DATASETS_TO_PLOT=(
-  "TB_D100-bulk_benchmark_AB_select-AB.csv"
-  "TB_D100-pseudobulk_benchmark_AB_select-AB.csv"
-  "TB_D100-bulk_random_benchmark_AB_select-AB.csv"
+  "TB_D100-bulk_benchmark_AB_select-A.csv"
+  "TB_D100-bulk_benchmark_AB_select-B.csv"
+
+  "TB_D100-bulk_benchmark_A_select-A.csv"
+  "TB_D100-bulk_benchmark_A_select-B.csv"
+
+  "TB_D100-bulk_benchmark_B_select-A.csv"
+  "TB_D100-bulk_benchmark_B_select-B.csv"
 )
 
   # "TB_D100-bulk_benchmark_A_select-A.csv"
