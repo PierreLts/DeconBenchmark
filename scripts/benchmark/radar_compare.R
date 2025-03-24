@@ -226,69 +226,19 @@ for (file_path in benchmark_files) {
       next
     }
     
-    # Extract and print the entire data frame structure for debugging
-    cat("\nDEBUG: Data frame structure for file:", basename(file_path), "\n")
-    str(data)
-    cat("\nDEBUG: First row of data:\n")
-    print(data[1,])
-    
-    # Extract metrics values with additional error checking
-    pearson_val <- tryCatch({
-      as.numeric(metrics_row[[pearson_col]])
-    }, error = function(e) {
-      cat("Error converting Pearson value:", e$message, "\n")
-      return(NA)
-    })
-    
-    jsd_val <- tryCatch({
-      as.numeric(metrics_row[[jsd_col]])
-    }, error = function(e) {
-      cat("Error converting JSD value:", e$message, "\n")
-      return(NA)
-    })
-    
-    nrmse_val <- tryCatch({
-      as.numeric(metrics_row[[nrmse_col]])
-    }, error = function(e) {
-      cat("Error converting NRMSE value:", e$message, "\n")
-      return(NA)
-    })
-    
-    r2_val <- tryCatch({
-      as.numeric(metrics_row[[r2_col]])
-    }, error = function(e) {
-      cat("Error converting R2 value:", e$message, "\n")
-      return(NA)
-    })
+    # Extract metrics values
+    pearson_val <- as.numeric(metrics_row[[pearson_col]])
+    jsd_val <- as.numeric(metrics_row[[jsd_col]])
+    nrmse_val <- as.numeric(metrics_row[[nrmse_col]])
+    r2_val <- as.numeric(metrics_row[[r2_col]])
     
     # Extract runtime value (if available)
     runtime_val <- NA
     if (!is.na(runtime_col)) {
       runtime_str <- metrics_row[[runtime_col]]
-      cat("\n==== DETAILED RUNTIME DEBUGGING ====\n")
-      cat("  File path:", file_path, "\n")
-      cat("  File basename:", basename(file_path), "\n")
-      cat("  Runtime column:", colnames(data)[runtime_col], "at index", runtime_col, "\n")
-      cat("  Runtime raw value:", runtime_str, "as", class(runtime_str), "\n")
-      cat("  Runtime row data:", as.character(metrics_row), "\n")
-      
-      # Try to force character conversion to be safe
-      if (is.factor(runtime_str)) {
-        runtime_str <- as.character(runtime_str)
-        cat("  Converted factor to character:", runtime_str, "\n")
-      }
-      
-      # Specially handle the "3:20" case
-      if (runtime_str == "3:20") {
-        cat("  FOUND THE PROBLEMATIC 3:20 VALUE!\n")
-        runtime_val <- 3*60 + 20
-        cat("  Hardcoded conversion to", runtime_val, "seconds\n")
-      } else {
-        runtime_val <- parse_time_to_seconds(runtime_str)
-      }
-      
-      cat("  Final runtime value:", runtime_val, "seconds\n")
-      cat("====================================\n\n")
+      cat("  Found runtime column:", colnames(data)[runtime_col], "with value:", runtime_str, "\n")
+      runtime_val <- parse_time_to_seconds(runtime_str)
+      cat("  Converted runtime to", runtime_val, "seconds\n")
     } else {
       warning("Runtime metric not found in file: ", file_path)
       cat("  Available columns:", paste(colnames(data), collapse=", "), "\n")
@@ -313,18 +263,8 @@ if (length(data_list) == 0) {
   stop("No valid data found in any of the provided files")
 }
 
-  # Combine all data frames into one
+# Combine all data frames into one
 all_data <- do.call(rbind, data_list)
-
-# Print extensive debugging of what data was loaded
-cat("\n===== DATA LOADED FROM FILES =====\n")
-for (method_name in unique(all_data$method)) {
-  cat("Method:", method_name, "\n")
-  method_data <- all_data[all_data$method == method_name, ]
-  print(method_data)
-  cat("\n")
-}
-cat("================================\n\n")
 
 # Check for minimum number of metrics
 if (length(unique(all_data$metric)) < 3) {
@@ -352,40 +292,12 @@ all_data$display_value[all_data$metric == "NRMSE"] <- 1 - pmin(1, all_data$value
 all_data$display_value[all_data$metric == "PearsonCorr"] <- (pmax(-1, pmin(1, all_data$value[all_data$metric == "PearsonCorr"])) + 1) / 2
 
 # Runtime: 0 seconds (outer/best) to 1800 seconds (center/worst)
-cat("\n===== RUNTIME TRANSFORMATION DEBUG =====\n")
 runtime_indices <- which(all_data$metric == "Runtime")
-cat("Number of runtime metrics found:", length(runtime_indices), "\n")
-cat("All metric types:", paste(unique(all_data$metric), collapse=", "), "\n")
-cat("All methods:", paste(unique(all_data$method), collapse=", "), "\n")
-
-# Create a data frame with initial runtime values for final verification
-initial_runtimes <- data.frame(
-  Method = all_data$method[runtime_indices],
-  Raw_Value = all_data$value[runtime_indices],
-  stringsAsFactors = FALSE
-)
-print(initial_runtimes)
-
 for (i in runtime_indices) {
   runtime_value <- all_data$value[i]
   method_name <- all_data$method[i]
-  
-  # Extra debug check for TB_D100-bulk special case
-  if (grepl("TB_D100-bulk", method_name)) {
-    cat("\n*** SPECIAL DEBUG FOR TB_D100 ***\n")
-    cat("Method name:", method_name, "\n")
-    cat("Raw runtime value:", runtime_value, "of class", class(runtime_value), "\n")
-    
-    # If we have a TB_D100 item with NA runtime, fix it manually
-    if (is.na(runtime_value)) {
-      runtime_value <- 200  # 3:20 = 200 seconds
-      all_data$value[i] <- runtime_value
-      cat("Manually fixed TB_D100 runtime to 200 seconds\n")
-    }
-  }
-  
   # Debug output for runtime values
-  cat("\nRuntime value for", method_name, ":", runtime_value, "seconds\n")
+  cat("Runtime value for", method_name, ":", runtime_value, "seconds\n")
   
   # Only transform if value is not NA
   if (!is.na(runtime_value)) {
@@ -400,18 +312,6 @@ for (i in runtime_indices) {
     cat("  NA runtime value for", method_name, "- using default display value of 0.5\n")
   }
 }
-
-# Create a data frame with final transformed values for verification
-final_runtimes <- data.frame(
-  Method = all_data$method[runtime_indices],
-  Original_Value = all_data$value[runtime_indices],
-  Display_Value = all_data$display_value[runtime_indices],
-  Radar_Position = 1 - all_data$display_value[runtime_indices],  # 0=outer, 1=center
-  stringsAsFactors = FALSE
-)
-cat("\nFINAL RUNTIME VALUES FOR RADAR PLOT:\n")
-print(final_runtimes)
-cat("=====================================\n\n")
 
 # Set factor level order for metrics to control display order
 all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE", "Runtime"))
