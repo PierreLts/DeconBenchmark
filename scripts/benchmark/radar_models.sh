@@ -14,14 +14,12 @@
 # CONFIGURATION - MODIFY THIS LINE AS NEEDED
 #############################################################
 # Specify the benchmark file to plot
-DATASET_TO_PLOT="TB_D100-bulk_benchmark_AB_select-AB.csv"
+DATASET_TO_PLOT="TB_D100-bulk_random_benchmark_AB_select-AB.csv"
 #############################################################
 
 # Default parameters
 RLIBRARY="/work/gr-fe/R_4.3.1"
-OUTPUT_FILE="radar_models.pdf"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
-PLOT_TITLE="Model Performance Comparison"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -65,9 +63,16 @@ if [ -z "$BENCHMARK_FILE" ]; then
   BENCHMARK_FILE="$DATASET_TO_PLOT"
 fi
 
+# Extract the base name without "_benchmark" for plot title and output filename
+BASE_NAME=$(basename "$BENCHMARK_FILE" .csv | sed 's/_benchmark//')
+OUTPUT_FILE="radar_${BASE_NAME}.pdf"
+PLOT_TITLE="Models for ${BASE_NAME}"
+
 # Log start time
 echo "Starting radar_models.sh at $(date)"
 echo "Benchmark file: $BENCHMARK_FILE"
+echo "Output file: $OUTPUT_FILE"
+echo "Plot title: $PLOT_TITLE"
 
 # Find the benchmark file if it's not a full path
 if [ ! -f "$BENCHMARK_FILE" ]; then

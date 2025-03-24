@@ -565,7 +565,6 @@ p <- ggplot() +
     fontface = "bold"
   )
 
-# Create custom colored legend text - vertically in the top right
 # Calculate optimal legend layout based on number of methods
 legend_rows_per_column <- 15  # Maximum rows per column
 legend_columns <- ceiling(num_methods / legend_rows_per_column)
@@ -575,6 +574,7 @@ legend_items_per_column <- ceiling(num_methods / legend_columns)
 legend_x <- 0.8  # Position on the right side
 legend_spacing <- 0.06  # Vertical spacing between items
 col_width <- 0.5  # Width of each column - REDUCED to bring columns closer
+legend_start_y <- 1.3  # Higher starting position (was 1.0)
 
 # Create the legend data
 legend_data <- data.frame(
@@ -593,7 +593,7 @@ for (col in 1:legend_columns) {
   end_idx <- min(col * legend_items_per_column, length(methods))
   
   # Calculate y positions for this column's items
-  y_positions <- seq(from = 1.0, by = -legend_spacing, length.out = end_idx - start_idx + 1)
+  y_positions <- seq(from = legend_start_y, by = -legend_spacing, length.out = end_idx - start_idx + 1)
   
   for (i in start_idx:end_idx) {
     item_idx <- i - start_idx + 1
@@ -627,7 +627,7 @@ p <- p +
   geom_text(
     data = legend_data,
     aes(x = x, y = y, label = label, color = method),
-    size = 4.0,
+    size = 4.5,  # Increased font size from 4.0 to 4.5
     fontface = "bold",
     hjust = 0,  # Left-align the text
     vjust = 0.5  # Center vertically
