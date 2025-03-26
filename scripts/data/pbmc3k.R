@@ -65,4 +65,4 @@ pbmc$BD_cell_type <- Idents(pbmc)
 
 
 # Save RDS
-saveRDS(pbmc, file = "/Users/stang/Desktop/R_analysis/Deconvolution/filtered_gene_bc_matrices/hg19/pbmc_reference.rds")
+saveRDS(pbmc, file = "/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/pbmc_reference.rds")
