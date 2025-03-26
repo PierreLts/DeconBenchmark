@@ -15,8 +15,9 @@ set -x
 RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
 SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/singleCellExpr_generation.R"
 INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/pbmc_reference.rds}"
-OUTPUT_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
 OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
+# Add the missing mapping file parameter with a default value
+MAPPING_FILE="${4:-/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt}"
 PREFIX="PBMC"
 
 # Create prefix-specific subdirectory
