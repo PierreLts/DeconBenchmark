@@ -91,15 +91,15 @@ parse_time_to_seconds <- function(time_str) {
 display_to_actual <- function(display_value, metric) {
   actual <- NA
   if (metric == "JSD") {
-    actual <- 0.5 * (1 - display_value)
+    actual <- 0.7 * (1 - display_value)
   } else if (metric == "R2") {
-    actual <- (display_value * 16) - 15
+    actual <- (display_value * 11) - 10
   } else if (metric == "NRMSE") {
-    actual <- 5 * (1 - display_value)
+    actual <- 4 * (1 - display_value)
   } else if (metric == "PearsonCorr") {
     actual <- (display_value * 2) - 1
   } else if (metric == "Runtime") {
-    actual <- 1800 * (1 - display_value)
+    actual <- 3600 * (1 - display_value)
   }
   return(actual)
 }
@@ -206,19 +206,19 @@ all_data$method <- factor(all_data$method, levels = jsd_order)
 # Transform values for consistent scale direction with specified ranges
 all_data$display_value <- all_data$value  # Start with original values
 
-# JSD: 0 (outer/best) to 0.2 (center/worst)
-all_data$display_value[all_data$metric == "JSD"] <- 1 - pmin(1, all_data$value[all_data$metric == "JSD"] / 0.5)
+# JSD: 0 (outer/best) to 0.7 (center/worst)
+all_data$display_value[all_data$metric == "JSD"] <- 1 - pmin(1, all_data$value[all_data$metric == "JSD"] / 0.7)
 
-# R2: 1 (outer/best) to -4 (center/worst)
-all_data$display_value[all_data$metric == "R2"] <- (pmax(-15, all_data$value[all_data$metric == "R2"]) + 15) / 16
+# R2: 1 (outer/best) to -10 (center/worst)
+all_data$display_value[all_data$metric == "R2"] <- (pmax(-10, all_data$value[all_data$metric == "R2"]) + 10) / 11
 
-# NRMSE: 0 (outer/best) to 5 (center/worst)
-all_data$display_value[all_data$metric == "NRMSE"] <- 1 - pmin(1, all_data$value[all_data$metric == "NRMSE"] / 5)
+# NRMSE: 0 (outer/best) to 4 (center/worst)
+all_data$display_value[all_data$metric == "NRMSE"] <- 1 - pmin(1, all_data$value[all_data$metric == "NRMSE"] / 4)
 
 # Pearson Correlation: 1 (outer/best) to -1 (center/worst)
 all_data$display_value[all_data$metric == "PearsonCorr"] <- (pmax(-1, pmin(1, all_data$value[all_data$metric == "PearsonCorr"])) + 1) / 2
 
-# Runtime: 0 seconds (outer/best) to 1800 seconds (center/worst)
+# Runtime: 0 seconds (outer/best) to 3600 seconds (center/worst)
 runtime_indices <- which(all_data$metric == "Runtime")
 for (i in runtime_indices) {
   runtime_value <- all_data$value[i]
@@ -226,8 +226,8 @@ for (i in runtime_indices) {
   
   # Only transform if value is not NA
   if (!is.na(runtime_value)) {
-    # Apply transformation, making sure 0 is best (1.0) and 1800+ is worst (0.0)
-    display_value <- 1 - pmin(1, runtime_value / 1800)
+    # Apply transformation, making sure 0 is best (1.0) and 3600+ is worst (0.0)
+    display_value <- 1 - pmin(1, runtime_value / 3600)
     all_data$display_value[i] <- display_value
   } else {
     # For NA values, set to 0.5 (middle of the scale) to avoid missing data
@@ -238,7 +238,7 @@ for (i in runtime_indices) {
 # Set factor level order for metrics to control display order
 all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD", "NRMSE", "Runtime"))
 
-# Create a continuous color palette based on the colors in radar_compare.R
+# Function to get extended color palette
 get_extended_palette <- function(n) {
   # Base colors from radar_compare.R
   base_colors <- c(

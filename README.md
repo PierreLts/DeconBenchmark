@@ -10,6 +10,8 @@ Pierre Lorthiois
 Installation of libraries and packages are done running 'install_r_lib.sh'
 
 ## 2. Data preparation
+Order of compilation is important for dependecies
+
 Original .rds data found in the /data folder.
 The compilable data is a .rda file composed of 2 matrixes (single cell and bulk) and one vector (labels).
 The section formats our .rds file into the correct format.
