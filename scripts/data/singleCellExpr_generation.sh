@@ -14,10 +14,10 @@ set -x
 # Default parameters (can be overridden by command line arguments)
 RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
 SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/singleCellExpr_generation.R"
-INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds}"
+INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/pbmc_reference.rds}"
 OUTPUT_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
 OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
-PREFIX="${4:-TB}"
+PREFIX="PBMC"
 
 # Create prefix-specific subdirectory
 OUTPUT_DIR="$OUTPUT_BASE_DIR/$PREFIX"

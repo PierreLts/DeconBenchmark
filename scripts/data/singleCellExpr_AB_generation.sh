@@ -13,7 +13,7 @@ set -x
 
 # ===== EXPLICIT SETTINGS - MODIFY THESE DIRECTLY =====
 # Output prefix for generated files
-PREFIX="TB1"
+PREFIX="PBMC"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
 SAMPLE_FILTER="AB"
 # =====
@@ -21,7 +21,7 @@ SAMPLE_FILTER="AB"
 # Default parameters (can be overridden by command line arguments)
 RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
 SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/singleCellExpr_AB_generation.R"
-INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/GFB-33245_HFKJMDSXC_2_scRNAseqWTATBseverityrun1_Seurat.rds}"
+INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/pbmc_reference.rds}"
 OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
 MAPPING_FILE="${4:-/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt}"
 
