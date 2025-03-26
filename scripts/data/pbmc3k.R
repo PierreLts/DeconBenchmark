@@ -110,3 +110,84 @@ cat("PBMC processing completed\n")
 # Print final cell type counts
 cat("Cell type counts:\n")
 print(table(pbmc$BD_cell_type))
+
+
+# Add this section at the end of pbmc3k.R after saving the RDS file
+
+# Load the saved RDS file to inspect its structure
+cat("\n====== PBMC RDS FILE STRUCTURE INSPECTION ======\n")
+cat("Loading the saved RDS file to examine its structure...\n")
+pbmc_loaded <- readRDS(output_file_path)
+
+# Basic structure information
+cat("\n1. OBJECT STRUCTURE:\n")
+cat("Object class:", class(pbmc_loaded), "\n")
+cat("Main slots in Seurat object:", paste(names(pbmc_loaded), collapse=", "), "\n")
+cat("Dimensions (features x cells):", paste(dim(pbmc_loaded), collapse=" x "), "\n")
+
+# Assay data tables
+cat("\n2. ASSAY DATA TABLES:\n")
+cat("Available assays:", paste(names(pbmc_loaded@assays), collapse=", "), "\n")
+for (assay_name in names(pbmc_loaded@assays)) {
+  assay_obj <- pbmc_loaded@assays[[assay_name]]
+  cat("\n  ASSAY:", assay_name, "\n")
+  cat("    Data tables in this assay:", paste(names(assay_obj), collapse=", "), "\n")
+  
+  # For each layer in the assay (counts, data, scale.data)
+  for (layer_name in names(assay_obj)) {
+    layer_data <- assay_obj[[layer_name]]
+    cat("\n    TABLE:", layer_name, "\n")
+    cat("      Class:", class(layer_data), "\n")
+    cat("      Dimensions (genes x cells):", paste(dim(layer_data), collapse=" x "), "\n")
+    
+    # Print the first few row names (genes)
+    cat("      First 5 genes:", paste(head(rownames(layer_data), 5), collapse=", "), "\n")
+    
+    # Print the first few column names (cells)
+    cat("      First 5 cells:", paste(head(colnames(layer_data), 5), collapse=", "), "\n")
+    
+    # For sparse matrices, convert a small subset to dense for display
+    if (inherits(layer_data, "dgCMatrix")) {
+      cat("      Data preview (5x5) - converted from sparse matrix:\n")
+      small_preview <- as.matrix(layer_data[1:min(5, nrow(layer_data)), 1:min(5, ncol(layer_data))])
+    } else {
+      cat("      Data preview (5x5):\n")
+      small_preview <- layer_data[1:min(5, nrow(layer_data)), 1:min(5, ncol(layer_data))]
+    }
+    print(small_preview)
+  }
+}
+
+# Metadata table
+cat("\n3. METADATA TABLE:\n")
+cat("Dimensions (cells x variables):", paste(dim(pbmc_loaded@meta.data), collapse=" x "), "\n")
+cat("Column names:", paste(colnames(pbmc_loaded@meta.data), collapse=", "), "\n")
+cat("First 5 rows of metadata:\n")
+print(head(pbmc_loaded@meta.data, 5))
+
+# Cell type information
+cat("\n4. CELL TYPE TABLES:\n")
+if ("celltype" %in% colnames(pbmc_loaded@meta.data)) {
+  cat("Cell type table from 'celltype' column:\n")
+  celltype_counts <- table(pbmc_loaded$celltype)
+  print(as.data.frame(celltype_counts))
+}
+
+if ("BD_cell_type" %in% colnames(pbmc_loaded@meta.data)) {
+  cat("\nBD Rhapsody cell type table from 'BD_cell_type' column:\n")
+  bd_celltype_counts <- table(pbmc_loaded$BD_cell_type)
+  print(as.data.frame(bd_celltype_counts))
+}
+
+# Commands list
+cat("\n5. COMMANDS HISTORY:\n")
+if (length(pbmc_loaded@commands) > 0) {
+  cat("Commands executed on this object:\n")
+  for (i in seq_along(pbmc_loaded@commands)) {
+    cat("  ", i, ": ", names(pbmc_loaded@commands)[i], "\n", sep="")
+  }
+} else {
+  cat("No commands history stored in this object\n")
+}
+
+cat("\n====== END OF RDS STRUCTURE INSPECTION ======\n")
