@@ -95,7 +95,7 @@ if (inherits(counts_data, "dgCMatrix") || inherits(counts_data, "dgTMatrix")) {
 
 print(paste("Expression matrix dimensions before gene mapping:", paste(dim(singleCellExpr), collapse=" x ")))
 
-# === NEW SECTION: Gene mapping ===
+# === MODIFIED SECTION: Gene mapping with unmapped gene removal ===
 print("Loading gene mapping file and mapping gene names to Ensembl IDs...")
 if (file.exists(mapping_file)) {
   # Load gene mapping file
@@ -121,16 +121,25 @@ if (file.exists(mapping_file)) {
       gene_map <- setNames(mapping_df$Ensembl_ID, mapping_df$Gene_Name)
       new_gene_names <- gene_map[gene_names]
       
-      # For genes without a mapping, keep original name
-      missing_mapping <- is.na(new_gene_names)
-      if (any(missing_mapping)) {
-        print(paste(sum(missing_mapping), "genes had no mapping and will keep original names"))
-        new_gene_names[missing_mapping] <- gene_names[missing_mapping]
-      }
+      # NEW: Identify unmapped genes and remove them
+      unmapped_genes <- is.na(new_gene_names)
+      num_unmapped <- sum(unmapped_genes)
+      num_total <- length(gene_names)
+      percent_unmapped <- round(num_unmapped / num_total * 100, 2)
       
-      # Assign new gene names as rownames
+      print(paste("Total genes:", num_total))
+      print(paste("Unmapped genes:", num_unmapped, "(", percent_unmapped, "%)"))
+      print("Removing rows with unmapped genes...")
+      
+      # Filter out unmapped genes
+      singleCellExpr <- singleCellExpr[!unmapped_genes, , drop=FALSE]
+      new_gene_names <- new_gene_names[!unmapped_genes]
+      
+      # Assign new Ensembl IDs as rownames
       rownames(singleCellExpr) <- new_gene_names
-      print("Gene names mapped to Ensembl IDs where possible")
+      
+      print(paste("Expression matrix dimensions after removing unmapped genes:", 
+                 paste(dim(singleCellExpr), collapse=" x ")))
     } else {
       message("Mapping file doesn't have at least 2 columns, skipping gene mapping")
     }
@@ -140,7 +149,7 @@ if (file.exists(mapping_file)) {
   print("Continuing without gene mapping")
 }
 
-# === NEW SECTION: Handle duplicate genes function ===
+# === SECTION: Handle duplicate genes function ===
 handle_duplicate_genes <- function(expr_matrix) {
   # Get gene names
   gene_names <- rownames(expr_matrix)
@@ -181,7 +190,7 @@ handle_duplicate_genes <- function(expr_matrix) {
 print("Checking for duplicate genes in expression matrix...")
 singleCellExpr <- handle_duplicate_genes(singleCellExpr)
 
-print(paste("Expression matrix dimensions after gene mapping and duplicate handling:", paste(dim(singleCellExpr), collapse=" x ")))
+print(paste("Final expression matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
 
 # Check for column duplicates
 print('Checking for column duplicates...')
@@ -190,21 +199,19 @@ if(any(duplicated(colnames(singleCellExpr)))) {
   print(table(colnames(singleCellExpr))[table(colnames(singleCellExpr)) > 1])
 }
 
-# Setup output directories
-output_dir_base <- output_dir
-output_dir_prefix <- file.path(output_dir_base, prefix)
+# Setup output directory
+# Use output_dir directly without adding another prefix folder
+output_dir_path <- output_dir
 
-# Create output directories if needed
-if (!dir.exists(output_dir_base)) {
-  dir.create(output_dir_base, recursive = TRUE)
-}
-if (!dir.exists(output_dir_prefix)) {
-  dir.create(output_dir_prefix, recursive = TRUE)
+# Create output directory if needed
+if (!dir.exists(output_dir_path)) {
+  dir.create(output_dir_path, recursive = TRUE)
+  print(paste("Created output directory:", output_dir_path))
 }
 
 # Save outputs - cell labels
 print("Saving cell labels...")
-save_path <- file.path(output_dir_prefix, paste0(prefix, "_singleCellLabels_AB.rda"))
+save_path <- file.path(output_dir_path, paste0(prefix, "_singleCellLabels_AB.rda"))
 save(singleCellLabels, file = save_path)
 
 labels_df <- data.frame(
@@ -212,24 +219,24 @@ labels_df <- data.frame(
   CellType = singleCellLabels,
   stringsAsFactors = FALSE
 )
-csv_path <- file.path(output_dir_prefix, paste0(prefix, "_singleCellLabels_AB.csv"))
+csv_path <- file.path(output_dir_path, paste0(prefix, "_singleCellLabels_AB.csv"))
 write.csv(labels_df, file = csv_path, row.names = FALSE)
 
 # Save outputs - expression matrix
 print("Saving expression matrix...")
-save_path <- file.path(output_dir_prefix, paste0(prefix, "_singleCellExpr_AB.rda"))
+save_path <- file.path(output_dir_path, paste0(prefix, "_singleCellExpr_AB.rda"))
 save(singleCellExpr, file = save_path)
 
 # Save a small subset as CSV
 max_rows <- min(50, nrow(singleCellExpr))
 max_cols <- min(50, ncol(singleCellExpr))
 small_expr <- singleCellExpr[1:max_rows, 1:max_cols]
-csv_path <- file.path(output_dir_prefix, paste0(prefix, "_singleCellExpr_AB_50x50.csv"))
+csv_path <- file.path(output_dir_path, paste0(prefix, "_singleCellExpr_AB_50x50.csv"))
 write.csv(small_expr, file = csv_path)
 
 # Save subjects information
 print("Saving cell subjects data...")
-save_path <- file.path(output_dir_prefix, paste0(prefix, "_singleCellSubjects_AB.rda"))
+save_path <- file.path(output_dir_path, paste0(prefix, "_singleCellSubjects_AB.rda"))
 save(singleCellSubjects, file = save_path)
 
 subjects_df <- data.frame(
@@ -237,7 +244,7 @@ subjects_df <- data.frame(
   Subject = singleCellSubjects,
   stringsAsFactors = FALSE
 )
-csv_path <- file.path(output_dir_prefix, paste0(prefix, "_singleCellSubjects_AB.csv"))
+csv_path <- file.path(output_dir_path, paste0(prefix, "_singleCellSubjects_AB.csv"))
 write.csv(subjects_df, file = csv_path, row.names = FALSE)
 
 print("PBMC data processing completed successfully!")

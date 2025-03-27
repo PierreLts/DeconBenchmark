@@ -14,7 +14,7 @@
 # CONFIGURATION - MODIFY THIS LINE AS NEEDED
 #############################################################
 # Specify the benchmark file to plot
-DATASET_TO_PLOT="TB_D100-bulk_benchmark_B_select-B.csv"
+DATASET_TO_PLOT="PBMC_D100-bulk_benchmark_AB_select-AB.csv"
 #############################################################
 
 # Default parameters
