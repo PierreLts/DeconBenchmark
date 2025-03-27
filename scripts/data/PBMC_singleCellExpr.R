@@ -8,7 +8,7 @@ if (length(args) != 5) {
 path_Rlibrary <- args[1] #IMPORTANT
 input_data <- args[2]     # Path to PBMC Seurat object
 output_dir <- args[3]     # Output directory
-mapping_file <- args[4]   # Gene mapping file (not used in simplified version)
+mapping_file <- args[4]   # Gene mapping file
 prefix <- args[5]         # Prefix for output files
 
 # Libraries
@@ -93,7 +93,102 @@ if (inherits(counts_data, "dgCMatrix") || inherits(counts_data, "dgTMatrix")) {
   singleCellExpr <- counts_data
 }
 
-print(paste("Expression matrix dimensions:", paste(dim(singleCellExpr), collapse=" x ")))
+print(paste("Expression matrix dimensions before gene mapping:", paste(dim(singleCellExpr), collapse=" x ")))
+
+# === NEW SECTION: Gene mapping ===
+print("Loading gene mapping file and mapping gene names to Ensembl IDs...")
+if (file.exists(mapping_file)) {
+  # Load gene mapping file
+  mapping_df <- tryCatch({
+    read.table(mapping_file, sep="\t", header=TRUE, stringsAsFactors=FALSE)
+  }, error = function(e) {
+    message(paste("Error reading mapping file:", e$message))
+    message("Continuing without gene mapping")
+    return(NULL)
+  })
+  
+  if (!is.null(mapping_df)) {
+    # Set column names if needed
+    if (ncol(mapping_df) >= 2) {
+      colnames(mapping_df)[1:2] <- c("Ensembl_ID", "Gene_Name")
+      
+      # Remove duplicates from mapping (keep first occurrence of each gene name)
+      mapping_df <- mapping_df[!duplicated(mapping_df$Gene_Name), ]
+      print(paste("Mapping file contains", nrow(mapping_df), "unique gene mappings"))
+      
+      # Map gene names to Ensembl IDs
+      gene_names <- rownames(singleCellExpr)
+      gene_map <- setNames(mapping_df$Ensembl_ID, mapping_df$Gene_Name)
+      new_gene_names <- gene_map[gene_names]
+      
+      # For genes without a mapping, keep original name
+      missing_mapping <- is.na(new_gene_names)
+      if (any(missing_mapping)) {
+        print(paste(sum(missing_mapping), "genes had no mapping and will keep original names"))
+        new_gene_names[missing_mapping] <- gene_names[missing_mapping]
+      }
+      
+      # Assign new gene names as rownames
+      rownames(singleCellExpr) <- new_gene_names
+      print("Gene names mapped to Ensembl IDs where possible")
+    } else {
+      message("Mapping file doesn't have at least 2 columns, skipping gene mapping")
+    }
+  }
+} else {
+  print(paste("Gene mapping file not found:", mapping_file))
+  print("Continuing without gene mapping")
+}
+
+# === NEW SECTION: Handle duplicate genes function ===
+handle_duplicate_genes <- function(expr_matrix) {
+  # Get gene names
+  gene_names <- rownames(expr_matrix)
+  
+  # Check for duplicates
+  if (!any(duplicated(gene_names))) {
+    message("No duplicate genes found.")
+    return(expr_matrix)
+  }
+  
+  # Count duplicates
+  dup_genes <- unique(gene_names[duplicated(gene_names)])
+  dup_count <- length(dup_genes)
+  message(paste("Found", dup_count, "unique genes with duplicates. Handling by summing expression values."))
+  
+  # Get unique gene names
+  unique_genes <- unique(gene_names)
+  
+  # Create a new matrix for the results
+  result <- matrix(0, nrow = length(unique_genes), ncol = ncol(expr_matrix))
+  rownames(result) <- unique_genes
+  colnames(result) <- colnames(expr_matrix)
+  
+  # Sum expression values for each unique gene
+  for (i in seq_along(unique_genes)) {
+    gene <- unique_genes[i]
+    indices <- which(gene_names == gene)
+    if (length(indices) > 0) {
+      # Sum expression values across all instances of this gene
+      result[i, ] <- colSums(expr_matrix[indices, , drop = FALSE])
+    }
+  }
+  
+  return(result)
+}
+
+# Apply duplicate handling to the expression matrix
+print("Checking for duplicate genes in expression matrix...")
+singleCellExpr <- handle_duplicate_genes(singleCellExpr)
+
+print(paste("Expression matrix dimensions after gene mapping and duplicate handling:", paste(dim(singleCellExpr), collapse=" x ")))
+
+# Check for column duplicates
+print('Checking for column duplicates...')
+if(any(duplicated(colnames(singleCellExpr)))) {
+  message("Warning: Found duplicate sample names in single-cell matrix")
+  print(table(colnames(singleCellExpr))[table(colnames(singleCellExpr)) > 1])
+}
 
 # Setup output directories
 output_dir_base <- output_dir
