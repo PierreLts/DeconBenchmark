@@ -319,9 +319,9 @@ all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD"
 # Set up colors - use the provided colors and continue the gradient
 # Starting with your colors and continuing the gradient
 colors <- c(
-  "#FF7E1D",  # Orange (your specified)
-  "#DE0099",  # Pink (your specified)
-  "#B300F2",  # Purple (your specified)
+  "#FF7E1D",  # Orange
+  "#DE0099",  # Pink
+  "#B300F2",  # Purple
   "#6C13FF",  # Violet/Indigo
   "#0066FF",  # Blue
   "#00A3D7",  # Light Blue
