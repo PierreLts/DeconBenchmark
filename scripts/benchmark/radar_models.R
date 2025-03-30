@@ -272,7 +272,7 @@ all_data$metric <- factor(all_data$metric, levels = c("PearsonCorr", "R2", "JSD"
 
 # Function to get extended color palette
 get_extended_palette <- function(n) {
-  # Base colors from radar_compare.R
+  # Base colors from radar_compare.R - REMOVED YELLOW AND USING ONLY 9 COLORS
   base_colors <- c(
     "#FF7E1D",  # Orange
     "#DE0099",  # Pink
@@ -282,11 +282,10 @@ get_extended_palette <- function(n) {
     "#00A3D7",  # Light Blue
     "#00C292",  # Teal
     "#00D858",  # Green
-    "#78E100",  # Lime
-    "#F1DF00"   # Yellow
+    "#78E100"   # Lime
   )
   
-  # If we need <= 10 colors, just return the base colors
+  # If we need <= 9 colors, just return the base colors
   if (n <= length(base_colors)) {
     return(base_colors[1:n])
   }
@@ -505,18 +504,18 @@ plot_size <- 10  # Fixed 10 inches regardless of model count
 
 # Set up the plot
 p <- ggplot() +
-  # Add grid lines
+  # Add grid lines - CHANGED FROM grey85 TO black
   geom_path(
     data = grid_data %>% group_by(radius) %>% reframe(x = c(x, x[1]), y = c(y, y[1])),
     aes(x = x, y = y, group = radius),
-    color = "grey85",
+    color = "black",
     size = 0.5
   ) +
-  # Add radial axes - use axis_line_data for straight lines
+  # Add radial axes - CHANGED FROM grey85 TO black
   geom_segment(
     data = data.frame(x = 0, y = 0, xend = axis_line_data$x, yend = axis_line_data$y),
     aes(x = x, y = y, xend = xend, yend = yend),
-    color = "grey85",
+    color = "black",
     size = 0.5
   ) +
   # Add lines connecting points (using path with Cartesian coordinates)
@@ -535,11 +534,11 @@ p <- ggplot() +
     aes(x = x, y = y, color = method),
     size = 2
   ) +
-  # Add scale value labels with proper alignment
+  # Add scale value labels - CHANGED FROM grey40 TO black
   geom_text(
     data = scale_labels,
     aes(x = x, y = y, label = label, hjust = hjust, vjust = vjust),
-    color = "grey40",
+    color = "black",
     size = 3.5
   ) +
   # Use Cartesian coordinates with equal aspect ratio
