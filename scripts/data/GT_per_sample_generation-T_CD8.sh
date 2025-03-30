@@ -16,7 +16,7 @@ RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
 SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/GT_per_sample_generation-T_CD8.R"
 INPUT_DATA="${2:-/work/gr-fe/lorthiois/DeconBenchmark/data/merged_batches.rds}"
 OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
-PREFIX="PBMC"
+PREFIX="PBMC_D100-common"
 
 # Create prefix-specific subdirectory
 OUTPUT_DIR="$OUTPUT_BASE_DIR/$PREFIX"

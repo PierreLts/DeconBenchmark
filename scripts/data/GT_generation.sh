@@ -12,11 +12,11 @@ set -e
 set -x
 
 # Default parameters (can be overridden by command line arguments)
-RLIBRARY="/work/gr-fe/R_4.3.1"
+RLIBRARY="${1:-/work/gr-fe/R_4.3.1}"
 SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data/GT_generation.R"
-INPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
-OUTPUT_BASE_DIR="$/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
-PREFIX="PBMC"
+INPUT_DIR="${2:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
+OUTPUT_BASE_DIR="${3:-/work/gr-fe/lorthiois/DeconBenchmark/generated_data}"
+PREFIX="${4:-TB}"
 
 # Create prefix-specific subdirectory
 INPUT_DIR="$INPUT_DIR/$PREFIX"

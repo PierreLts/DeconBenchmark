@@ -12,37 +12,85 @@ prefix <- args[4]        # Prefix for output files
 
 # Libraries
 .libPaths(path_Rlibrary, FALSE) #IMPORTANT
+library(reshape2)  # For melt function
 
-# Load single cell labels file
-sc_labels_path <- file.path(input_dir, paste0(prefix, "_singleCellLabels_AB.rda"))
-if (!file.exists(sc_labels_path)) {
-  stop(paste("Single cell labels file not found:", sc_labels_path))
+# Function to check if the cell types in a matrix need special handling
+check_cell_types <- function(cell_types) {
+  # Track which special cases are present
+  info <- list(
+    has_cd8_memory = "T_CD8_memory" %in% cell_types,
+    has_cd8_naive = "T_CD8_naive" %in% cell_types,
+    has_cd8 = "T_CD8" %in% cell_types,
+    has_gamma_delta = "T_gamma_delta" %in% cell_types,
+    has_other = "Other" %in% cell_types
+  )
+  
+  # Print detected cell type patterns
+  pattern_desc <- character(0)
+  if(info$has_cd8_memory && info$has_cd8_naive && !info$has_cd8) {
+    pattern_desc <- c(pattern_desc, "T_CD8 subtypes (memory/naive) without combined T_CD8")
+  } else if(!info$has_cd8_memory && !info$has_cd8_naive && info$has_cd8) {
+    pattern_desc <- c(pattern_desc, "Combined T_CD8 without subtypes")
+  } else if(info$has_cd8_memory && info$has_cd8_naive && info$has_cd8) {
+    pattern_desc <- c(pattern_desc, "Both T_CD8 subtypes AND combined T_CD8 (unusual)")
+  }
+  
+  if(info$has_gamma_delta && !info$has_other) {
+    pattern_desc <- c(pattern_desc, "T_gamma_delta without Other")
+  } else if(!info$has_gamma_delta && info$has_other) {
+    pattern_desc <- c(pattern_desc, "Other without T_gamma_delta")
+  } else if(info$has_gamma_delta && info$has_other) {
+    pattern_desc <- c(pattern_desc, "Both T_gamma_delta AND Other")
+  }
+  
+  if(length(pattern_desc) > 0) {
+    print(paste("Cell type pattern detected:", paste(pattern_desc, collapse=", ")))
+  }
+  
+  return(info)
 }
 
-# Load the single cell labels
-load(sc_labels_path)
-
-# Calculate the ground truth proportions from the labels
-if (!exists("singleCellLabels")) {
-  stop("singleCellLabels object not found in the loaded file")
+# Load per-sample ground truth file - require this file
+per_sample_gt_path <- file.path(input_dir, paste0(prefix, "_GT_proportions_per_sample.rda"))
+if (!file.exists(per_sample_gt_path)) {
+  stop(paste("Error: Per-sample ground truth file not found:", per_sample_gt_path))
 }
 
-# Calculate overall proportions
-cell_types <- unique(singleCellLabels)
-cell_counts <- table(singleCellLabels)
-proportions <- as.numeric(cell_counts) / sum(cell_counts)
+print(paste("Loading per-sample ground truth from:", per_sample_gt_path))
+load(per_sample_gt_path)
 
-# Create a matrix with cell types as columns (single row for overall average)
-P <- matrix(proportions, nrow = 1, dimnames = list("true_proportions", names(cell_counts)))
+# Verify groundTruth object exists with the required structure
+if (!exists("groundTruth") || is.null(groundTruth$P)) {
+  stop("Error: Expected 'groundTruth$P' object not found in per-sample file")
+}
+
+# This is the per-sample matrix
+per_sample_proportions <- groundTruth$P
+
+# Print information about the per-sample data
+print("Per-sample ground truth summary:")
+print(paste("Samples:", nrow(per_sample_proportions)))
+print(paste("Cell types:", paste(colnames(per_sample_proportions), collapse=", ")))
+
+# Check cell type patterns
+cell_type_info <- check_cell_types(colnames(per_sample_proportions))
+
+# Calculate overall proportions by averaging across all samples
+# This gives equal weight to each sample regardless of cell count
+overall_proportions <- colMeans(per_sample_proportions)
+
+# Create a new matrix for overall proportions
+P <- matrix(overall_proportions, nrow = 1, 
+            dimnames = list("true_proportions", names(overall_proportions)))
 
 # Create a list to store the ground truth
 groundTruth <- list(P = P)
 
 # Print information for verification
-print("Ground truth proportions:")
+print("Ground truth proportions derived from per-sample data:")
 print(groundTruth$P)
-print(paste("Total cell types:", length(cell_types)))
-print(paste("Sum of proportions:", sum(proportions)))
+print(paste("Total cell types:", length(colnames(P))))
+print(paste("Sum of proportions:", sum(overall_proportions)))
 
 # Save as RDA
 rda_filename <- file.path(output_dir, paste0(prefix, "_GT_proportions.rda"))
