@@ -10,7 +10,7 @@ r_library_path <- args[1]
 .libPaths(r_library_path, FALSE)
 
 # Get output file path
-output_file <- args[2]
+original_output_file <- args[2]
 
 # Get plot title
 plot_title <- args[3]
@@ -21,6 +21,38 @@ benchmark_files <- args[4:length(args)]
 if (length(benchmark_files) == 0) {
   stop("No benchmark files provided")
 }
+
+# Get current working directory root (assuming we're in the project directory)
+# This handles both absolute and relative paths based on current execution context
+project_root <- getwd()
+while (!dir.exists(file.path(project_root, "benchmark_results")) && 
+       !file.exists(file.path(project_root, "DeconBenchmark")) && 
+       project_root != dirname(project_root)) {
+  project_root <- dirname(project_root)
+}
+
+# Construct target directory based on detected project structure
+if (dir.exists(file.path(project_root, "DeconBenchmark", "benchmark_results"))) {
+  target_dir <- file.path(project_root, "DeconBenchmark", "benchmark_results", "radar")
+} else if (dir.exists(file.path(project_root, "benchmark_results"))) {
+  target_dir <- file.path(project_root, "benchmark_results", "radar")
+} else {
+  # Fallback to relative path if we can't detect project structure
+  target_dir <- file.path(getwd(), "benchmark_results", "radar")
+}
+
+cat("Using target directory:", target_dir, "\n")
+
+# Create the directory if it doesn't exist
+if (!dir.exists(target_dir)) {
+  dir.create(target_dir, recursive = TRUE, showWarnings = TRUE)
+  cat("Created output directory:", target_dir, "\n")
+}
+
+# Get the filename from the original path and create the new output path
+output_filename <- basename(original_output_file)
+output_file <- file.path(target_dir, output_filename)
+cat("Output will be saved to:", output_file, "\n")
 
 # Function to install packages if not available
 install_if_missing <- function(pkg) {
@@ -517,7 +549,7 @@ plot_size <- 10  # Fixed 10 inches regardless of dataset count
 p <- ggplot() +
   # Add grid lines
   geom_path(
-    data = grid_data %>% group_by(radius) %>% summarize(x = c(x, x[1]), y = c(y, y[1]), .groups = "drop"),
+    data = grid_data %>% group_by(radius) %>% reframe(x = c(x, x[1]), y = c(y, y[1])),
     aes(x = x, y = y, group = radius),
     color = "grey85",
     size = 0.5
@@ -531,10 +563,9 @@ p <- ggplot() +
   ) +
   # Add lines connecting points (using path with Cartesian coordinates)
   geom_polygon(
-    data = polygon_data %>% group_by(method) %>% summarize(
+    data = polygon_data %>% group_by(method) %>% reframe(
       x = c(x, x[1]),
-      y = c(y, y[1]),
-      .groups = "drop"
+      y = c(y, y[1])
     ),
     aes(x = x, y = y, group = method, color = method),
     fill = NA,
@@ -652,6 +683,6 @@ legend_width_adjustment <- 0.8
 max_width <- 15  # Maximum width in inches
 final_width <- min(plot_size + legend_width_adjustment, max_width)
 
-# Save plot with controlled dimensions
-ggsave(output_file, p, width = final_width, height = plot_size, units = "in")
+# Save plot with controlled dimensions - add create.dir=TRUE
+ggsave(output_file, p, width = final_width, height = plot_size, units = "in", create.dir = TRUE)
 cat("Radar plot saved to:", output_file, "\n")
