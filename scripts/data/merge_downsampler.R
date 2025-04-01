@@ -120,8 +120,7 @@ if (length(singleCellSubjects) > 0) {
 
 # Clean up cell names by removing any potential batch prefixes that might exist
 clean_cell_names <- function(cell_names) {
-  # This will remove any batchname prefixes like "TB1." or "TB2_" from cell names
-  # It looks for patterns like "PREFIX." or "PREFIX_" at the start of cell names
+  # Looks for patterns like "PREFIX." or "PREFIX_" at the start of cell names
   clean_names <- cell_names
   
   # Apply cleaning for each batch prefix

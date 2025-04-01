@@ -10,27 +10,40 @@
 
 # Path configuration
 LOG_DIR="/scratch/lorthiois/logs"
-DEFAULT_DATASET_PREFIX="TB1"
+DEFAULT_DATASET_PREFIX="TB_D100-bulk_null"
+DEFAULT_SAMPLE_FILTER="AB"  # Default sample filter
+
+# Parse command line arguments
 DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"  # Use default prefix if not provided
-OUTPUT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/error_summary_${DATASET_PREFIX}.html"
-JOB_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}/model_job_mapping.txt"
-PAIRED_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}/paired_plot_job_mapping.txt"
-STATS_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}/stats_job_mapping.txt"
+SAMPLE_FILTER="${2:-$DEFAULT_SAMPLE_FILTER}"    # Use default filter if not provided
+
+# New format for log directory includes both prefix and filter
+GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}_${SAMPLE_FILTER}"
+OUTPUT_FILE="${GLOBAL_LOG_DIR}/error_summary_${DATASET_PREFIX}_${SAMPLE_FILTER}.html"
+
+# Use the new path format for mapping files
+JOB_MAPPING_FILE="${GLOBAL_LOG_DIR}/model_job_mapping.txt"
+PAIRED_MAPPING_FILE="${GLOBAL_LOG_DIR}/paired_plot_job_mapping.txt"
+STATS_MAPPING_FILE="${GLOBAL_LOG_DIR}/stats_job_mapping.txt"
+
+# Create directory if it doesn't exist
+mkdir -p "$GLOBAL_LOG_DIR"
 
 # If stats mapping file doesn't exist, create it by looking for benchmark stats jobs
-if [ ! -f "$STATS_MAPPING_FILE" ] && [ -d "/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}" ]; then
-    # Look for stats job logs that match pattern
-    if grep -l "paired_benchmark_stats.sh" "/scratch/lorthiois/logs/"*.o 2>/dev/null | head -1 > /dev/null; then
-        echo "# Auto-generated stats job mapping" > "$STATS_MAPPING_FILE"
-        for log_file in $(grep -l "paired_benchmark_stats.sh" "/scratch/lorthiois/logs/"*.o 2>/dev/null); do
+if [ ! -f "$STATS_MAPPING_FILE" ] && [ -d "$GLOBAL_LOG_DIR" ]; then
+    # Look for stats job logs that match pattern with both dataset prefix and sample filter
+    stats_pattern="benchmarking_${DATASET_PREFIX}_${SAMPLE_FILTER}|benchmark_stats.*${DATASET_PREFIX}.*${SAMPLE_FILTER}|paired_benchmark_stats.sh"
+    if grep -l -E "$stats_pattern" "${LOG_DIR}/"*.o 2>/dev/null | head -1 > /dev/null; then
+        echo "# Auto-generated stats job mapping for ${DATASET_PREFIX}_${SAMPLE_FILTER}" > "$STATS_MAPPING_FILE"
+        for log_file in $(grep -l -E "$stats_pattern" "${LOG_DIR}/"*.o 2>/dev/null); do
             job_id=$(basename "$log_file" .o)
-            echo "stats_${DATASET_PREFIX}:${job_id}" >> "$STATS_MAPPING_FILE"
+            echo "stats_${DATASET_PREFIX}_${SAMPLE_FILTER}:${job_id}" >> "$STATS_MAPPING_FILE"
         done
         echo "Auto-generated stats mapping file: $STATS_MAPPING_FILE"
     fi
 fi
 
-DATA_NAME="${DATASET_PREFIX}"
+DATA_NAME="${DATASET_PREFIX}_${SAMPLE_FILTER}"
 
 # Create a temporary working directory
 TEMP_DIR=$(mktemp -d)
@@ -68,6 +81,12 @@ EOF
 # Check if mapping files exist
 if [ ! -f "$JOB_MAPPING_FILE" ]; then
     echo "Job mapping file not found: $JOB_MAPPING_FILE"
+    # Try to look for a job mapping file without the sample filter (for backward compatibility)
+    LEGACY_JOB_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}/model_job_mapping.txt"
+    if [ -f "$LEGACY_JOB_MAPPING_FILE" ]; then
+        echo "Found legacy job mapping file: $LEGACY_JOB_MAPPING_FILE"
+        JOB_MAPPING_FILE="$LEGACY_JOB_MAPPING_FILE"
+    fi
     # Continue but note the missing file in the HTML output
 fi
 
@@ -155,6 +174,9 @@ WARNING_METHODS=0
 # Process each method and its job ID for deconvolution errors
 if [ -f "$JOB_MAPPING_FILE" ]; then
     while IFS=: read -r METHOD JOB_ID; do
+        # Skip comment lines
+        [[ "$METHOD" =~ ^#.*$ ]] && continue
+        
         TOTAL_METHODS=$((TOTAL_METHODS + 1))
         echo "Processing $METHOD (Job $JOB_ID)..."
         
@@ -303,6 +325,9 @@ PLOT_WARNING=0
 # Add code to track paired plot job errors
 if [ -f "$PAIRED_MAPPING_FILE" ]; then
     while IFS=: read -r METHOD PLOT_JOB_ID; do
+        # Skip comment lines
+        [[ "$METHOD" =~ ^#.*$ ]] && continue
+        
         PLOT_TOTAL=$((PLOT_TOTAL + 1))
         
         # Check plot job error file
@@ -451,6 +476,9 @@ STATS_WARNING=0
 # Add code to track stats job errors
 if [ -f "$STATS_MAPPING_FILE" ]; then
     while IFS=: read -r JOB_NAME STATS_JOB_ID; do
+        # Skip comment lines
+        [[ "$JOB_NAME" =~ ^#.*$ ]] && continue
+        
         STATS_TOTAL=$((STATS_TOTAL + 1))
         
         # Check stats job error file
@@ -658,6 +686,9 @@ while IFS= read -r PATTERN; do
     # Check deconvolution jobs
     if [ -f "$JOB_MAPPING_FILE" ]; then
         while IFS=: read -r METHOD JOB_ID; do
+            # Skip comment lines
+            [[ "$METHOD" =~ ^#.*$ ]] && continue
+            
             ERROR_FILE="$LOG_DIR/${JOB_ID}.e"
             if [ -f "$ERROR_FILE" ] && grep -i "$PATTERN" "$ERROR_FILE" > /dev/null; then
                 METHODS_WITH_ERROR="$METHODS_WITH_ERROR$METHOD (deconv), "
@@ -669,6 +700,9 @@ while IFS= read -r PATTERN; do
     # Check paired plot jobs
     if [ -f "$PAIRED_MAPPING_FILE" ]; then
         while IFS=: read -r METHOD PLOT_JOB_ID; do
+            # Skip comment lines
+            [[ "$METHOD" =~ ^#.*$ ]] && continue
+            
             if [ ! -z "$PLOT_JOB_ID" ]; then
                 PLOT_ERROR_FILE="$LOG_DIR/${PLOT_JOB_ID}.e"
                 if [ -f "$PLOT_ERROR_FILE" ] && grep -i "$PATTERN" "$PLOT_ERROR_FILE" > /dev/null; then
@@ -682,6 +716,9 @@ while IFS= read -r PATTERN; do
     # Check stats jobs
     if [ -f "$STATS_MAPPING_FILE" ]; then
         while IFS=: read -r JOB_NAME STATS_JOB_ID; do
+            # Skip comment lines
+            [[ "$JOB_NAME" =~ ^#.*$ ]] && continue
+            
             if [ ! -z "$STATS_JOB_ID" ]; then
                 STATS_ERROR_FILE="$LOG_DIR/${STATS_JOB_ID}.e"
                 if [ -f "$STATS_ERROR_FILE" ] && grep -i "$PATTERN" "$STATS_ERROR_FILE" > /dev/null; then

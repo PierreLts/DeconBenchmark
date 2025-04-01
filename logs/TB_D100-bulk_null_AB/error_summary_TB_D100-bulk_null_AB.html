@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deconvolution, Paired Plot, and Stats Error Summary</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .error { color: #e74c3c; }
+        .success { color: #2ecc71; }
+        .warning { color: #f39c12; }
+        .missing { color: #95a5a6; }
+        .dashboard { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .metric { border: 1px solid #ddd; padding: 15px; text-align: center; flex: 1; margin: 0 5px; }
+        .metric-title { font-weight: bold; }
+        .metric-value { font-size: 24px; margin: 10px 0; }
+        .tabs { margin-top: 20px; }
+        .tab { display: inline-block; padding: 10px 20px; cursor: pointer; background: #f2f2f2; border: 1px solid #ddd; }
+        .tab.active { background: white; border-bottom: 1px solid white; }
+        .tab-content { display: none; border: 1px solid #ddd; padding: 15px; margin-top: -1px; }
+        .tab-content.active { display: block; }
+    </style>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</head>
+<body>
+    <h1>Deconvolution, Paired Plot, and Stats Error Summary</h1>
+    <p>Generated on mar 01 avr 2025 13:09:38 CEST for dataset: TB_D100-bulk_null_AB</p>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="openTab(event, 'DeconvolutionTab')">Deconvolution Errors</button>
+        <button class="tab" onclick="openTab(event, 'PairedPlotTab')">Paired Plot Errors</button>
+        <button class="tab" onclick="openTab(event, 'StatsTab')">Stats Errors</button>
+        <button class="tab" onclick="openTab(event, 'SummaryTab')">Error Summary</button>
+    </div>
+    
+    <div id="DeconvolutionTab" class="tab-content active">
+        <h2>Deconvolution Run Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+        <tr>
+            <td>ARIC</td>
+            <td>33341579</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td>  File "sklearn/svm/_libsvm.pyx", line 192, in sklearn.svm._libsvm.fit<br>
+ValueError: Invalid input - all samples have zero or negative weights.<br></td>
+        </tr>
+        <tr>
+            <td>AutoGeneS</td>
+            <td>33341580</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in if (abs(row_sum - 100) &gt;= 1) { : <br>
+  missing value where TRUE/FALSE needed<br></td>
+        </tr>
+        <tr>
+            <td>BayesPrism</td>
+            <td>33341581</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td>Error in new.prism(reference = t(args$singleCellExpr), mixture = t(args$bulk),  : <br>
+  Error: gene names of reference and mixture do not match!<br>
+In addition: Warning message:<br></td>
+        </tr>
+        <tr>
+            <td>BisqueRef</td>
+            <td>33341582</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in CountsToCPM(bulk.eset) : <br>
+  Zero expression in selected genes for 30 cells<br></td>
+        </tr>
+        <tr>
+            <td>DeconPeaker</td>
+            <td>33341583</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td>    raise embedded.RRuntimeError(_rinterface._geterrmessage())<br>
+rpy2.rinterface_lib.embedded.RRuntimeError: Error in mvr(Y_norm ~ X_norm, ncols, scale = FALSE, validation = "CV",  : <br>
+  Invalid number of components, ncomp<br></td>
+        </tr>
+        <tr>
+            <td>DeconRNASeq</td>
+            <td>33341584</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in lsei(AA, BB, EE, FF, GG, HH) : <br>
+  NA/NaN/Inf in foreign function call (arg 6)<br></td>
+        </tr>
+        <tr>
+            <td>DESeq2</td>
+            <td>33341585</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in if (abs(row_sum - 100) &gt;= 1) { : <br>
+  missing value where TRUE/FALSE needed<br></td>
+        </tr>
+        <tr>
+            <td>EMeth</td>
+            <td>33341586</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in optim(rho[i, ], fn = function(a) { : <br>
+  non-finite value supplied by optim<br></td>
+        </tr>
+        <tr>
+            <td>EPIC</td>
+            <td>33341587</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in cor.test.default(b, b_estimated, method = "spearman") : <br>
+  not enough finite observations<br></td>
+        </tr>
+        <tr>
+            <td>FARDEEP</td>
+            <td>33341588</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in (n - k_up + 1):n : result would be too long a vector<br>
+Calls: fardeep -&gt; tuningBIC -&gt; alts<br></td>
+        </tr>
+            <tr>
+                <td>LinDeconSeq</td>
+                <td>33341589</td>
+                <td class="success">Success</td>
+                <td>None</td>
+                <td>Standard execution log (no errors)</td>
+            </tr>
+        <tr>
+            <td>MIXTURE</td>
+            <td>33341590</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in predict.svm(ret, xhold, decision.values = TRUE) : <br>
+  Model is empty!<br></td>
+        </tr>
+        <tr>
+            <td>MuSic</td>
+            <td>33341591</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in if (sum(abs(p.weight.new - p.weight)) &lt; eps) { : <br>
+  missing value where TRUE/FALSE needed<br></td>
+        </tr>
+        <tr>
+            <td>MySort</td>
+            <td>33341592</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in predict.svm(ret, xhold, decision.values = TRUE) : <br>
+  Model is empty!<br></td>
+        </tr>
+        <tr>
+            <td>PREDE</td>
+            <td>33341593</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in solve.QP(Dmat = Dmat, dvec = dvec, Amat = Amat, bvec = b0vec,  : <br>
+  matrix D in quadratic function is not positive definite!<br></td>
+        </tr>
+        <tr>
+            <td>quanTIseq</td>
+            <td>33341594</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in if (abs(row_sum - 100) &gt;= 1) { : <br>
+  missing value where TRUE/FALSE needed<br></td>
+        </tr>
+        <tr>
+            <td>RNA-Sieve</td>
+            <td>33341595</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td>    raise ValueError("Invalid dimensions %s." % (shape,))<br>
+ValueError: Invalid dimensions (0, 10).<br></td>
+        </tr>
+        <tr>
+            <td>scaden</td>
+            <td>33341596</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td>    return a[subset_idx]<br>
+IndexError: arrays used as indices must be of integer (or boolean) type<br></td>
+        </tr>
+        <tr>
+            <td>SCDC</td>
+            <td>33341597</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td>01A has common genes 0 ...<br>
+Error in if (sum(abs(prop.wt.new - prop.wt)) &lt; epsilon) { : <br>
+  missing value where TRUE/FALSE needed<br></td>
+        </tr>
+        <tr>
+            <td>TOAST</td>
+            <td>33341598</td>
+            <td class="error">Failed</td>
+            <td>Error</td>
+            <td><br>
+Error in rowMeans(Ymat[numMarker[[k]], ]) : <br>
+  'x' must be an array of at least two dimensions<br></td>
+        </tr>
+        </table>
+    </div>
+    
+    <div id="PairedPlotTab" class="tab-content">
+        <h2>Paired Plot Errors</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Plot Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+        <tr>
+            <td>scaden</td>
+            <td>33341654</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: scaden<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>RNA-Sieve</td>
+            <td>33341655</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: RNA-Sieve<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>ARIC</td>
+            <td>33341656</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: ARIC<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>FARDEEP</td>
+            <td>33341657</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: FARDEEP<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>DeconPeaker</td>
+            <td>33341658</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: DeconPeaker<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>MySort</td>
+            <td>33341659</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: MySort<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>SCDC</td>
+            <td>33341660</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: SCDC<br>
+Execution halted<br></td>
+        </tr>
+    <tr>
+        <td>LinDeconSeq</td>
+        <td>33341661</td>
+        <td class="success">Success</td>
+        <td>None</td>
+        <td>Standard execution log (no errors)</td>
+    </tr>
+        <tr>
+            <td>TOAST</td>
+            <td>33341662</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: TOAST<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>BisqueRef</td>
+            <td>33341663</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: BisqueRef<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>EMeth</td>
+            <td>33341664</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: EMeth<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>MuSic</td>
+            <td>33341665</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: MuSic<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>EPIC</td>
+            <td>33341666</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: EPIC<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>PREDE</td>
+            <td>33341667</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: PREDE<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>MIXTURE</td>
+            <td>33341668</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: MIXTURE<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>DeconRNASeq</td>
+            <td>33341669</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: DeconRNASeq<br>
+Execution halted<br></td>
+        </tr>
+        <tr>
+            <td>BayesPrism</td>
+            <td>33341670</td>
+            <td class="error">Failed</td>
+            <td>Error:</td>
+            <td><br>
+Error: No proportion matrix found for method: BayesPrism<br>
+Execution halted<br></td>
+        </tr>
+        </table>
+    </div>
+    
+    <div id="StatsTab" class="tab-content">
+        <h2>Statistics Calculation Errors</h2>
+        <table>
+            <tr>
+                <th>Job Name</th>
+                <th>Stats Job ID</th>
+                <th>Status</th>
+                <th>Error Type</th>
+                <th>Error Details</th>
+            </tr>
+        <tr>
+            <td>paired_plots</td>
+            <td>33341648</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td>sbatch: ├──────────────────────────────┼─────────────┼─────────────┼─────────────┤<br>
+sbatch: │ account : gr-fe              │ 1,000       │ 21.7        │ 0.35        │<br>
+sbatch: ╰──────────────────────────────┴─────────────┴─────────────┴─────────────╯<br>
+sbatch: ¹⁾ Estimated cost of the queued jobs and this job<br>
+sbatch: ²⁾ Queued jobs costs are based on its walltime (option --time)<br></td>
+        </tr>
+        <tr>
+            <td>metrics</td>
+            <td>33341649</td>
+            <td class="warning">Completed with warnings</td>
+            <td>Unknown</td>
+            <td><br>
+The following object is masked from ‘package:reshape2’:<br>
+<br>
+    smiths<br>
+<br></td>
+        </tr>
+        </table>
+    </div>
+    
+    <div id="SummaryTab" class="tab-content">
+        <h2>Error Pattern Summary</h2>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Deconv Methods</div>
+                <div class="metric-value">20</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Success</div>
+                <div class="metric-value" style="color: #2ecc71">1</div>
+                <div>5.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Warning</div>
+                <div class="metric-value" style="color: #f39c12">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Failed</div>
+                <div class="metric-value" style="color: #e74c3c">19</div>
+                <div>95.0%</div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Plots Total</div>
+                <div class="metric-value">17</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Plots Success</div>
+                <div class="metric-value" style="color: #2ecc71">1</div>
+                <div>5.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Plots Warning</div>
+                <div class="metric-value" style="color: #f39c12">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Plots Failed</div>
+                <div class="metric-value" style="color: #e74c3c">16</div>
+                <div>94.0%</div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="metric">
+                <div class="metric-title">Stats Total</div>
+                <div class="metric-value">2</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Success</div>
+                <div class="metric-value" style="color: #2ecc71">0</div>
+                <div>0.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Warning</div>
+                <div class="metric-value" style="color: #f39c12">2</div>
+                <div>100.0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Stats Failed</div>
+                <div class="metric-value" style="color: #e74c3c">0</div>
+                <div>0.0%</div>
+            </div>
+        </div>
+        
+        <table>
+            <tr>
+                <th>Error Pattern</th>
+                <th>Count</th>
+                <th>Affected Methods</th>
+            </tr>
+        <tr>
+            <td>Error:</td>
+            <td>21</td>
+            <td>ARIC (deconv), BayesPrism (deconv), DeconPeaker (deconv), RNA-Sieve (deconv), scaden (deconv), scaden (plot), RNA-Sieve (plot), ARIC (plot), FARDEEP (plot), DeconPeaker (plot), MySort (plot), SCDC (plot), TOAST (plot), BisqueRef (plot), EMeth (plot), MuSic (plot), EPIC (plot), PREDE (plot), MIXTURE (plot), DeconRNASeq (plot), BayesPrism (plot)</td>
+        </tr>
+        <tr>
+            <td>ERROR:</td>
+            <td>21</td>
+            <td>ARIC (deconv), BayesPrism (deconv), DeconPeaker (deconv), RNA-Sieve (deconv), scaden (deconv), scaden (plot), RNA-Sieve (plot), ARIC (plot), FARDEEP (plot), DeconPeaker (plot), MySort (plot), SCDC (plot), TOAST (plot), BisqueRef (plot), EMeth (plot), MuSic (plot), EPIC (plot), PREDE (plot), MIXTURE (plot), DeconRNASeq (plot), BayesPrism (plot)</td>
+        </tr>
+        <tr>
+            <td>Error</td>
+            <td>35</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesPrism (deconv), BisqueRef (deconv), DeconPeaker (deconv), DeconRNASeq (deconv), DESeq2 (deconv), EMeth (deconv), EPIC (deconv), FARDEEP (deconv), MIXTURE (deconv), MuSic (deconv), MySort (deconv), PREDE (deconv), quanTIseq (deconv), RNA-Sieve (deconv), scaden (deconv), SCDC (deconv), TOAST (deconv), scaden (plot), RNA-Sieve (plot), ARIC (plot), FARDEEP (plot), DeconPeaker (plot), MySort (plot), SCDC (plot), TOAST (plot), BisqueRef (plot), EMeth (plot), MuSic (plot), EPIC (plot), PREDE (plot), MIXTURE (plot), DeconRNASeq (plot), BayesPrism (plot)</td>
+        </tr>
+        <tr>
+            <td>ERROR</td>
+            <td>35</td>
+            <td>ARIC (deconv), AutoGeneS (deconv), BayesPrism (deconv), BisqueRef (deconv), DeconPeaker (deconv), DeconRNASeq (deconv), DESeq2 (deconv), EMeth (deconv), EPIC (deconv), FARDEEP (deconv), MIXTURE (deconv), MuSic (deconv), MySort (deconv), PREDE (deconv), quanTIseq (deconv), RNA-Sieve (deconv), scaden (deconv), SCDC (deconv), TOAST (deconv), scaden (plot), RNA-Sieve (plot), ARIC (plot), FARDEEP (plot), DeconPeaker (plot), MySort (plot), SCDC (plot), TOAST (plot), BisqueRef (plot), EMeth (plot), MuSic (plot), EPIC (plot), PREDE (plot), MIXTURE (plot), DeconRNASeq (plot), BayesPrism (plot)</td>
+        </tr>
+        </table>
+    </div>
+    
+    <script>
+        // Open first tab by default
+        document.getElementsByClassName("tab")[0].click();
+    </script>
+</body>
+</html>
