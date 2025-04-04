@@ -13,8 +13,8 @@ set -x  # Print commands as they're executed
 
 # ===== PARAMETERS TO ADJUST =====
 OUTPUT_PREFIX="TB"
-CELLS_PER_TYPE=75 # 4 batches --> multiply by 4 nb of cells/celltype
-FILTER_TYPE="AB"  # Default filter type (AB, A, or B)
+CELLS_PER_TYPE=25 # 4 batches --> multiply by 4 nb of cells/celltype: 4*25-->D100
+FILTER_TYPE="B"  # Default filter type (AB, A, or B)
 BATCH1="TB1"
 BATCH2="TB2"
 BATCH3="TB3"

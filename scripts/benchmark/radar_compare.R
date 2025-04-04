@@ -459,7 +459,7 @@ for (i in 1:nrow(label_data)) {
     label_data$y[i] <- label_data$y[i] + 0.15
     label_data$x[i] <- label_data$x[i] + 0.03
   } else if (label_data$metric[i] == "PearsonCorr") {
-    label_data$y[i] <- label_data$y[i] + 0.15
+    label_data$y[i] <- label_data$y[i] + 0.1  # Reduced from 0.15 to 0.1
     label_data$x[i] <- label_data$x[i] - 0.03
   } else if (label_data$metric[i] == "Runtime") {
     # Adjust the Runtime label position if needed
@@ -471,6 +471,9 @@ for (i in 1:nrow(label_data)) {
 # Create data for scale value labels - only at key points (0, 0.5, 1)
 scale_labels <- data.frame()
 
+# Define universal offset for all metrics
+default_offset <- 0.1  # Consistent shift for all metrics
+
 for (i in seq_along(metrics)) {
   metric_name <- metrics[i]
   angle <- angles[i]
@@ -480,41 +483,51 @@ for (i in seq_along(metrics)) {
     # Calculate actual value for this display value
     actual <- display_to_actual(br, as.character(metric_name))
     
-    # Calculate label position along the axis
-    x <- br * cos(angle)
-    y <- br * sin(angle)
+    # Calculate base position along the axis
+    base_x <- br * cos(angle)
+    base_y <- br * sin(angle)
     
     # Calculate position for the text label - aligned with axis direction
     # Use the angle to determine alignment
     hjust <- 0.5 # Default horizontal alignment
     vjust <- 0.5 # Default vertical alignment
     
-    # Special case for center (0,0)
-    if (br == 0) {
-      # For center value, slightly offset in the direction of the axis
-      # to avoid overlapping at the center
-      center_offset <- 0.08  # Increased from 0.03 to 0.08 to space labels from center
-      x <- center_offset * cos(angle)
-      y <- center_offset * sin(angle)
-    }
-    
-    # Adjust alignment based on axis quadrant
+    # Calculate offset to shift labels away from the axis
+    # Offset direction depends on the axis angle
     if (angle == 0) { # Right
       hjust <- -0.1
       vjust <- 0.5
-      x <- x + 0.05
+      x <- base_x + default_offset
+      y <- base_y
     } else if (angle == pi/2) { # Top
       hjust <- 0.5
       vjust <- -0.1
-      y <- y + 0.05
+      x <- base_x
+      y <- base_y + default_offset
     } else if (angle == pi) { # Left
       hjust <- 1.1
       vjust <- 0.5
-      x <- x - 0.05
+      x <- base_x - default_offset
+      y <- base_y
     } else if (angle == 3*pi/2) { # Bottom
       hjust <- 0.5
       vjust <- 1.1
-      y <- y - 0.05
+      x <- base_x
+      y <- base_y - default_offset
+    } else {
+      # For diagonal axes, calculate the offset in both x and y directions
+      offset_x <- default_offset * cos(angle)
+      offset_y <- default_offset * sin(angle)
+      x <- base_x + offset_x
+      y <- base_y + offset_y
+    }
+    
+    # Special adjustment for PearsonCorr
+    if (metric_name == "PearsonCorr") {
+      # Reduce the offset a bit for PearsonCorr to bring it closer
+      adjustment_factor <- 0.7  # Reduce the offset to 70%
+      x <- base_x + (x - base_x) * adjustment_factor
+      y <- base_y + (y - base_y) * adjustment_factor
     }
     
     # Add to data frame

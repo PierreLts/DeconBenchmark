@@ -3,7 +3,7 @@
 
 # ===== EXPLICIT SETTINGS - MODIFY THESE DIRECTLY =====
 # Output prefix for generated files
-PREFIX="PBMC"
+PREFIX="TB"
 # Sample filter: "A" for only A samples, "B" for only B samples, "AB" for both
 SAMPLE_FILTER="AB"
 # =====

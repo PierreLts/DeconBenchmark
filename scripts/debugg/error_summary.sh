@@ -10,7 +10,7 @@
 
 # Path configuration
 LOG_DIR="/scratch/lorthiois/logs"
-DEFAULT_DATASET_PREFIX="TB_D100-bulk_null"
+DEFAULT_DATASET_PREFIX="TB_D300-bulk"
 DEFAULT_SAMPLE_FILTER="AB"  # Default sample filter
 
 # Parse command line arguments

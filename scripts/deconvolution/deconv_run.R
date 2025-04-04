@@ -124,7 +124,7 @@ deconvolutionResult <- runDeconvolution(
   isMethylation = FALSE,
   singleCellExpr = singleCellExpr,
   singleCellLabels = singleCellLabels,
-  singleCellSubjects = singleCellSubjects, # High impact
+  singleCellSubjects = singleCellSubjects, # BisqueRef
   cellTypeExpr = cellTypeExpr,
   sigGenes = sigGenes,
   signature = signature,
