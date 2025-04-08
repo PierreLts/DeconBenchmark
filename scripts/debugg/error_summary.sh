@@ -53,15 +53,15 @@ ERROR_PATTERNS_FILE="$TEMP_DIR/error_patterns.txt"
 cat > "$ERROR_PATTERNS_FILE" << EOF
 Error:
 ERROR:
+Error
+ERROR
 Exception:
+Exception
 Failed:
+Failed
 fatal:
 Fatal:
 FATAL:
-Error
-ERROR
-Exception
-Failed
 fatal
 Fatal
 FATAL

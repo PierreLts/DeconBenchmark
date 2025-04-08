@@ -14,13 +14,11 @@
 # CONFIGURATION - MODIFY THESE LINES AS NEEDED
 #############################################################
 # List the benchmark files you want to include in the radar plot
-PLOT_TITLE="Bulk vs. Pseudobulk vs. Random Bulk"
+PLOT_TITLE="Original vs. PBMC Reference"
 
 DATASETS_TO_PLOT=(
-  "TB_D100-bulk_benchmark_AB_select-AB.csv"
-  "TB_D100-pseudobulk_benchmark_AB_select-AB.csv"
-  "TB_D100-bulk_random_benchmark_AB_select-AB.csv"
-
+  "TB_D100-common-bulk_benchmark_AB_select-AB.csv"
+  "PBMC_D100-common-bulk_benchmark_AB_select-AB.csv"
 )
 
   # "TB_D100-bulk_benchmark_AB_select-A.csv"

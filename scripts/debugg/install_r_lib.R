@@ -2,20 +2,17 @@
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)!=2) {
-  stop("2 arguments must be supplied ()",
+  stop("2 arguments must be supplied (R_LIBRARY_PATH DO_INSTALL)",
    call.=FALSE)
 }
-
 
 ####### Parameter of main function
 path_Rlibrary <- args[1]
 do_install <- args[2]
 
-
 .libPaths(path_Rlibrary, FALSE)
 print(.libPaths())
 print(getRversion())
-
 
 if(do_install == 1){
   # Set the CRAN mirror URL
@@ -23,76 +20,142 @@ if(do_install == 1){
   # Set the mirror option
   options(repos = c(CRAN = cran_mirror))
   
-  # Function to check and install packages
+  # Function to check and install packages with error handling
   install_if_missing <- function(pkg) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
-      install.packages(pkg)
+      cat(paste("Installing package:", pkg, "\n"))
+      tryCatch({
+        install.packages(pkg)
+        if (requireNamespace(pkg, quietly = TRUE)) {
+          cat(paste("Successfully installed package:", pkg, "\n"))
+        } else {
+          cat(paste("Failed to install package:", pkg, "\n"))
+        }
+      }, error = function(e) {
+        cat(paste("Error installing package:", pkg, "-", e$message, "\n"))
+      })
+    } else {
+      cat(paste("Package already installed:", pkg, "\n"))
     }
   }
-  library(devtools)
-  # Install required libraries
-  # install_if_missing("ggplot2")
-  # install_if_missing("reshape2")
-  # install_if_missing("corrplot")
-  # install_if_missing("pheatmap")
-  # install_if_missing("Metrics")
-  # install_if_missing("stats")
-  # install_if_missing("scales")
-    # Install required libraries
-  required_packages <- c("dplyr", "tidyr", "readr", "stringr", "gridExtra")
   
-  lapply(required_packages, install_if_missing)
-  # Add to Singularity container definition or add this to run script
-  if (!requireNamespace("devtools", quietly = TRUE))
-    install.packages("devtools")
-  devtools::install_github("cartof/digitalDLSorter")
-  # # babelwhale
-  # install_if_missing("babelwhale")
-  # babelwhale::test_singularity_installation(detailed = TRUE)
-  #library(CDSeq)
-  # # DeconBenchmark
-  # install_if_missing("devtools")
-  # devtools::install_github("tinnlab/DeconBenchmark")
-  #install.packages("CDSeq")
-  # # install.packages("devtools")
-  # devtools::install_github("kkang7/CDSeq_R_Package")
-  # # install.packages("devtools")
-  # devtools::install_github("kkang7/CDSeq_R_Package", build_vignettes = TRUE)
-
-
+  # Install devtools first (needed for GitHub packages)
+  install_if_missing("devtools")
+  
+  # Install BiocManager (needed for Bioconductor packages)
+  install_if_missing("BiocManager")
+  
+  # Install key Seurat dependencies first
+  cat("Installing key Seurat dependencies...\n")
+  seurat_dependencies <- c(
+    "Rcpp",
+    "rlang",
+    "cowplot",
+    "Matrix",
+    "irlba",
+    "RANN",
+    "dplyr",
+    "patchwork",
+    "reticulate"
+  )
+  
+  for (pkg in seurat_dependencies) {
+    install_if_missing(pkg)
+  }
+  
+  # Install required CRAN packages (alphabetically ordered)
+  required_cran_packages <- c(
+    "babelwhale",
+    "biomaRt",
+    "Biobase",
+    "dplyr",
+    "ggplot2",
+    "gridExtra",
+    "knitr",
+    "Matrix",
+    "Metrics",
+    "readr",
+    "reshape2",
+    "RColorBrewer",
+    "scales",
+    "stringr",
+    "tidyr",
+    "tools"
+  )
+  
+  # Install each package and print status
+  for (pkg in required_cran_packages) {
+    install_if_missing(pkg)
+  }
+  
+  # Now install Seurat (which has many dependencies)
+  cat("Installing Seurat...\n")
+  install_if_missing("Seurat")
+  
+  # Test Singularity installation
+  tryCatch({
+    if (requireNamespace("babelwhale", quietly = TRUE)) {
+      cat("Testing Singularity installation...\n")
+      babelwhale::test_singularity_installation(detailed = TRUE)
+    } else {
+      cat("babelwhale not installed, skipping Singularity installation test\n")
+    }
+  }, error = function(e) {
+    cat(paste("Error testing Singularity installation:", e$message, "\n"))
+  })
+  
+  # Define a function to install from GitHub with error handling
+  install_github <- function(repo, ...) {
+    tryCatch({
+      if (requireNamespace("devtools", quietly = TRUE)) {
+        cat(paste("Installing", repo, "from GitHub...\n"))
+        devtools::install_github(repo, ...)
+        repo_name <- sub(".*/", "", repo)
+        if (requireNamespace(repo_name, quietly = TRUE)) {
+          cat(paste("Successfully installed", repo, "from GitHub\n"))
+        } else {
+          cat(paste("Failed to install", repo, "from GitHub\n"))
+        }
+      } else {
+        cat("devtools not installed, skipping GitHub installation\n")
+      }
+    }, error = function(e) {
+      cat(paste("Error installing", repo, "from GitHub:", e$message, "\n"))
+    })
+  }
+  
+  # Install GitHub packages
+  cat("Installing GitHub packages...\n")
+  install_github("tinnlab/DeconBenchmark")
+  install_github("cartof/digitalDLSorter")
+  install_github("xuranw/MuSiC")
+  
+  # Install CDSeq from CRAN or GitHub
+  tryCatch({
+    cat("Installing CDSeq from CRAN...\n")
+    install.packages("CDSeq")
+    if (requireNamespace("CDSeq", quietly = TRUE)) {
+      cat("Successfully installed CDSeq from CRAN\n")
+    } else {
+      cat("Failed to install CDSeq from CRAN\n")
+      # Try installing from GitHub if CRAN fails
+      if (requireNamespace("devtools", quietly = TRUE)) {
+        cat("Trying to install CDSeq from GitHub instead...\n")
+        devtools::install_github("kkang7/CDSeq_R_Package")
+      }
+    }
+  }, error = function(e) {
+    cat(paste("Error installing CDSeq from CRAN:", e$message, "\n"))
+    # Try installing from GitHub if CRAN fails
+    if (requireNamespace("devtools", quietly = TRUE)) {
+      cat("Trying to install CDSeq from GitHub instead...\n")
+      tryCatch({
+        devtools::install_github("kkang7/CDSeq_R_Package")
+      }, error = function(e2) {
+        cat(paste("Error installing CDSeq from GitHub:", e2$message, "\n"))
+      })
+    }
+  })
+  
+  cat("Package installation completed.\n")
 }
-
-
-
-
-
-
-  #install.packages("MatrixEQTL", lib=path_Rlibrary)
-  #install.packages("bigsnpr", lib=path_Rlibrary)
-  
- 
- ##Bioconductor packages
-  #if (!require("BiocManager", quietly = TRUE))
-  #  install.packages("BiocManager")
-
-  #BiocManager::install("GSVA", force = TRUE)
-#BiocManager::install("MungeSumstats")
-#BiocManager::install("SNPlocs.Hsapiens.dbSNP155.GRCh38#BiocManager::install("BSgenome.Hsapiens.NCBI.GRCh38")
-
-
-#BiocManager::install("SNPlocs.Hsapiens.dbSNP155.GRCh37")
-#BiocManager::install("BSgenome.Hsapiens.1000genomes.hs37d5")
-
-
-# #necessary for install_github
-#     install.packages("devtools", lib=path_Rlibrary)
-#     library(devtools)
-#     #Github packages
-#     install_github("baolinwu/KATSP")
-#     install_github('gastonstat/AssotesteR')
-#     remotes::install_github("YuLab-SMU/clusterProfiler")
-
-# #Download tar.gz file at https://cran.r-project.org/src/contrib/Archive/RVtests/
-#     #install.packages("C:/Users/boutrys/OneDrive - UCL/DRAFT_ARTICLES/Statistical_framework_ensemble/To_publish_Plos_computational_biology/Response_to_reviewers/SIMULATION/functions/library_to_install/RVtests_1.2.tar.gz", repos=NULL, type="source")
-#     install.packages("${path_Rlibrary}/RVtests_1.2.tar.gz", repos=NULL, type="source", lib=path_Rlibrary)
-
