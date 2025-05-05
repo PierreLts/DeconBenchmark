@@ -31,9 +31,11 @@ The scripts in this section are in *scripts/data/*
 | `singleCellExpr_AB_generation.R` | 
 | `singleCellLabels_AB_generation.R` | 
 | `singleCellSubjects_AB_generation.R` | 
+| |
 | `bulk_generation.R` |
 | `pseudobulk.R` |
 | `bulk_randomizer.R` |
+| |
 | `GT_generation.R` |
 | `GT_per_sample_generation.R` |
 
@@ -41,6 +43,7 @@ You might want to **run it twice** because of a dependency issue: `GT_generation
 
 
 Files created at */generated_data*:
+| | Run `all_data.sh` to run: | |
 | Script File | Output File |
 |-------------|------------|
 | `singleCellExpr_AB_generation.R` | "data_name"_singleCellExpr_AB.rda |
