@@ -8,6 +8,7 @@ Pierre Lorthiois 04/2025
 Here `.R` files should be run through their corresponding `.sh` launch scripts on the EPFL Scitas cluster.
 
 ## 1. Overview
+You can find the PowerPoint presentation of this project in data/ProjectPresentation.pptx
 ### 1.1. Installations
 First intall libraries and packages running `install_r_lib.R`
 ### 1.2. Flow Chart
