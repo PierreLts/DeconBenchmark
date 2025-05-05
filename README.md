@@ -9,6 +9,9 @@ Here `.R` files should be run through their corresponding `.sh` launch scripts.
 
 ## 1. Installations
 First intall libraries and packages running `install_r_lib.R`
+### 1.1. Flow Chart
+<img src="FlowChart.png" width="800" alt="Detailed workflow diagram of the deconvolution benchmarking process">
+
 
 ## 2. Data Preparation
 ### 2.1. Data Folder
