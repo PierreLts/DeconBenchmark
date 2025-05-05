@@ -91,3 +91,13 @@ NOTE: the name of the plot is consistently "radar_comparision.pdf", if you do no
 
 ## 6. Archive
 This folder is of limited importance. It keeps some generated results and some old, now less useful scripts.
+
+## 7. Cluster Computing Ressources 
+Computing rssources can be adjusted for each file. Take a look at the header of each .sh launch file.<br><br>
+
+#SBATCH --cpus-per-task 64<br>
+#SBATCH --mem 256G<br>
+#SBATCH --time 12:00:00<br><br>
+
+If too much RAM memory is allocated with too few CPUs, you will probably get an Out Of Memory OOM error, consider a ratio of ~4GB/CPU.
+
