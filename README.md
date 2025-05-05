@@ -40,16 +40,18 @@ You might want to **run it twice** because of a dependency issue: `GT_generation
 
 
 Files created at */generated_data*:
-`singleCellExpr_AB_generation.R`        --> "data_name"_singleCellExpr_AB.rda<br>
-`singleCellLabels_AB_generation.R`      --> "data_name"_singleCellLabels_AB.rda<br>
-`singleCellSubjects_AB_generation.R`    --> "data_name"_singleCellSubjects_AB.rda<br>
-
-`bulk_generation.R`             --> "data_name"_bulk.rda<br>
-`pseudobulk.R`                  --> "data_name"_pseudobulk.rda<br>
-`bulk_randomizer.R`             --> "data_name"_bulk_random.rda<br>
-
-`GT_generation.R`               --> "data_name"_GT_proportions.rda<br>
-`GT_per_sample_generation.R`    --> "data_name"_GT_proportions_per_sample.rda<br>
+| Script File | | Output File |
+|-------------|:---:|------------|
+| `singleCellExpr_AB_generation.R` | --> | "data_name"_singleCellExpr_AB.rda |
+| `singleCellLabels_AB_generation.R` | --> | "data_name"_singleCellLabels_AB.rda |
+| `singleCellSubjects_AB_generation.R` | --> | "data_name"_singleCellSubjects_AB.rda |
+| | | |
+| `bulk_generation.R` | --> | "data_name"_bulk.rda |
+| `pseudobulk.R` | --> | "data_name"_pseudobulk.rda |
+| `bulk_randomizer.R` | --> | "data_name"_bulk_random.rda |
+| | | |
+| `GT_generation.R` | --> | "data_name"_GT_proportions.rda |
+| `GT_per_sample_generation.R` | --> | "data_name"_GT_proportions_per_sample.rda |
 
 .csv file versions are also saved for visualizations purpose.
 
