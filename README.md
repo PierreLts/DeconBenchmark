@@ -19,15 +19,17 @@ Data Preparation<br>
 Deconvolution Run<br>
 Benchmarking<br>
 Debugging<br>
-<img src="data/SimpleFlowChart.png" width="500" alt="Detailed workflow diagram of the deconvolution benchmarking process">
+<img src="data/SimpleFlowChart.png" width="650" alt="Detailed workflow diagram of the deconvolution benchmarking process">
 
 ## 2. Data Preparation
 To run the pipeline, we first need properly formated data.
 ### 2.1. Data Folder
-The folder should contain:
-Single cell RNA-seq data: "scRNA".rds   (our case: 4 batches "GFB...Seurat.rds")<br>
-Bulk RNA-seq data: "bulkRNA".csv        (our case: "cleaned_feature_counts_matrix.csv")<br><br>
-Gene name mapping file: mart_export.txt (Same for all of us)<br><br>
+| The folder should contain: |
+|-------------|------------|
+| Single cell RNA-seq data: | "scRNA".rds   (our case: 4 batches "GFB...Seurat.rds") |
+| Bulk RNA-seq data: | "bulkRNA".csv        (our case: "cleaned_feature_counts_matrix.csv") |
+| Gene name mapping file: | mart_export.txt (Same for all of us) |
+
 Running `merge_batches.R` will save "merged_batches.rds" which are the 4 batches of your choice merged (in our case the 4 batches "GFB...Seurat.rds")
 
 ### 2.2. Data Generation
