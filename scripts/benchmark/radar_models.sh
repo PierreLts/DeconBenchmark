@@ -4,22 +4,25 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=12G
 #SBATCH --time=0:30:00
+
+#### -ADJUST PATHS 1/4- ####
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
+#### ------------------ ####
+
 #SBATCH --job-name=radar_model_plot
 
 # This script generates a radar plot showing all models from a single benchmark file
 
-#############################################################
-# CONFIGURATION - MODIFY THIS LINE AS NEEDED
-#############################################################
+#### -SET PARAMETERS- ####
 # Specify the benchmark file to plot
 DATASET_TO_PLOT="TB_D100-pseudobulk_benchmark_AB_select-AB.csv"
-#############################################################
+#### ---------------- ####
 
-# Default parameters
+#### -ADJUST PATHS 2/4- ####
 RLIBRARY="/work/gr-fe/R_4.3.1"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
+#### ------------------ ####
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -45,7 +48,10 @@ while [[ $# -gt 0 ]]; do
       echo "Options:"
       echo "  -o, --output FILE      Output file name (default: radar_models.pdf)"
       echo "  -l, --library PATH     R library path (default: /work/gr-fe/R_4.3.1)"
+      
+#### -ADJUST PATHS 3/4- ####
       echo "  -d, --directory PATH   Benchmark directory (default: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results)"
+#### ------------------ ####
       echo "  -t, --title TITLE      Plot title (default: 'Model Performance Comparison')"
       echo "  -h, --help             Show this help message"
       exit 0
@@ -159,7 +165,10 @@ module load r
 
 echo "Generating radar plot..."
 # Run the R script
+
+#### -ADJUST PATHS 4/4- ####
 R_SCRIPT="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/radar_models.R"
+#### ------------------ ####
 
 # Check if R script exists
 if [ ! -f "$R_SCRIPT" ]; then

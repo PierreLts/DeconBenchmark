@@ -1,15 +1,20 @@
 #!/bin/bash
 # parallel_deconv.sh - Run multiple deconvolution methods in parallel
 
-# Default parameters
+#### -DEFAULT PARAMETERS- ####
+# The reference you want to run the deconvolution on:
 DEFAULT_DATASET_PREFIX="TB_D100"
-DEFAULT_SAMPLE_FILTER="AB"
+# Run with all sample in the ref: AB; Run on only untreated samples: A; Run on only treated samples: B
+DEFAULT_SAMPLE_FILTER="AB" # AB, A, or B
+# Choose the bulk you want to deconvolve
 DEFAULT_BULK_TYPE="bulk"  # bulk, bulk_random, pseudobulk, bulk_null
+# Choose the models you want to run on (CDSeq has also been implemented)
 DEFAULT_METHODS="ARIC,AutoGeneS,BayesPrism,BisqueRef,DeconPeaker,DeconRNASeq,DESeq2,EMeth,EPIC,FARDEEP,LinDeconSeq,MIXTURE,MuSic,MySort,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,TOAST"
 
 # Working ref, but long: "deconvSeq,DWLS,CPM,BayICE"
 # Working ref free: "BayCount,CDSeq,deconf,DeconICA,DSA,Linseed,MCPcounter"
 # Entire list: "AdRoit,ARIC,AutoGeneS,BayCount,BayesPrism,BayICE,BisqueMarker,BisqueRef,BseqSC,CDSeq,CellDistinguisher,CIBERSORT,CIBERSORTx,CPM,DAISM,debCAM,Deblender,DeCompress,deconf,DeconICA,DeconPeaker,DeconRNASeq,deconvSeq,DecOT,DeMixT,DESeq2,digitalDLSorter,DSA,dtangle,DWLS,EMeth,EPIC,FARDEEP,ImmuCellAI,LinDeconSeq,Linseed,MCPcounter,MIXTURE,MOMF,MuSic,MySort,NITUMID,PREDE,quanTIseq,RNA-Sieve,scaden,SCDC,spatialDWLS,TOAST"
+#### -------------------- ####
 
 # Parse command line arguments
 DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"
@@ -20,15 +25,18 @@ BULK_TYPE="${4:-$DEFAULT_BULK_TYPE}"  # New parameter - bulk file type
 # Create the new output directory name with dataset prefix and bulk type
 OUTPUT_DIR_NAME="${DATASET_PREFIX}-${BULK_TYPE}"
 
-# Set paths
+#### -SET PATHS- ####
+# Temporary folder
 SCRIPT_DIR="/scratch/lorthiois/scripts"
 mkdir -p "$SCRIPT_DIR"
+# You might need to adjust this part of the paths "/work/gr-fe/lorthiois"
 TEMPLATE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/deconvolution"
 OUTPUT_BASE_DIR="/work/gr-fe/lorthiois/DeconBenchmark/deconv_results"
 OUTPUT_DIR="$OUTPUT_BASE_DIR/$OUTPUT_DIR_NAME"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results/$OUTPUT_DIR_NAME"
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${OUTPUT_DIR_NAME}_${SAMPLE_FILTER}"
 mkdir -p ${GLOBAL_LOG_DIR}
+#### ----------- ####
 
 # Create output directories
 mkdir -p "$OUTPUT_DIR"

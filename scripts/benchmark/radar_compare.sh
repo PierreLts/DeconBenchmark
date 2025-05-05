@@ -4,15 +4,17 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=0:10:00
+
+#### -ADJUST PATHS 1/4- ####
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
+#### ------------------ ####
+
 #SBATCH --job-name=radar_plot
 
 # This script generates radar plots from benchmark files
 
-#############################################################
-# CONFIGURATION - MODIFY THESE LINES AS NEEDED
-#############################################################
+#### -SET PARAMETERS- ####
 # List the benchmark files you want to include in the radar plot
 PLOT_TITLE="Original vs. PBMC Reference"
 
@@ -43,13 +45,13 @@ DATASETS_TO_PLOT=(
     # "TB_D10000-bulk_benchmark_AB_select-AB.csv"
     # "TB_D33348-bulk_benchmark_AB_select-AB.csv"
 
+#### ---------------- ####
 
-#############################################################
-
-# Default parameters
+#### -ADJUST PATHS 2/4- ####
 RLIBRARY="/work/gr-fe/R_4.3.1"
 OUTPUT_FILE="radar_comparison.pdf"
 BENCHMARK_DIR="/work/gr-fe/lorthiois/DeconBenchmark/benchmark_results"
+#### ------------------ ####
 
 # Log start time
 echo "Starting radar_compare.sh at $(date)"
@@ -78,7 +80,9 @@ while [[ $# -gt 0 ]]; do
       echo "Options:"
       echo "  -o, --output FILE      Output file name (default: radar_comparison.pdf)"
       echo "  -l, --library PATH     R library path (default: /work/gr-fe/R_4.3.1)"
+#### -ADJUST PATHS 3/4- ####
       echo "  -d, --directory PATH   Benchmark directory (default: /work/gr-fe/lorthiois/DeconBenchmark/benchmark_results)"
+#### ------------------ ####
       echo "  -t, --title TITLE      Plot title (default: 'Performance Metrics Comparison')"
       echo "  -h, --help             Show this help message"
       exit 0
@@ -193,7 +197,10 @@ module load r
 
 echo "Generating radar plot..."
 # Run the R script
+
+#### -ADJUST PATHS 4/4- ####
 r_script="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark/radar_compare.R"
+#### ------------------ ####
 
 # Check if R script exists
 if [ ! -f "$r_script" ]; then

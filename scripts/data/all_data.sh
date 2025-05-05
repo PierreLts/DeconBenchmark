@@ -8,13 +8,15 @@ PREFIX="TB"
 SAMPLE_FILTER="AB"
 # =====
 
-# Default parameters
+#### -SET PATHS 1/4- ####
+# You might have to adjust this part of the path "/work/gr-fe/lorthiois"
 DEFAULT_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/pbmc_reference.rds"
 DEFAULT_PSEUDOBULK_SEURAT_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/merged_batches.rds"
 DEFAULT_BULK_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/cleaned_feature_counts_matrix.csv"
 DEFAULT_MAPPING_FILE="/work/gr-fe/lorthiois/DeconBenchmark/data/mart_export.txt"
 DEFAULT_OUTPUT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/generated_data"
 DEFAULT_RLIBRARY="/work/gr-fe/R_4.3.1"
+#### -------------- ####
 
 # Parse command line arguments
 SEURAT_FILE="${1:-$DEFAULT_SEURAT_FILE}"
@@ -40,6 +42,7 @@ FILTERED_PREFIX="${PREFIX}-${SAMPLE_FILTER}"
 SUBDIR_PATH="$OUTPUT_DIR/$PREFIX"
 mkdir -p $SUBDIR_PATH
 
+#### -SET PATHS 2/4- ####
 # Set up scratch log directory
 SCRATCH_LOG_DIR="/scratch/lorthiois/logs"
 mkdir -p $SCRATCH_LOG_DIR
@@ -47,6 +50,7 @@ mkdir -p $SCRATCH_LOG_DIR
 # Create prefix-specific subdirectory for temporary scripts
 SCRATCH_SCRIPT_DIR="/scratch/lorthiois/scripts/${PREFIX}"
 mkdir -p $SCRATCH_SCRIPT_DIR
+#### --------------- ####
 
 # Set up log file in output directory for logging the script execution
 OUTPUT_LOG_DIR="$SUBDIR_PATH/logs"
@@ -73,8 +77,10 @@ if [[ ! "$SAMPLE_FILTER" =~ ^(A|B|AB)$ ]]; then
     exit 1
 fi
 
+#### -SET PATHS 3/4- ####
 # Base directory where scripts are located
 SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/data"
+#### --------------- ####
 
 # Function to create temp script and submit job
 submit_job() {
@@ -191,9 +197,11 @@ SAMPLE_GT_JOB_ID=$(submit_job "GT_per_sample_gen" "
 Rscript $SCRIPT_DIR/GT_per_sample_generation.R $RLIBRARY $SEURAT_FILE $SUBDIR_PATH $PREFIX
 " 8 "32G" "1:00:00")  # No dependency here
 
+#### -SET PATHS 4/4- ####
 # Create consistent logs directory structure
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${PREFIX}_${SAMPLE_FILTER}"
 mkdir -p $GLOBAL_LOG_DIR
+#### --------------- ####
 
 # Change where the job mapping file is saved
 JOB_MAPPING_FILE="$GLOBAL_LOG_DIR/data_job_mapping.txt"

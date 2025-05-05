@@ -5,6 +5,9 @@
 #SBATCH --mem=4G
 #SBATCH --time=1:00:00
 #SBATCH --job-name=error_summary
+
+#### -ADJUST PATHS & PARAMETERS 1/2- ####
+
 #SBATCH --output=/scratch/lorthiois/logs/%A.o
 #SBATCH --error=/scratch/lorthiois/logs/%A.e
 
@@ -19,6 +22,8 @@ SAMPLE_FILTER="${2:-$DEFAULT_SAMPLE_FILTER}"    # Use default filter if not prov
 
 # New format for log directory includes both prefix and filter
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}_${SAMPLE_FILTER}"
+#### ------------------------------- ####
+
 OUTPUT_FILE="${GLOBAL_LOG_DIR}/error_summary_${DATASET_PREFIX}_${SAMPLE_FILTER}.html"
 
 # Use the new path format for mapping files
@@ -78,6 +83,7 @@ Panic
 CANCELLED
 EOF
 
+#### -ADJUST PATHS & PARAMETERS 2/2- ####
 # Check if mapping files exist
 if [ ! -f "$JOB_MAPPING_FILE" ]; then
     echo "Job mapping file not found: $JOB_MAPPING_FILE"
@@ -89,6 +95,7 @@ if [ ! -f "$JOB_MAPPING_FILE" ]; then
     fi
     # Continue but note the missing file in the HTML output
 fi
+#### ------------------------------- ####
 
 # Generate HTML header
 cat > "$OUTPUT_FILE" << EOF

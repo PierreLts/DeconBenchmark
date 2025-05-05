@@ -1,22 +1,27 @@
 #!/bin/bash
 # run_benchmarks.sh - Run all benchmarking tasks for a dataset
 
-# Default parameters
+
+#### -SET PARAMETERS- ####
+# Adjust the set of deconvolution runs you want to benchmark
 DEFAULT_DATASET_PREFIX="TB_D100-bulk_null"
-DEFAULT_INCLUDE_OVERALL_GT="TRUE"
-DEFAULT_SAMPLE_FILTER="AB"
+DEFAULT_INCLUDE_OVERALL_GT="TRUE" # Set to "TRUE" if you want to include the mean Ground Truth (Recommended) 
+DEFAULT_SAMPLE_FILTER="AB" # AB, A, or B
+#### ---------------- ####
 
 # Parse command line arguments
 DATASET_PREFIX="${1:-$DEFAULT_DATASET_PREFIX}"
 INCLUDE_OVERALL_GT="${2:-$DEFAULT_INCLUDE_OVERALL_GT}"
 SAMPLE_FILTER="${3:-$DEFAULT_SAMPLE_FILTER}"
 
-# Paths
+#### -ADJUST PATHS- ####
+# You might have to adjust this partof the paths: "/work/gr-fe/lorthiois"
 GLOBAL_LOG_DIR="/work/gr-fe/lorthiois/DeconBenchmark/logs/${DATASET_PREFIX}_${SAMPLE_FILTER}"
 mkdir -p "${GLOBAL_LOG_DIR}"
 LOG_FILE="${GLOBAL_LOG_DIR}/benchmarking_${DATASET_PREFIX}_${SAMPLE_FILTER}_$(date +%Y%m%d_%H%M%S).log"
 
 SCRIPT_DIR="/work/gr-fe/lorthiois/DeconBenchmark/scripts/benchmark"
+#### -------------- ####
 
 echo "===== Starting benchmarking for ${DATASET_PREFIX} =====" | tee -a "${LOG_FILE}"
 echo "Include overall ground truth: ${INCLUDE_OVERALL_GT}" | tee -a "${LOG_FILE}"
