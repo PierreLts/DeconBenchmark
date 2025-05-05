@@ -24,7 +24,7 @@ Debugging<br>
 ## 2. Data Preparation
 To run the pipeline, we first need properly formated data.
 ### 2.1. Data Folder
-| The folder should contain: |
+| The folder should contain: | |
 |-------------|------------|
 | Single cell RNA-seq data: | "scRNA".rds   (our case: 4 batches "GFB...Seurat.rds") |
 | Bulk RNA-seq data: | "bulkRNA".csv        (our case: "cleaned_feature_counts_matrix.csv") |
