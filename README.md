@@ -1,11 +1,11 @@
 # DeconvBenchmarking pipeline
-This pipeline aims at running and benchmarking deconvolution models.
+This pipeline enambles running, debugging, and benchmarking of 50+ Bulk RNA-seq deconvolution models.
 The pipeline is build on the [tinnlab/DeconBenchmark](https://github.com/tinnlab/DeconBenchmark) package which unifies the running of 50 deconvolution models in one function.
 
 Pierre Lorthiois 04/2025
 
 ## 0. Running Files
-Here `.R` files should be run through their corresponding `.sh` launch scripts.
+Here `.R` files should be run through their corresponding `.sh` launch scripts on the EPFL Scitas cluster.
 
 ## 1. Overview
 ### 1.1. Installations
