@@ -43,7 +43,7 @@ You might want to **run it twice** because of a dependency issue: `GT_generation
 
 
 Files created at */generated_data*:
-| | Run `all_data.sh` to run: | |
+| Run `all_data.sh` to run: | |
 | Script File | Output File |
 |-------------|------------|
 | `singleCellExpr_AB_generation.R` | "data_name"_singleCellExpr_AB.rda |
