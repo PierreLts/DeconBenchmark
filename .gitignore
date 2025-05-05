@@ -11,6 +11,8 @@
 # Output files
 *.pdf
 *.png
+!FlowChart.png
+!SimpleFlowChart.png
 *.jpg
 *.jpeg
 *.svg
